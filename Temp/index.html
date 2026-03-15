@@ -6,510 +6,316 @@
 <title>CodeSensei</title>
 <style>
 :root{--bg:#0d0d16;--s:#131322;--c:#181830;--ch:#1e1e38;--bd:#1f1f3a;--a:#F59E0B;--as:#2a2210;--tx:#cccce0;--td:#555570;--tm:#8888a0;--g:#34D399;--r:#F87171;--p:#A78BFA}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:flex}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:flex}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#222240;border-radius:3px}
-button{font-family:inherit;cursor:pointer}
-input::placeholder{color:var(--td)}
-
-/* Sidebar */
+button{font-family:inherit;cursor:pointer}input::placeholder{color:var(--td)}
 .sb{width:190px;background:var(--s);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0}
 .sb-hd{padding:12px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--bd);cursor:pointer}
 .sb-logo{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#F59E0B,#f97316);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--bg);font-family:monospace;flex-shrink:0}
-.sb-nav{flex:1;padding:5px}
-.nav-i{padding:8px 10px;border-radius:6px;margin-bottom:1px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--tm);transition:background .12s}
-.nav-i:hover{background:var(--ch)}.nav-i.act{background:var(--as);color:var(--a)}
-.nav-ic{font-size:15px;width:18px;text-align:center;font-family:monospace}
-.sb-ft{padding:10px 11px;border-top:1px solid var(--bd);font-size:10.5px;color:var(--td)}
-
-/* Main */
+.sb-nav{flex:1;padding:5px}.sb-ft{padding:10px 11px;border-top:1px solid var(--bd);font-size:10.5px;color:var(--td)}
+.nv{padding:8px 10px;border-radius:6px;margin-bottom:1px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--tm);transition:background .12s}
+.nv:hover{background:var(--ch)}.nv.on{background:var(--as);color:var(--a)}
 #main{flex:1;overflow:auto}
 .pg{padding:28px 30px;max-width:760px;margin:0 auto;animation:fi .25s ease}
 @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-h1{font-size:24px;font-weight:700;margin-bottom:3px}
-h2{font-size:20px;font-weight:700;margin-bottom:3px}
+h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weight:700;margin-bottom:3px}
 .sub{color:var(--td);margin-bottom:24px;font-size:13.5px}
-
-/* Cards */
-.cd{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:13px;cursor:pointer;transition:border-color .15s}
-.cd:hover{border-color:#2a2a50}
-
-/* Module cards */
+.cd{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:13px;cursor:pointer;transition:border-color .15s}.cd:hover{border-color:#2a2a50}
 .mod{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .15s}
 .mod:hover{border-color:rgba(245,158,11,.2);transform:translateY(-1px)}
-.mod-num{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
-.mod-info{flex:1}.mod-title{font-size:14px;font-weight:600;margin-bottom:2px}.mod-sub{font-size:12px;color:var(--td)}
-.mod-status{font-size:11px;padding:3px 8px;border-radius:4px}
-
-/* Lesson */
-.back{background:none;border:none;color:var(--tm);font-size:13px;padding:0;margin-bottom:14px}
-.back:hover{color:var(--tx)}
+.mod-n{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.back{background:none;border:none;color:var(--tm);font-size:13px;padding:0;margin-bottom:14px;display:block}.back:hover{color:var(--tx)}
+.stg{display:flex;gap:0;margin-bottom:18px;border-radius:8px;overflow:hidden;border:1px solid var(--bd)}
+.stg-b{flex:1;padding:10px;text-align:center;font-size:12.5px;font-weight:600;border:none;background:var(--c);color:var(--td);transition:all .15s;cursor:pointer}
+.stg-b.on{background:var(--a);color:var(--bg)}
 .tabs{display:flex;gap:5px;margin-bottom:16px}
-.tab{padding:8px 13px;border-radius:7px;border:1px solid var(--bd);background:transparent;color:var(--tm);font-size:12px;font-weight:500;transition:all .12s}
-.tab.act{border-color:rgba(245,158,11,.26);background:var(--as);color:var(--a)}
-.tab.act-p{border-color:rgba(167,139,250,.2);background:rgba(167,139,250,.06);color:var(--p)}
-.tab.act-g{border-color:rgba(52,211,153,.2);background:rgba(52,211,153,.06);color:var(--g)}
+.tb{padding:8px 13px;border-radius:7px;border:1px solid var(--bd);background:transparent;color:var(--tm);font-size:12px;font-weight:500;transition:all .12s}
+.tb.on{border-color:rgba(245,158,11,.26);background:var(--as);color:var(--a)}
+.tb.on-p{border-color:rgba(167,139,250,.2);background:rgba(167,139,250,.06);color:var(--p)}
+.tb.on-g{border-color:rgba(52,211,153,.2);background:rgba(52,211,153,.06);color:var(--g)}
 .lbox{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:20px;line-height:1.8;font-size:13.5px}
-
-/* Stages */
-.stage-bar{display:flex;gap:0;margin-bottom:18px;border-radius:8px;overflow:hidden;border:1px solid var(--bd)}
-.stage-btn{flex:1;padding:10px;text-align:center;font-size:12.5px;font-weight:600;border:none;background:var(--c);color:var(--td);transition:all .15s;cursor:pointer}
-.stage-btn.act{background:var(--a);color:var(--bg)}
-.stage-btn.done{background:rgba(52,211,153,.1);color:var(--g)}
-
-/* Challenge */
-.q-card{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:18px;margin-bottom:10px}
-.q-label{font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:8px}
-.q-text{font-size:14px;font-weight:500;margin-bottom:12px;line-height:1.6}
-.q-code{background:rgba(0,0,0,.35);padding:12px;border-radius:7px;font-family:monospace;font-size:12px;line-height:1.6;color:#e2d9a2;margin-bottom:12px;white-space:pre-wrap;border:1px solid #222240}
-.q-opt{padding:10px 14px;border:1px solid var(--bd);border-radius:7px;margin-bottom:5px;cursor:pointer;font-size:13px;transition:all .12s}
-.q-opt:hover{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.04)}
-.q-opt.selected{border-color:var(--a);background:var(--as);color:var(--a)}
-.q-opt.correct{border-color:var(--g);background:rgba(52,211,153,.08);color:var(--g)}
-.q-opt.wrong{border-color:var(--r);background:rgba(248,113,113,.08);color:var(--r)}
-.q-reveal{padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
-.q-exp{margin-top:10px;padding:12px;background:rgba(245,158,11,.04);border-radius:7px;border-left:3px solid var(--a);font-size:13px;line-height:1.7}
-
-/* Line explanations */
-.src-file{margin-bottom:16px}
-.src-header{padding:8px 12px;background:#111125;border:1px solid var(--bd);border-radius:8px 8px 0 0;font-size:12px;font-weight:600;color:var(--tm);font-family:monospace}
-.src-lines{border:1px solid var(--bd);border-top:none;border-radius:0 0 8px 8px;overflow:hidden}
-.src-line{display:flex;cursor:pointer;transition:background .1s;border-bottom:1px solid rgba(255,255,255,.02)}
-.src-line:hover{background:rgba(255,255,255,.02)}
-.src-line.active{background:rgba(245,158,11,.06);border-left:3px solid var(--a)}
-.src-num{width:28px;text-align:center;color:var(--td);font-size:10.5px;padding:4px 0;font-family:monospace;flex-shrink:0}
-.src-code{font-family:monospace;font-size:12px;padding:4px 8px;flex:1;white-space:pre-wrap;color:var(--tx)}
-.src-hint{padding:4px 8px;color:var(--td);font-size:11px;flex-shrink:0}
-.src-exp{padding:8px 12px 8px 36px;background:rgba(245,158,11,.04);border-left:3px solid rgba(245,158,11,.2);font-size:12.5px;line-height:1.7;animation:fi .2s ease}
-
-/* Chat */
-.chat-box{background:var(--c);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.chat-hd{padding:9px 13px;border-bottom:1px solid var(--bd);font-size:12px;color:var(--td)}
-.chat-msgs{height:280px;overflow:auto;padding:13px}
-.chat-empty{color:var(--td);font-size:12.5px;text-align:center;margin-top:28px}
-.chat-msg{display:flex;margin-bottom:8px}
-.chat-bub{max-width:88%;padding:9px 12px;font-size:13px;line-height:1.7}
-.chat-bub.ai{border-radius:3px 10px 10px 10px;background:var(--ch);border:1px solid var(--bd)}
-.chat-bub.user{border-radius:10px 3px 10px 10px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.12)}
-.chat-in{display:flex;gap:6px;padding:9px 11px;border-top:1px solid var(--bd)}
-.chat-in input{flex:1;padding:8px 10px;background:var(--s);border:1px solid var(--bd);border-radius:6px;color:var(--tx);font-size:12.5px;outline:none}
-.chat-in button{padding:8px 13px;background:var(--a);border:none;border-radius:6px;color:var(--bg);font-weight:600;font-size:12px}
-
-/* Score */
-.score-box{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:20px;text-align:center;margin-top:16px}
-.score-num{font-size:36px;font-weight:700;margin-bottom:4px}
-.score-label{font-size:13px;color:var(--td)}
-
-/* Markdown */
+.sf-h{padding:8px 12px;background:#111125;border:1px solid var(--bd);border-radius:8px 8px 0 0;font-size:12px;font-weight:600;color:var(--tm);font-family:monospace}
+.sf-b{border:1px solid var(--bd);border-top:none;border-radius:0 0 8px 8px;overflow:hidden}
+.sl{display:flex;cursor:pointer;transition:background .1s;border-bottom:1px solid rgba(255,255,255,.02)}
+.sl:hover{background:rgba(255,255,255,.02)}.sl.on{background:rgba(245,158,11,.06)}
+.sl-n{width:28px;text-align:center;color:var(--td);font-size:10.5px;padding:5px 0;font-family:monospace;flex-shrink:0}
+.sl-c{font-family:monospace;font-size:12px;padding:5px 8px;flex:1;white-space:pre-wrap;color:var(--tx)}
+.sl-h{padding:5px 8px;color:var(--td);font-size:11px;flex-shrink:0}
+.sl-e{padding:10px 14px 10px 36px;background:rgba(245,158,11,.04);border-left:3px solid rgba(245,158,11,.2);font-size:12.5px;line-height:1.7;border-bottom:1px solid rgba(255,255,255,.02)}
+.qc{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:18px;margin-bottom:10px}
+.ql{font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.qt{font-size:14px;font-weight:500;margin-bottom:12px;line-height:1.6}
+.qcd{background:rgba(0,0,0,.35);padding:12px;border-radius:7px;font-family:monospace;font-size:12px;line-height:1.6;color:#e2d9a2;margin-bottom:12px;white-space:pre-wrap;border:1px solid #222240}
+.qo{padding:10px 14px;border:1px solid var(--bd);border-radius:7px;margin-bottom:5px;cursor:pointer;font-size:13px;transition:all .12s}
+.qo:hover{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.04)}
+.qo.sel{border-color:var(--a);background:var(--as);color:var(--a)}
+.qo.ok{border-color:var(--g);background:rgba(52,211,153,.08);color:var(--g)}
+.qo.no{border-color:var(--r);background:rgba(248,113,113,.08);color:var(--r)}
+.qx{margin-top:10px;padding:12px;background:rgba(245,158,11,.04);border-radius:7px;border-left:3px solid var(--a);font-size:13px;line-height:1.7}
+.ch-b{background:var(--c);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.ch-h{padding:9px 13px;border-bottom:1px solid var(--bd);font-size:12px;color:var(--td)}
+.ch-m{height:280px;overflow:auto;padding:13px}
+.ch-e{color:var(--td);font-size:12.5px;text-align:center;margin-top:28px}
+.bub{max-width:88%;padding:9px 12px;font-size:13px;line-height:1.7}
+.bub.ai{border-radius:3px 10px 10px 10px;background:var(--ch);border:1px solid var(--bd)}
+.bub.us{border-radius:10px 3px 10px 10px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.12)}
+.ch-i{display:flex;gap:6px;padding:9px 11px;border-top:1px solid var(--bd)}
+.ch-i input{flex:1;padding:8px 10px;background:var(--s);border:1px solid var(--bd);border-radius:6px;color:var(--tx);font-size:12.5px;outline:none}
+.ch-i button{padding:8px 13px;background:var(--a);border:none;border-radius:6px;color:var(--bg);font-weight:600;font-size:12px}
+.sc{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:20px;text-align:center;margin-top:16px}
 .md-code{background:rgba(0,0,0,.4);padding:14px;border-radius:8px;font-size:12px;line-height:1.7;font-family:monospace;overflow-x:auto;margin:10px 0;color:#e2d9a2;border:1px solid #222240;white-space:pre-wrap;display:block}
 .md-b{color:var(--a);font-weight:600}
 .md-ic{background:rgba(255,183,77,.1);padding:1px 4px;border-radius:3px;font-size:12px;color:#e2d9a2;font-family:monospace}
-
-/* Loading */
-.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--td);font-size:14px}
-.spin{width:20px;height:20px;border:2px solid var(--bd);border-top-color:var(--a);border-radius:50%;animation:spin .6s linear infinite;margin-right:10px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-.hidden{display:none!important}
+.ld{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--td);font-size:14px}
+.spin{width:20px;height:20px;border:2px solid var(--bd);border-top-color:var(--a);border-radius:50%;animation:sp .6s linear infinite;margin-right:10px}
+@keyframes sp{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-
 <div class="sb">
   <div class="sb-hd"><div class="sb-logo">&lt;/&gt;</div><span style="font-size:14px;font-weight:700">CodeSensei</span></div>
   <div class="sb-nav">
-    <div class="nav-i act" onclick="go('dash')"><span class="nav-ic">◈</span>Dashboard</div>
-    <div class="nav-i" onclick="go('bat')"><span class="nav-ic">☰</span>Batch Modules</div>
+    <div class="nv on" id="nav-dash" onclick="goDash()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">◈</span>Dashboard</div>
+    <div class="nv" id="nav-bat" onclick="goModules()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">☰</span>Batch Modules</div>
   </div>
   <div class="sb-ft">Learning from your own code</div>
 </div>
-
 <div id="main"></div>
 
 <script>
-const SB_URL = 'https://wylxvmkcrexwfpjpbhyy.supabase.co/rest/v1';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bHh2bWtjcmV4d2ZwanBiaHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2MzkxMDYsImV4cCI6MjA4NDIxNTEwNn0.6Bxo42hx4jwlJGWnfjiTpiDUsYfc1QLTN3YtrU1efak';
-const HDRS = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+const SB='https://wylxvmkcrexwfpjpbhyy.supabase.co/rest/v1';
+const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bHh2bWtjcmV4d2ZwanBiaHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2MzkxMDYsImV4cCI6MjA4NDIxNTEwNn0.6Bxo42hx4jwlJGWnfjiTpiDUsYfc1QLTN3YtrU1efak';
+const H={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json','Prefer':'return=representation'};
 
-let state = {view:'dash', lesson:null, stage:'learn', layer:'main', chatMsgs:[], lineToggles:{}, answers:{}, revealed:{}, quizSubmitted:false};
+// ─── DATA CACHE ───
+let cache={lessons:null,lines:null,challenges:null,progress:null};
+let S={view:'dash',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{}};
 
-// ─── Supabase fetch helper ───
-async function sb(table, query='') {
-  try {
-    const r = await fetch(`${SB_URL}/${table}?${query}`, {headers:HDRS});
-    return await r.json();
-  } catch(e) { console.error(e); return []; }
+async function q(table,query=''){
+  try{const r=await fetch(`${SB}/${table}?${query}`,{headers:H});return await r.json();}catch(e){console.error(e);return[];}
 }
 
-// ─── Markdown renderer ───
-function md(text) {
-  if (!text) return '';
-  return text.replace(/\n/g,'<br>').split(/(```[^`]*```)/gs).map(block => {
-    if (block.startsWith('```')) {
-      const code = block.replace(/```\w*\n?/g,'').replace(/```$/,'').replace(/<br>/g,'\n');
-      return '<pre class="md-code">'+esc(code)+'</pre>';
-    }
-    return block.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map(p => {
-      if (p.startsWith('**') && p.endsWith('**')) return '<span class="md-b">'+esc(p.slice(2,-2))+'</span>';
-      if (p.startsWith('`') && p.endsWith('`')) return '<code class="md-ic">'+esc(p.slice(1,-1))+'</code>';
+function md(t){
+  if(!t)return'';
+  return t.replace(/\n/g,'<br>').split(/(```[^`]*```)/gs).map(b=>{
+    if(b.startsWith('```')){const c=b.replace(/```\w*\n?/g,'').replace(/```$/,'').replace(/<br>/g,'\n');return'<pre class="md-code">'+esc(c)+'</pre>';}
+    return b.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map(p=>{
+      if(p.startsWith('**')&&p.endsWith('**'))return'<span class="md-b">'+esc(p.slice(2,-2))+'</span>';
+      if(p.startsWith('`')&&p.endsWith('`'))return'<code class="md-ic">'+esc(p.slice(1,-1))+'</code>';
       return p;
     }).join('');
   }).join('');
 }
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-// ─── Navigation ───
-function go(view, data) {
-  state.view = view;
-  if (data) Object.assign(state, data);
-  document.querySelectorAll('.nav-i').forEach(el => el.classList.remove('act'));
-  if (view === 'dash') document.querySelectorAll('.nav-i')[0].classList.add('act');
-  else document.querySelectorAll('.nav-i')[1].classList.add('act');
-  render();
-}
+function setNav(id){document.querySelectorAll('.nv').forEach(n=>n.classList.remove('on'));document.getElementById(id).classList.add('on');}
 
-// ─── Main render ───
-async function render() {
-  const m = document.getElementById('main');
-  if (state.view === 'dash') return renderDash(m);
-  if (state.view === 'bat') return renderModules(m);
-  if (state.view === 'lesson') return renderLesson(m);
-}
-
-// ─── DASHBOARD ───
-async function renderDash(m) {
-  const progress = await sb('code_sensei_progress','select=*&topic_id=eq.bat');
-  const lessons = await sb('code_sensei_lessons','select=module_number,module_title&topic_id=eq.bat&order=display_order');
-  const total = lessons.length || 7;
-  const done = progress.filter(p => p.status === 'completed').length;
-
-  m.innerHTML = `<div class="pg">
-    <h1>Welcome back, Aniket</h1>
-    <p class="sub">Your full-stack journey — learn from your own code</p>
-
-    <div class="cd" onclick="go('bat')" style="margin-bottom:16px;border-color:rgba(245,158,11,.12)">
+// ═══ DASHBOARD ═══
+async function goDash(){
+  S.view='dash';setNav('nav-dash');
+  const m=document.getElementById('main');
+  m.innerHTML=`<div class="pg">
+    <h1>Welcome back, Aniket</h1><p class="sub">Your full-stack journey — learn from your own code</p>
+    <div class="cd" onclick="goModules()" style="margin-bottom:16px;border-color:rgba(245,158,11,.12)">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="width:48px;height:48px;border-radius:11px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:22px">📁</div>
         <div style="flex:1">
           <div style="font-size:16px;font-weight:600;margin-bottom:3px">Batch Scripts (.bat)</div>
-          <div style="font-size:12px;color:var(--td)">7 modules · ${done}/${total} completed · Your lecturer's scripts</div>
-          <div style="height:3px;background:#1a1a30;border-radius:2px;margin-top:8px"><div style="height:100%;width:${total>0?(done/total)*100:0}%;background:var(--a);border-radius:2px;min-width:${done>0?'4px':'0'}"></div></div>
+          <div style="font-size:12px;color:var(--td)">7 modules · Your lecturer's 74 scripts</div>
         </div>
         <span style="color:var(--a);font-size:18px">→</span>
       </div>
     </div>
-
-    <div class="cd" onclick="go('bat')" style="border-color:rgba(245,158,11,.15)">
+    <div class="cd" onclick="goModules()" style="border-color:rgba(245,158,11,.15)">
       <div style="font-size:10px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:5px">SUGGESTED NEXT</div>
       <div style="font-size:15px;font-weight:600;margin-bottom:2px">Module 1: Foundations</div>
-      <div style="font-size:12.5px;color:var(--td)">Learn ECHO, COPY, MOVE, DEL and more from your lecturer's actual scripts →</div>
+      <div style="font-size:12.5px;color:var(--td)">Learn ECHO, COPY, MOVE, DEL from your lecturer's scripts →</div>
     </div>
-
     <div style="margin-top:20px;padding:16px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
       <div style="font-size:13px;color:var(--tm);margin-bottom:8px">Other topics coming soon:</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        ${['HTML','CSS','JavaScript','Python','JSON','SQL','Shell (.sh)'].map(t => 
-          '<span style="padding:4px 10px;background:#1a1a30;border-radius:5px;font-size:11.5px;color:var(--td)">'+t+'</span>'
-        ).join('')}
-      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${['HTML','CSS','JavaScript','Python','JSON','SQL','Shell'].map(t=>'<span style="padding:4px 10px;background:#1a1a30;border-radius:5px;font-size:11.5px;color:var(--td)">'+t+'</span>').join('')}</div>
     </div>
   </div>`;
 }
 
-// ─── MODULE LIST ───
-async function renderModules(m) {
-  m.innerHTML = '<div class="pg"><div class="loading"><div class="spin"></div>Loading modules...</div></div>';
-  
-  const lessons = await sb('code_sensei_lessons','select=*&topic_id=eq.bat&order=display_order');
-  const progress = await sb('code_sensei_progress','select=*&topic_id=eq.bat');
-
-  const allModules = [
-    {n:1,title:'Foundations',sub:'ECHO, COPY, MOVE, DEL, ATTRIB, FIND, REN',files:'6, 11, 13, 15, 16, 20, 22, 23'},
-    {n:2,title:'Variables & Arguments',sub:'SET, %1 %2, SETLOCAL, environment vars',files:'30, 34, 35, 36, 37'},
-    {n:3,title:'Decision Making',sub:'IF, IF/ELSE, NESTED IF, DEFINED, EXIST',files:'44-58'},
-    {n:4,title:'Strings',sub:'Create, concat, extract, remove, replace',files:'65-75, 80'},
-    {n:5,title:'Arrays',sub:'Create, access, modify, iterate, length',files:'81-94'},
-    {n:6,title:'Operators',sub:'Arithmetic, relational, assignment, bitwise, logical',files:'96-113'},
-    {n:7,title:'Real Projects',sub:'Calculator, guess game, services manager, user accounts',files:'120-162'},
+// ═══ MODULE LIST ═══
+async function goModules(){
+  S.view='mods';setNav('nav-bat');
+  const m=document.getElementById('main');
+  const mods=[
+    {n:1,t:'Foundations',s:'ECHO, COPY, MOVE, DEL, ATTRIB, FIND, REN',f:'6, 11, 13, 15, 16, 20, 22, 23',ready:true},
+    {n:2,t:'Variables & Arguments',s:'SET, %1 %2, SETLOCAL, environment vars',f:'30-37',ready:false},
+    {n:3,t:'Decision Making',s:'IF, IF/ELSE, NESTED IF, DEFINED, EXIST',f:'44-58',ready:false},
+    {n:4,t:'Strings',s:'Create, concat, extract, remove, replace',f:'65-75, 80',ready:false},
+    {n:5,t:'Arrays',s:'Create, access, modify, iterate, length',f:'81-94',ready:false},
+    {n:6,t:'Operators',s:'Arithmetic, relational, assignment, bitwise',f:'96-113',ready:false},
+    {n:7,t:'Real Projects',s:'Calculator, guess game, services manager',f:'120-162',ready:false},
   ];
-
-  m.innerHTML = `<div class="pg">
-    <button class="back" onclick="go('dash')">← Dashboard</button>
-    <h2>Batch Scripts (.bat)</h2>
-    <p class="sub">7 modules from your lecturer's scripts — suggested order shown, jump to any</p>
-    ${allModules.map(mod => {
-      const hasContent = lessons.find(l => l.module_number === mod.n);
-      const prog = progress.find(p => p.module_number === mod.n);
-      const status = prog ? prog.status : 'not_started';
-      const statusLabel = status === 'completed' ? '<span class="mod-status" style="background:rgba(52,211,153,.1);color:var(--g)">✓ Complete</span>' :
-                          status === 'in_progress' ? '<span class="mod-status" style="background:var(--as);color:var(--a)">In Progress</span>' :
-                          hasContent ? '<span class="mod-status" style="background:rgba(255,255,255,.04);color:var(--tm)">Available</span>' :
-                          '<span class="mod-status" style="background:rgba(255,255,255,.02);color:var(--td)">🔒 Coming Soon</span>';
-      const clickable = hasContent;
-      return `<div class="mod" ${clickable ? `onclick="openModule(${mod.n})"` : ''} style="${!clickable?'opacity:.4;cursor:default':''}">
-        <div class="mod-num" style="background:${status==='completed'?'rgba(52,211,153,.1)':'rgba(245,158,11,.1)'};color:${status==='completed'?'var(--g)':'var(--a)'}">${status==='completed'?'✓':mod.n}</div>
-        <div class="mod-info">
-          <div class="mod-title">Module ${mod.n}: ${mod.title}</div>
-          <div class="mod-sub">${mod.sub}</div>
-          <div style="font-size:10.5px;color:var(--td);margin-top:3px">Files: ${mod.files}</div>
-        </div>
-        ${statusLabel}
-      </div>`;
-    }).join('')}
+  m.innerHTML=`<div class="pg"><button class="back" onclick="goDash()">← Dashboard</button>
+    <h2>Batch Scripts (.bat)</h2><p class="sub">7 modules from your lecturer's scripts</p>
+    ${mods.map(mod=>`<div class="mod" ${mod.ready?`onclick="openMod(${mod.n})"`:''}style="${mod.ready?'':'opacity:.4;cursor:default'}">
+      <div class="mod-n" style="background:rgba(245,158,11,.1);color:var(--a)">${mod.n}</div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:600;margin-bottom:2px">Module ${mod.n}: ${mod.t}</div><div style="font-size:12px;color:var(--td)">${mod.s}</div><div style="font-size:10.5px;color:var(--td);margin-top:3px">Files: ${mod.f}</div></div>
+      <span style="font-size:11px;padding:3px 8px;border-radius:4px;background:${mod.ready?'rgba(255,255,255,.04)':'rgba(255,255,255,.02)'};color:${mod.ready?'var(--tm)':'var(--td)'}">${mod.ready?'Available':'🔒 Soon'}</span>
+    </div>`).join('')}
   </div>`;
 }
 
-// ─── OPEN MODULE ───
-async function openModule(num) {
-  state.lesson = num;
-  state.stage = 'learn';
-  state.layer = 'main';
-  state.chatMsgs = [];
-  state.lineToggles = {};
-  state.answers = {};
-  state.revealed = {};
-  state.quizSubmitted = false;
+// ═══ OPEN MODULE — fetch once, cache ═══
+async function openMod(n){
+  S.mod=n;S.stage='learn';S.layer='main';S.chatMsgs=[];S.openLines={};S.answers={};S.revealed={};
+  const m=document.getElementById('main');
+  m.innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading module...</div></div>';
 
-  // Update progress to in_progress
-  const prog = await sb('code_sensei_progress','select=*&topic_id=eq.bat&module_number=eq.'+num);
-  if (prog.length > 0 && prog[0].status === 'not_started') {
-    await fetch(`${SB_URL}/code_sensei_progress?id=eq.${prog[0].id}`, {
-      method:'PATCH', headers:HDRS, body:JSON.stringify({status:'in_progress',started_at:new Date().toISOString()})
-    });
-  }
-  go('lesson');
+  // Fetch all data ONCE
+  cache.lessons=await q('code_sensei_lessons','select=*&topic_id=eq.bat&module_number=eq.'+n);
+  cache.lines=await q('code_sensei_line_explanations','select=*&topic_id=eq.bat&module_number=eq.'+n+'&order=source_filename,line_number');
+  cache.challenges=await q('code_sensei_challenges','select=*&topic_id=eq.bat&module_number=eq.'+n+'&order=display_order');
+
+  renderModule();
 }
 
-// ─── LESSON VIEW ───
-async function renderLesson(m) {
-  m.innerHTML = '<div class="pg"><div class="loading"><div class="spin"></div>Loading lesson...</div></div>';
+// ═══ RENDER MODULE — uses cached data, no fetch ═══
+function renderModule(){
+  const m=document.getElementById('main');
+  const les=cache.lessons[0];
+  if(!les){m.innerHTML='<div class="pg"><p style="color:var(--td)">No content found.</p></div>';return;}
 
-  const num = state.lesson;
-  const lessons = await sb('code_sensei_lessons','select=*&topic_id=eq.bat&module_number=eq.'+num);
-  const lineExps = await sb('code_sensei_line_explanations','select=*&topic_id=eq.bat&module_number=eq.'+num+'&order=source_filename,line_number');
-  const challenges = await sb('code_sensei_challenges','select=*&topic_id=eq.bat&module_number=eq.'+num+'&order=display_order');
+  const pQ=cache.challenges.filter(c=>c.stage==='practice');
+  const tQ=cache.challenges.filter(c=>c.stage==='test');
 
-  if (!lessons.length) { m.innerHTML = '<div class="pg"><p style="color:var(--td)">No content found for this module.</p></div>'; return; }
-  const les = lessons[0];
-  const practiceQs = challenges.filter(c => c.stage === 'practice');
-  const testQs = challenges.filter(c => c.stage === 'test');
+  // Group lines by file
+  const files={};
+  cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});
+  const fileOrder=les.source_files||Object.keys(files);
 
-  // Group line explanations by file
-  const fileGroups = {};
-  lineExps.forEach(le => {
-    if (!fileGroups[le.source_filename]) fileGroups[le.source_filename] = [];
-    fileGroups[le.source_filename].push(le);
-  });
-
-  m.innerHTML = `<div class="pg">
-    <button class="back" onclick="go('bat')">← Back to Modules</button>
-    <h2 style="margin-bottom:4px">Module ${num}: ${les.module_title}</h2>
-    <p class="sub">${les.source_files ? les.source_files.length + ' source files from your lecturer' : ''}</p>
-
-    <!-- Stage Bar -->
-    <div class="stage-bar">
-      <div class="stage-btn ${state.stage==='learn'?'act':''}" onclick="switchStage('learn')">📖 Learn</div>
-      <div class="stage-btn ${state.stage==='practice'?'act':''}" onclick="switchStage('practice')">⚡ Practice (${practiceQs.length})</div>
-      <div class="stage-btn ${state.stage==='test'?'act':''}" onclick="switchStage('test')">🧠 Test (${testQs.length})</div>
+  m.innerHTML=`<div class="pg">
+    <button class="back" onclick="goModules()">← Back to Modules</button>
+    <h2 style="margin-bottom:4px">Module ${S.mod}: ${les.module_title}</h2>
+    <p class="sub">${les.source_files?les.source_files.length+' source files from your lecturer':''}</p>
+    <div class="stg">
+      <div class="stg-b ${S.stage==='learn'?'on':''}" onclick="setStage('learn')">📖 Learn</div>
+      <div class="stg-b ${S.stage==='practice'?'on':''}" onclick="setStage('practice')">⚡ Practice (${pQ.length})</div>
+      <div class="stg-b ${S.stage==='test'?'on':''}" onclick="setStage('test')">🧠 Test (${tQ.length})</div>
     </div>
-
-    <div id="stage-content"></div>
+    <div id="sc"></div>
   </div>`;
 
-  // Render stage content
-  const sc = document.getElementById('stage-content');
+  const sc=document.getElementById('sc');
+  if(S.stage==='learn') renderLearn(sc,les,files,fileOrder);
+  else if(S.stage==='practice') renderQs(sc,pQ,'PRACTICE');
+  else renderQs(sc,tQ,'TEST');
+}
 
-  if (state.stage === 'learn') {
-    sc.innerHTML = `
-      <div class="tabs">
-        <button class="tab ${state.layer==='main'?'act':''}" onclick="switchLayer('main')">📖 Explanation</button>
-        <button class="tab ${state.layer==='alt'?'act-p':''}" onclick="switchLayer('alt')">🔄 Different Angle</button>
-        <button class="tab ${state.layer==='chat'?'act-g':''}" onclick="switchLayer('chat')">💬 Ask Freely</button>
-      </div>
-      <div id="layer-content"></div>
-      ${Object.keys(fileGroups).length > 0 ? '<div style="margin-top:24px"><div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:12px">SOURCE FILES — TAP ANY LINE FOR EXPLANATION</div><div id="source-files"></div></div>' : ''}
-    `;
-    renderLayer(les);
-    renderSourceFiles(fileGroups, les);
-  } else if (state.stage === 'practice') {
-    renderChallenges(sc, practiceQs, 'PRACTICE');
+function setStage(s){S.stage=s;S.answers={};S.revealed={};renderModule();}
+
+// ═══ LEARN STAGE ═══
+function renderLearn(sc,les,files,fileOrder){
+  sc.innerHTML=`
+    <div class="tabs">
+      <button class="tb ${S.layer==='main'?'on':''}" onclick="setLayer('main')">📖 Explanation</button>
+      <button class="tb ${S.layer==='alt'?'on-p':''}" onclick="setLayer('alt')">🔄 Different Angle</button>
+      <button class="tb ${S.layer==='chat'?'on-g':''}" onclick="setLayer('chat')">💬 Ask Freely</button>
+    </div>
+    <div id="lc"></div>
+    <div style="margin-top:24px"><div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:12px">SOURCE FILES — TAP ANY LINE FOR EXPLANATION</div><div id="sf"></div></div>
+  `;
+  renderLayer(les);
+  renderFiles(files,fileOrder);
+}
+
+function setLayer(l){S.layer=l;const les=cache.lessons[0];renderLayer(les);}
+
+function renderLayer(les){
+  const lc=document.getElementById('lc');
+  if(S.layer==='main'){
+    lc.innerHTML=`<div class="lbox">${md(les.explanation_main)}</div>`;
+  } else if(S.layer==='alt'){
+    lc.innerHTML=`<div class="lbox" style="border-color:rgba(167,139,250,.1)"><div style="font-size:10px;color:var(--p);font-weight:700;letter-spacing:1px;margin-bottom:10px">ALTERNATIVE EXPLANATION</div>${md(les.explanation_alt)}<div style="margin-top:14px;padding:9px 11px;background:rgba(167,139,250,.05);border-radius:6px;font-size:12px;color:var(--tm)">Still unclear? Try "Ask Freely" for a personalized explanation.</div></div>`;
   } else {
-    renderChallenges(sc, testQs, 'TEST');
+    lc.innerHTML=`<div class="ch-b"><div class="ch-h">Ask anything about <strong style="color:var(--a)">${les.module_title}</strong> — powered by Claude API</div>
+      <div class="ch-m" id="cms">${S.chatMsgs.length===0?'<div class="ch-e">🤔<br>Try asking:<br>"What is the difference between DEL /s and DEL /p?"<br>"Why does PAUSE matter?"<br>"Explain ATTRIB like I am 10"</div>':''}${S.chatMsgs.map(m=>'<div style="display:flex;justify-content:'+(m.r==='a'?'flex-start':'flex-end')+';margin-bottom:8px"><div class="bub '+(m.r==='a'?'ai':'us')+'">'+md(m.t)+'</div></div>').join('')}</div>
+      <div class="ch-i"><input id="ci" placeholder="Describe what confuses you..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Send</button></div></div>`;
+    const cms=document.getElementById('cms');if(cms)cms.scrollTop=cms.scrollHeight;
   }
 }
 
-function switchStage(s) { state.stage = s; state.answers = {}; state.revealed = {}; state.quizSubmitted = false; render(); }
-function switchLayer(l) { state.layer = l; render(); }
-
-// ─── LAYER CONTENT ───
-function renderLayer(les) {
-  const lc = document.getElementById('layer-content');
-  if (state.layer === 'main') {
-    lc.innerHTML = `<div class="lbox">${md(les.explanation_main)}</div>`;
-  } else if (state.layer === 'alt') {
-    lc.innerHTML = `<div class="lbox" style="border-color:rgba(167,139,250,.1)">
-      <div style="font-size:10px;color:var(--p);font-weight:700;letter-spacing:1px;margin-bottom:10px">ALTERNATIVE EXPLANATION</div>
-      ${md(les.explanation_alt)}
-      <div style="margin-top:14px;padding:9px 11px;background:rgba(167,139,250,.05);border-radius:6px;font-size:12px;color:var(--tm)">Still unclear? Try "Ask Freely" for a personalized explanation.</div>
-    </div>`;
-  } else {
-    lc.innerHTML = `<div class="chat-box">
-      <div class="chat-hd">Ask anything about <strong style="color:var(--a)">${les.module_title}</strong> — powered by Claude API</div>
-      <div class="chat-msgs" id="chat-msgs">
-        ${state.chatMsgs.length === 0 ? '<div class="chat-empty">🤔<br>Try asking:<br>"What is the difference between DEL /s and DEL /p?"<br>"Why does PAUSE matter?"<br>"Explain ATTRIB like I am 10 years old"</div>' : ''}
-        ${state.chatMsgs.map(m => `<div class="chat-msg" style="justify-content:${m.r==='a'?'flex-start':'flex-end'}"><div class="chat-bub ${m.r==='a'?'ai':'user'}">${md(m.t)}</div></div>`).join('')}
-      </div>
-      <div class="chat-in">
-        <input id="chat-input" placeholder="Describe what confuses you..." onkeydown="if(event.key==='Enter')sendChat()">
-        <button onclick="sendChat()">Send</button>
-      </div>
-    </div>`;
-    const msgs = document.getElementById('chat-msgs');
-    if (msgs) msgs.scrollTop = msgs.scrollHeight;
-  }
+async function sendMsg(){
+  const i=document.getElementById('ci');const t=i.value.trim();if(!t)return;i.value='';
+  S.chatMsgs.push({r:'u',t:t});renderLayer(cache.lessons[0]);
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,
+        system:'You are CodeSensei, a patient coding tutor for Aniket learning batch scripting. Beginner, based in Japan. Under 150 words. Use **bold** and `backticks`. Real-world analogies. Encouraging.',
+        messages:S.chatMsgs.map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}))})});
+    const d=await r.json();S.chatMsgs.push({r:'a',t:d.content.map(c=>c.text||'').join('')});
+  }catch(e){S.chatMsgs.push({r:'a',t:'Think of batch commands like a to-do list. The computer reads top to bottom.\n\n**ECHO** announces what is happening.\n**COPY/MOVE/DEL** are the tasks.\n**PAUSE** stops to let you check.\n\nAsk something more specific!'});}
+  renderLayer(cache.lessons[0]);
 }
 
-async function sendChat() {
-  const input = document.getElementById('chat-input');
-  const q = input.value.trim();
-  if (!q) return;
-  input.value = '';
-  state.chatMsgs.push({r:'u',t:q});
-  render();
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:800,
-        system:'You are CodeSensei, a patient coding tutor for Aniket who is learning batch scripting. He is a beginner based in Japan. Keep responses under 150 words. Use **bold** for key terms and `backticks` for code. Use real-world analogies. Be encouraging.',
-        messages:state.chatMsgs.map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}))
-      })
-    });
-    const data = await res.json();
-    const aiText = data.content.map(c=>c.text||'').join('');
-    state.chatMsgs.push({r:'a',t:aiText});
-  } catch(e) {
-    state.chatMsgs.push({r:'a',t:'Let me explain that differently.\n\nThink of batch commands like items on a to-do list. The computer reads from top to bottom and does each task. **ECHO** announces what is happening. **COPY/MOVE/DEL** are the actual tasks. **PAUSE** stops to let you check the work.\n\nAsk me something more specific and I can go deeper!'});
-  }
-  render();
-}
-
-// ─── SOURCE FILES WITH LINE EXPLANATIONS ───
-function renderSourceFiles(fileGroups, les) {
-  const sf = document.getElementById('source-files');
-  if (!sf) return;
-
-  // Use source_files order from lesson if available
-  const fileOrder = les.source_files || Object.keys(fileGroups);
-
-  sf.innerHTML = fileOrder.map(filename => {
-    const exps = fileGroups[filename.trim()] || [];
-    if (!exps.length) return '';
-    return `<div class="src-file">
-      <div class="src-header">📄 ${filename.trim()}</div>
-      <div class="src-lines">
-        ${exps.map((exp, i) => {
-          const key = filename+'-'+exp.line_number;
-          const open = state.lineToggles[key];
-          return `<div>
-            <div class="src-line ${open?'active':''}" onclick="toggleLine('${key}')">
-              <span class="src-num">${exp.line_number}</span>
-              <span class="src-code">${exp.concept_tag || ''}</span>
-              <span class="src-hint">${open?'▼':'💡'}</span>
-            </div>
-            ${open ? '<div class="src-exp">'+md(exp.explanation)+'</div>' : ''}
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`;
+// ═══ SOURCE FILES — no refetch on toggle ═══
+function renderFiles(files,fileOrder){
+  const sf=document.getElementById('sf');if(!sf)return;
+  sf.innerHTML=fileOrder.map(fn=>{
+    const fn2=fn.trim();const exps=files[fn2];if(!exps||!exps.length)return'';
+    return`<div style="margin-bottom:16px"><div class="sf-h">📄 ${fn2}</div><div class="sf-b">${exps.map((e,i)=>{
+      const k=fn2+'-'+e.line_number;const open=S.openLines[k];
+      const code=e.code_text||e.concept_tag||'';
+      return`<div><div class="sl${open?' on':''}" onclick="togLine('${k}')"><span class="sl-n">${e.line_number}</span><span class="sl-c">${esc(code)}</span><span class="sl-h">${open?'▼':'💡'}</span></div>${open?'<div class="sl-e">'+md(e.explanation)+'</div>':''}</div>`;
+    }).join('')}</div></div>`;
   }).join('');
 }
 
-function toggleLine(key) {
-  state.lineToggles[key] = !state.lineToggles[key];
-  render();
+function togLine(k){
+  S.openLines[k]=!S.openLines[k];
+  // Re-render ONLY the source files section, not the whole page
+  const les=cache.lessons[0];
+  const files={};cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});
+  const fileOrder=les.source_files||Object.keys(files);
+  renderFiles(files,fileOrder);
 }
 
-// ─── CHALLENGES ───
-function renderChallenges(container, questions, label) {
-  if (!questions.length) {
-    container.innerHTML = '<div style="text-align:center;color:var(--td);padding:40px">No questions available yet for this stage.</div>';
-    return;
-  }
-
-  const isTest = label === 'TEST';
-
-  container.innerHTML = `
-    <div style="font-size:11px;color:${isTest?'var(--p)':'var(--a)'};font-weight:700;letter-spacing:1px;margin-bottom:14px">${label} — ${questions.length} QUESTIONS</div>
-    ${questions.map((q, qi) => {
-      const answered = state.answers[qi] !== undefined;
-      const revealed = state.revealed[qi];
-      let opts = '';
-      if (q.challenge_type === 'multiple_choice' && q.options) {
-        const options = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
-        opts = options.map((opt, oi) => {
-          let cls = 'q-opt';
-          if (answered && state.answers[qi] === oi) {
-            cls += opt === q.correct_answer ? ' correct' : ' wrong';
-          }
-          if (answered && opt === q.correct_answer) cls += ' correct';
-          return `<div class="${cls}" onclick="answer(${qi},${oi},'${esc(opt)}')">${esc(opt)}</div>`;
+// ═══ CHALLENGES ═══
+function renderQs(sc,qs,label){
+  if(!qs.length){sc.innerHTML='<div style="text-align:center;color:var(--td);padding:40px">No questions yet.</div>';return;}
+  const isT=label==='TEST';
+  sc.innerHTML=`<div style="font-size:11px;color:${isT?'var(--p)':'var(--a)'};font-weight:700;letter-spacing:1px;margin-bottom:14px">${label} — ${qs.length} QUESTIONS</div>
+    ${qs.map((q,qi)=>{
+      const ans=S.answers[qi]!==undefined;const rev=S.revealed[qi];
+      let opts='';
+      if(q.challenge_type==='multiple_choice'&&q.options){
+        const os=typeof q.options==='string'?JSON.parse(q.options):q.options;
+        opts=os.map((o,oi)=>{
+          let c='qo';
+          if(ans&&S.answers[qi]===oi)c+=o===q.correct_answer?' ok':' no';
+          if(ans&&o===q.correct_answer)c+=' ok';
+          return`<div class="${c}" onclick="ans(${qi},${oi})">${esc(o)}</div>`;
         }).join('');
       }
-
-      return `<div class="q-card">
-        <div class="q-label" style="color:${isTest?'var(--p)':'var(--a)'}">Q${qi+1} · ${q.challenge_type.replace('_',' ').toUpperCase()}</div>
-        <div class="q-text">${md(q.question)}</div>
-        ${q.code_snippet ? '<pre class="q-code">'+esc(q.code_snippet)+'</pre>' : ''}
-        ${opts}
-        ${q.challenge_type !== 'multiple_choice' && !revealed ? 
-          '<button class="q-reveal" style="background:var(--as);color:var(--a)" onclick="reveal('+qi+')">Show Answer</button>' : ''}
-        ${revealed || (answered && q.challenge_type === 'multiple_choice') ? 
-          '<div style="margin-top:10px"><div style="font-size:11px;color:var(--g);font-weight:600;margin-bottom:6px">ANSWER:</div><pre class="q-code">'+esc(q.correct_answer)+'</pre></div>' : ''}
-        ${(revealed || answered) && q.explanation ? '<div class="q-exp">'+md(q.explanation)+'</div>' : ''}
+      return`<div class="qc"><div class="ql" style="color:${isT?'var(--p)':'var(--a)'}">Q${qi+1} · ${q.challenge_type.replace(/_/g,' ').toUpperCase()}</div>
+        <div class="qt">${md(q.question)}</div>
+        ${q.code_snippet?'<pre class="qcd">'+esc(q.code_snippet)+'</pre>':''}${opts}
+        ${q.challenge_type!=='multiple_choice'&&!rev?'<button style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--as);color:var(--a)" onclick="rev('+qi+')">Show Answer</button>':''}
+        ${rev||ans?'<div style="margin-top:10px"><div style="font-size:11px;color:var(--g);font-weight:600;margin-bottom:6px">ANSWER:</div><pre class="qcd">'+esc(q.correct_answer)+'</pre></div>':''}
+        ${(rev||ans)&&q.explanation?'<div class="qx">'+md(q.explanation)+'</div>':''}
       </div>`;
     }).join('')}
-
-    ${isTest ? renderScore(questions) : ''}
-  `;
+    ${isT?scoreHtml(qs):''}`;
 }
 
-function answer(qi, oi, optText) {
-  if (state.answers[qi] !== undefined) return;
-  state.answers[qi] = oi;
-  render();
+function ans(qi,oi){if(S.answers[qi]!==undefined)return;S.answers[qi]=oi;const pQ=cache.challenges.filter(c=>c.stage==='practice');const tQ=cache.challenges.filter(c=>c.stage==='test');const sc=document.getElementById('sc');if(S.stage==='practice')renderQs(sc,pQ,'PRACTICE');else renderQs(sc,tQ,'TEST');}
+function rev(qi){S.revealed[qi]=true;const pQ=cache.challenges.filter(c=>c.stage==='practice');const tQ=cache.challenges.filter(c=>c.stage==='test');const sc=document.getElementById('sc');if(S.stage==='practice')renderQs(sc,pQ,'PRACTICE');else renderQs(sc,tQ,'TEST');}
+
+function scoreHtml(qs){
+  const mc=qs.filter(q=>q.challenge_type==='multiple_choice');
+  const total=Object.keys(S.answers).length;if(total<mc.length)return'';
+  let ok=0;mc.forEach((q,qi)=>{const os=typeof q.options==='string'?JSON.parse(q.options):q.options;if(os[S.answers[qi]]===q.correct_answer)ok++;});
+  const pass=ok>=Math.ceil(mc.length*0.6);
+  return`<div class="sc" style="border-color:${pass?'rgba(52,211,153,.2)':'rgba(248,113,113,.2)'}"><div style="font-size:36px;font-weight:700;color:${pass?'var(--g)':'var(--r)';margin-bottom:4px">${ok}/${mc.length}</div><div style="font-size:13px;color:var(--td)">${pass?'🎉 Passed! Module complete.':'Keep practicing — need '+Math.ceil(mc.length*0.6)+' to pass.'}</div></div>`;
 }
 
-function reveal(qi) {
-  state.revealed[qi] = true;
-  render();
-}
-
-function renderScore(questions) {
-  const totalAnswered = Object.keys(state.answers).length;
-  if (totalAnswered < questions.length) return '';
-
-  let correct = 0;
-  questions.forEach((q, qi) => {
-    if (q.challenge_type === 'multiple_choice' && q.options) {
-      const options = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
-      if (options[state.answers[qi]] === q.correct_answer) correct++;
-    }
-  });
-
-  const mcCount = questions.filter(q => q.challenge_type === 'multiple_choice').length;
-  const passed = correct >= Math.ceil(mcCount * 0.6);
-
-  return `<div class="score-box" style="border-color:${passed?'rgba(52,211,153,.2)':'rgba(248,113,113,.2)'}">
-    <div class="score-num" style="color:${passed?'var(--g)':'var(--r)'}">${correct}/${mcCount}</div>
-    <div class="score-label">${passed ? '🎉 Passed! Module complete.' : 'Keep practicing — you need '+Math.ceil(mcCount*0.6)+' correct to pass.'}</div>
-  </div>`;
-}
-
-// ─── INIT ───
-go('dash');
+// ═══ INIT ═══
+goDash();
 </script>
 </body>
 </html>

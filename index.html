@@ -311,7 +311,7 @@ function scoreHtml(qs){
   const total=Object.keys(S.answers).length;if(total<mc.length)return'';
   let ok=0;mc.forEach((q,qi)=>{const os=typeof q.options==='string'?JSON.parse(q.options):q.options;if(os[S.answers[qi]]===q.correct_answer)ok++;});
   const pass=ok>=Math.ceil(mc.length*0.6);
-  return`<div class="sc" style="border-color:${pass?'rgba(52,211,153,.2)':'rgba(248,113,113,.2)'}"><div style="font-size:36px;font-weight:700;color:${pass?'var(--g)':'var(--r)';margin-bottom:4px">${ok}/${mc.length}</div><div style="font-size:13px;color:var(--td)">${pass?'🎉 Passed! Module complete.':'Keep practicing — need '+Math.ceil(mc.length*0.6)+' to pass.'}</div></div>`;
+  return`<div class="sc" style="border-color:${pass?'rgba(52,211,153,.2)':'rgba(248,113,113,.2)'}"><div style="font-size:36px;font-weight:700;color:${pass?'var(--g)':'var(--r)'};margin-bottom:4px">${ok}/${mc.length}</div><div style="font-size:13px;color:var(--td)">${pass?'🎉 Passed! Module complete.':'Keep practicing — need '+Math.ceil(mc.length*0.6)+' to pass.'}</div></div>`;
 }
 
 // ═══ INIT ═══
