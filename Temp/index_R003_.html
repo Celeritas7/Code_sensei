@@ -89,7 +89,7 @@ const H={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json
 
 // ─── DATA CACHE ───
 let cache={lessons:null,lines:null,challenges:null,progress:null};
-let S={view:'dash',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false};
+let S={view:'dash',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{}};
 
 async function q(table,query=''){
   try{const r=await fetch(`${SB}/${table}?${query}`,{headers:H});return await r.json();}catch(e){console.error(e);return[];}
@@ -163,7 +163,7 @@ async function goModules(){
 
 // ═══ OPEN MODULE — fetch once, cache ═══
 async function openMod(n){
-  S.mod=n;S.stage='learn';S.layer='main';S.chatMsgs=[];S.openLines={};S.answers={};S.revealed={};S.notesOpen=false;
+  S.mod=n;S.stage='learn';S.layer='main';S.chatMsgs=[];S.openLines={};S.answers={};S.revealed={};
   const m=document.getElementById('main');
   m.innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading module...</div></div>';
 
@@ -212,31 +212,19 @@ function setStage(s){S.stage=s;S.answers={};S.revealed={};renderModule();}
 // ═══ LEARN STAGE ═══
 function renderLearn(sc,les,files,fileOrder){
   sc.innerHTML=`
-    <div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:12px">YOUR CODE — TAP ANY LINE TO LEARN WHAT IT DOES</div>
-    <div id="sf"></div>
-
-    <div style="margin-top:28px;border-top:1px solid var(--bd);padding-top:20px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;cursor:pointer" onclick="toggleNotes()">
-        <div style="font-size:11px;color:var(--tm);font-weight:700;letter-spacing:1px">📚 STUDY NOTES & AI HELP</div>
-        <span style="color:var(--td);font-size:14px">${S.notesOpen?'▼':'▶'}</span>
-      </div>
-      ${S.notesOpen?`
-        <div class="tabs">
-          <button class="tb ${S.layer==='main'?'on':''}" onclick="setLayer('main')">📖 Explanation</button>
-          <button class="tb ${S.layer==='alt'?'on-p':''}" onclick="setLayer('alt')">🔄 Different Angle</button>
-          <button class="tb ${S.layer==='chat'?'on-g':''}" onclick="setLayer('chat')">💬 Ask Freely</button>
-        </div>
-        <div id="lc"></div>
-      `:'<div style="font-size:12.5px;color:var(--td);padding:8px 0">Click to expand study notes, alternative explanations, or chat with AI</div>'}
+    <div class="tabs">
+      <button class="tb ${S.layer==='main'?'on':''}" onclick="setLayer('main')">📖 Explanation</button>
+      <button class="tb ${S.layer==='alt'?'on-p':''}" onclick="setLayer('alt')">🔄 Different Angle</button>
+      <button class="tb ${S.layer==='chat'?'on-g':''}" onclick="setLayer('chat')">💬 Ask Freely</button>
     </div>
+    <div id="lc"></div>
+    <div style="margin-top:24px"><div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:12px">SOURCE FILES — TAP ANY LINE FOR EXPLANATION</div><div id="sf"></div></div>
   `;
+  renderLayer(les);
   renderFiles(files,fileOrder);
-  if(S.notesOpen) renderLayer(les);
 }
 
-function setLayer(l){S.layer=l;S.notesOpen=true;renderModule();}
-
-function toggleNotes(){S.notesOpen=!S.notesOpen;renderModule();}
+function setLayer(l){S.layer=l;const les=cache.lessons[0];renderLayer(les);}
 
 function renderLayer(les){
   const lc=document.getElementById('lc');
