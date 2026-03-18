@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CodeSensei</title>
 <style>
-:root{--bg:#0d0d16;--s:#131322;--c:#181830;--ch:#1e1e38;--bd:#1f1f3a;--a:#F59E0B;--as:#2a2210;--tx:#cccce0;--td:#555570;--tm:#8888a0;--g:#34D399;--r:#F87171;--p:#A78BFA}
+:root{--bg:#0d0d16;--s:#131322;--c:#181830;--ch:#1e1e38;--bd:#1f1f3a;--a:#F59E0B;--as:#2a2210;--tx:#cccce0;--td:#555570;--tm:#8888a0;--g:#34D399;--r:#F87171;--p:#A78BFA;--b:#38bdf8}
 *{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:flex}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#222240;border-radius:3px}
-button{font-family:inherit;cursor:pointer}input::placeholder{color:var(--td)}
+button{font-family:inherit;cursor:pointer}input::placeholder{color:var(--td)}select{font-family:inherit;background:var(--c);color:var(--tx);border:1px solid var(--bd);border-radius:7px;padding:8px 10px;font-size:12.5px}
 .sb{width:190px;background:var(--s);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0}
 .sb-hd{padding:12px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--bd);cursor:pointer}
 .sb-logo{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#F59E0B,#f97316);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--bg);font-family:monospace;flex-shrink:0}
@@ -48,7 +48,6 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .qcd{background:rgba(0,0,0,.35);padding:12px;border-radius:7px;font-family:monospace;font-size:12px;line-height:1.6;color:#e2d9a2;margin-bottom:12px;white-space:pre-wrap;border:1px solid #222240}
 .qo{padding:10px 14px;border:1px solid var(--bd);border-radius:7px;margin-bottom:5px;cursor:pointer;font-size:13px;transition:all .12s}
 .qo:hover{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.04)}
-.qo.sel{border-color:var(--a);background:var(--as);color:var(--a)}
 .qo.ok{border-color:var(--g);background:rgba(52,211,153,.08);color:var(--g)}
 .qo.no{border-color:var(--r);background:rgba(248,113,113,.08);color:var(--r)}
 .qx{margin-top:10px;padding:12px;background:rgba(245,158,11,.04);border-radius:7px;border-left:3px solid var(--a);font-size:13px;line-height:1.7}
@@ -69,6 +68,27 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .ld{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--td);font-size:14px}
 .spin{width:20px;height:20px;border:2px solid var(--bd);border-top-color:var(--a);border-radius:50%;animation:sp .6s linear infinite;margin-right:10px}
 @keyframes sp{to{transform:rotate(360deg)}}
+/* Commit timeline */
+.commit{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;margin-bottom:6px;display:flex;align-items:flex-start;gap:12px;transition:all .12s}
+.commit:hover{border-color:#2a2a50}
+.commit-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.commit-msg{font-size:13.5px;font-weight:500;margin-bottom:3px}
+.commit-date{font-size:11px;color:var(--td)}
+.commit-sha{font-size:10px;color:var(--td);font-family:monospace}
+.badge{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;white-space:nowrap}
+.badge-new{background:rgba(56,189,248,.08);color:var(--b);border:1px solid rgba(56,189,248,.15)}
+.badge-ok{background:rgba(52,211,153,.08);color:var(--g);border:1px solid rgba(52,211,153,.15)}
+.badge-review{background:rgba(248,113,113,.08);color:var(--r);border:1px solid rgba(248,113,113,.15)}
+/* Diff */
+.diff-box{background:var(--c);border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.diff-sec{padding:8px 13px;background:#111125;border-bottom:1px solid var(--bd);font-size:12px;font-weight:600;color:var(--tm)}
+.diff-add{background:rgba(52,211,153,.04);border-left:3px solid rgba(52,211,153,.3);padding:2px 8px 2px 12px;font-family:monospace;font-size:11.5px;line-height:18px;color:var(--g)}
+.diff-del{background:rgba(248,113,113,.04);border-left:3px solid rgba(248,113,113,.3);padding:2px 8px 2px 12px;font-family:monospace;font-size:11.5px;line-height:18px;color:var(--r)}
+.diff-ctx{padding:2px 8px 2px 15px;font-family:monospace;font-size:11.5px;line-height:18px;color:var(--td)}
+.diff-analysis{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:18px;line-height:1.8;font-size:13.5px;margin-bottom:16px}
+/* Note input */
+.note-box{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-top:12px}
+.note-input{width:100%;padding:10px;background:var(--s);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-size:13px;outline:none;resize:vertical;min-height:60px;font-family:inherit}
 </style>
 </head>
 <body>
@@ -76,8 +96,9 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
   <div class="sb-hd"><div class="sb-logo">&lt;/&gt;</div><span style="font-size:14px;font-weight:700">CodeSensei</span></div>
   <div class="sb-nav">
     <div class="nv on" id="nav-dash" onclick="goDash()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">◈</span>Dashboard</div>
-    <div class="nv" id="nav-bat" onclick="goModules('bat')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">☰</span>Batch Modules</div>
-    <div class="nv" id="nav-sql" onclick="goModules('sql')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">⊞</span>SQL Modules</div>
+    <div class="nv" id="nav-bat" onclick="goModules('bat')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">☰</span>Batch</div>
+    <div class="nv" id="nav-sql" onclick="goModules('sql')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">⊞</span>SQL</div>
+    <div class="nv" id="nav-proj" onclick="goProjects()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">◧</span>My Projects</div>
   </div>
   <div class="sb-ft">Learning from your own code</div>
 </div>
@@ -86,75 +107,73 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 <script>
 const SB='https://wylxvmkcrexwfpjpbhyy.supabase.co/rest/v1';
 const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bHh2bWtjcmV4d2ZwanBiaHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2MzkxMDYsImV4cCI6MjA4NDIxNTEwNn0.6Bxo42hx4jwlJGWnfjiTpiDUsYfc1QLTN3YtrU1efak';
-const H={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json','Prefer':'return=representation'};
+const HDR={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json','Prefer':'return=representation'};
+const GH_API='https://api.github.com/repos/celeritas7/Ghost_tracker_simple';
 
-// ─── DATA CACHE ───
-let cache={lessons:null,lines:null,challenges:null,progress:null};
-let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false};
+let cache={lessons:null,lines:null,challenges:null,commits:null,commitNotes:{},commitStatus:{}};
+let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false,diffA:null,diffB:null,diffResult:null,diffAnalysis:null,analyzing:false};
 
-async function q(table,query=''){
-  try{const r=await fetch(`${SB}/${table}?${query}`,{headers:H});return await r.json();}catch(e){console.error(e);return[];}
-}
+async function sbq(table,query=''){try{const r=await fetch(`${SB}/${table}?${query}`,{headers:HDR});return await r.json();}catch(e){console.error(e);return[];}}
+async function sbPatch(table,id,data){try{await fetch(`${SB}/${table}?id=eq.${id}`,{method:'PATCH',headers:HDR,body:JSON.stringify(data)});}catch(e){console.error(e);}}
+async function sbPost(table,data){try{const r=await fetch(`${SB}/${table}`,{method:'POST',headers:HDR,body:JSON.stringify(data)});return await r.json();}catch(e){console.error(e);return null;}}
 
-function md(t){
-  if(!t)return'';
-  return t.replace(/\n/g,'<br>').split(/(```[^`]*```)/gs).map(b=>{
-    if(b.startsWith('```')){const c=b.replace(/```\w*\n?/g,'').replace(/```$/,'').replace(/<br>/g,'\n');return'<pre class="md-code">'+esc(c)+'</pre>';}
-    return b.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map(p=>{
-      if(p.startsWith('**')&&p.endsWith('**'))return'<span class="md-b">'+esc(p.slice(2,-2))+'</span>';
-      if(p.startsWith('`')&&p.endsWith('`'))return'<code class="md-ic">'+esc(p.slice(1,-1))+'</code>';
-      return p;
-    }).join('');
-  }).join('');
-}
+function md(t){if(!t)return'';return t.replace(/\n/g,'<br>').split(/(```[^`]*```)/gs).map(b=>{if(b.startsWith('```')){const c=b.replace(/```\w*\n?/g,'').replace(/```$/,'').replace(/<br>/g,'\n');return'<pre class="md-code">'+esc(c)+'</pre>';}return b.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map(p=>{if(p.startsWith('**')&&p.endsWith('**'))return'<span class="md-b">'+esc(p.slice(2,-2))+'</span>';if(p.startsWith('`')&&p.endsWith('`'))return'<code class="md-ic">'+esc(p.slice(1,-1))+'</code>';return p;}).join('');}).join('');}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
 function setNav(id){document.querySelectorAll('.nv').forEach(n=>n.classList.remove('on'));document.getElementById(id)?.classList.add('on');}
+function fmtDate(d){const dt=new Date(d);return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
 
-// ═══ DASHBOARD ═══
-async function goDash(){
+// ═══════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════
+function goDash(){
   S.view='dash';setNav('nav-dash');
-  const m=document.getElementById('main');
-  m.innerHTML=`<div class="pg">
+  document.getElementById('main').innerHTML=`<div class="pg">
     <h1>Welcome back, Aniket</h1><p class="sub">Your full-stack journey — learn from your own code</p>
-    <div class="cd" onclick="goModules('bat')" style="margin-bottom:10px;border-color:rgba(245,158,11,.12)">
+    <div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:10px">LESSONS</div>
+    <div class="cd" onclick="goModules('bat')" style="margin-bottom:8px;border-color:rgba(245,158,11,.12)">
       <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:48px;height:48px;border-radius:11px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:22px">📁</div>
-        <div style="flex:1">
-          <div style="font-size:16px;font-weight:600;margin-bottom:3px">Batch Scripts (.bat)</div>
-          <div style="font-size:12px;color:var(--td)">7 modules · Your lecturer's 74 scripts</div>
-        </div><span style="color:var(--a);font-size:18px">→</span>
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:20px">📁</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Batch Scripts (.bat)</div><div style="font-size:12px;color:var(--td)">7 modules · Your lecturer's scripts</div></div>
+        <span style="color:var(--a);font-size:16px">→</span>
       </div>
     </div>
-    <div class="cd" onclick="goModules('sql')" style="margin-bottom:16px;border-color:rgba(16,185,129,.12)">
+    <div class="cd" onclick="goModules('sql')" style="margin-bottom:20px;border-color:rgba(16,185,129,.12)">
       <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:48px;height:48px;border-radius:11px;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center;font-size:22px">🗄️</div>
-        <div style="flex:1">
-          <div style="font-size:16px;font-weight:600;margin-bottom:3px">SQL (PostgreSQL)</div>
-          <div style="font-size:12px;color:var(--td)">10 modules · Jose Portilla's Bootcamp + your notes</div>
-        </div><span style="color:var(--g);font-size:18px">→</span>
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🗄️</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">SQL (PostgreSQL)</div><div style="font-size:12px;color:var(--td)">10 modules · Bootcamp + your notes</div></div>
+        <span style="color:var(--g);font-size:16px">→</span>
       </div>
     </div>
-    <div style="padding:16px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
-      <div style="font-size:13px;color:var(--tm);margin-bottom:8px">Other topics coming soon:</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">${['HTML','CSS','JavaScript','Python','JSON','Shell'].map(t=>'<span style="padding:4px 10px;background:#1a1a30;border-radius:5px;font-size:11.5px;color:var(--td)">'+t+'</span>').join('')}</div>
+    <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">MY PROJECTS</div>
+    <div class="cd" onclick="goProjects()" style="margin-bottom:16px;border-color:rgba(56,189,248,.12)">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(56,189,248,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🔧</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Ghost Tracker</div><div style="font-size:12px;color:var(--td)">HTML/CSS/JS · 30 revisions from GitHub</div></div>
+        <span style="color:var(--b);font-size:16px">→</span>
+      </div>
+    </div>
+    <div style="padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
+      <div style="font-size:12px;color:var(--tm);margin-bottom:8px">Coming soon:</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${['HTML','CSS','JavaScript','Python','JSON','Shell'].map(t=>'<span style="padding:3px 8px;background:#1a1a30;border-radius:4px;font-size:11px;color:var(--td)">'+t+'</span>').join('')}</div>
     </div>
   </div>`;
 }
 
-// ═══ MODULE DEFINITIONS ═══
+// ═══════════════════════════════════════
+// MODULE DEFINITIONS & LIST (existing)
+// ═══════════════════════════════════════
 const TOPICS={
   bat:{title:'Batch Scripts (.bat)',color:'#F59E0B',navId:'nav-bat',mods:[
-    {n:1,t:'Foundations',s:'ECHO, COPY, MOVE, DEL, ATTRIB, FIND, REN',f:'6, 11, 13, 15, 16, 20, 22, 23',ready:true},
-    {n:2,t:'Variables & Arguments',s:'SET, %1 %2, SETLOCAL, environment vars',f:'30-37',ready:false},
-    {n:3,t:'Decision Making',s:'IF, IF/ELSE, NESTED IF, DEFINED, EXIST',f:'44-58',ready:false},
-    {n:4,t:'Strings',s:'Create, concat, extract, remove, replace',f:'65-75, 80',ready:false},
-    {n:5,t:'Arrays',s:'Create, access, modify, iterate, length',f:'81-94',ready:false},
-    {n:6,t:'Operators',s:'Arithmetic, relational, assignment, bitwise',f:'96-113',ready:false},
-    {n:7,t:'Real Projects',s:'Calculator, guess game, services manager',f:'120-162',ready:false},
+    {n:1,t:'Foundations',s:'ECHO, COPY, MOVE, DEL, ATTRIB, FIND, REN',f:'Files 6-23',ready:true},
+    {n:2,t:'Variables & Arguments',s:'SET, %1 %2, SETLOCAL, environment vars',f:'Files 30-37',ready:false},
+    {n:3,t:'Decision Making',s:'IF, IF/ELSE, NESTED IF, DEFINED, EXIST',f:'Files 44-58',ready:false},
+    {n:4,t:'Strings',s:'Create, concat, extract, remove, replace',f:'Files 65-75, 80',ready:false},
+    {n:5,t:'Arrays',s:'Create, access, modify, iterate, length',f:'Files 81-94',ready:false},
+    {n:6,t:'Operators',s:'Arithmetic, relational, assignment, bitwise',f:'Files 96-113',ready:false},
+    {n:7,t:'Real Projects',s:'Calculator, guess game, services manager',f:'Files 120-162',ready:false},
   ]},
   sql:{title:'SQL (PostgreSQL)',color:'#10B981',navId:'nav-sql',mods:[
-    {n:1,t:'SELECT Fundamentals',s:'SELECT, DISTINCT, COUNT',f:'Bootcamp Lectures 12-16',ready:true},
+    {n:1,t:'SELECT Fundamentals',s:'SELECT, DISTINCT, COUNT',f:'Lectures 12-16',ready:true},
     {n:2,t:'Filtering Data',s:'WHERE, AND/OR, BETWEEN, IN, LIKE',f:'Lectures 17-25',ready:false},
     {n:3,t:'Sorting & Limiting',s:'ORDER BY, LIMIT',f:'Lectures 20-22',ready:false},
     {n:4,t:'Aggregation',s:'GROUP BY, HAVING, aggregate functions',f:'Lectures 27-32',ready:false},
@@ -167,13 +186,11 @@ const TOPICS={
   ]},
 };
 
-// ═══ MODULE LIST ═══
-async function goModules(topic){
+function goModules(topic){
   if(topic) S.topic=topic;
   S.view='mods';setNav(TOPICS[S.topic].navId);
-  const m=document.getElementById('main');
   const tp=TOPICS[S.topic];
-  m.innerHTML=`<div class="pg"><button class="back" onclick="goDash()">← Dashboard</button>
+  document.getElementById('main').innerHTML=`<div class="pg"><button class="back" onclick="goDash()">← Dashboard</button>
     <h2 style="color:${tp.color}">${tp.title}</h2><p class="sub">${tp.mods.length} modules</p>
     ${tp.mods.map(mod=>`<div class="mod" ${mod.ready?`onclick="openMod(${mod.n})"`:''}style="${mod.ready?'':'opacity:.4;cursor:default'}">
       <div class="mod-n" style="background:${tp.color}18;color:${tp.color}">${mod.n}</div>
@@ -183,173 +200,351 @@ async function goModules(topic){
   </div>`;
 }
 
-// ═══ OPEN MODULE — fetch once, cache ═══
+// ═══════════════════════════════════════
+// MODULE LESSON (existing functionality)
+// ═══════════════════════════════════════
 async function openMod(n){
   S.mod=n;S.stage='learn';S.layer='main';S.chatMsgs=[];S.openLines={};S.answers={};S.revealed={};S.notesOpen=false;
-  const m=document.getElementById('main');
-  m.innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading module...</div></div>';
-
-  // Fetch all data ONCE
-  cache.lessons=await q('code_sensei_lessons','select=*&topic_id=eq.'+S.topic+'&module_number=eq.'+n);
-  cache.lines=await q('code_sensei_line_explanations','select=*&topic_id=eq.'+S.topic+'&module_number=eq.'+n+'&order=source_filename,line_number');
-  cache.challenges=await q('code_sensei_challenges','select=*&topic_id=eq.'+S.topic+'&module_number=eq.'+n+'&order=display_order');
-
+  document.getElementById('main').innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading module...</div></div>';
+  cache.lessons=await sbq('code_sensei_lessons','select=*&topic_id=eq.'+S.topic+'&module_number=eq.'+n);
+  cache.lines=await sbq('code_sensei_line_explanations','select=*&topic_id=eq.'+S.topic+'&module_number=eq.'+n+'&order=source_filename,line_number');
+  cache.challenges=await sbq('code_sensei_challenges','select=*&topic_id=eq.'+S.topic+'&module_number=eq.'+n+'&order=display_order');
   renderModule();
 }
-
-// ═══ RENDER MODULE — uses cached data, no fetch ═══
 function renderModule(){
-  const m=document.getElementById('main');
-  const les=cache.lessons[0];
+  const m=document.getElementById('main'),les=cache.lessons[0];
   if(!les){m.innerHTML='<div class="pg"><p style="color:var(--td)">No content found.</p></div>';return;}
-
-  const pQ=cache.challenges.filter(c=>c.stage==='practice');
-  const tQ=cache.challenges.filter(c=>c.stage==='test');
-
-  // Group lines by file
-  const files={};
-  cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});
+  const pQ=cache.challenges.filter(c=>c.stage==='practice'),tQ=cache.challenges.filter(c=>c.stage==='test');
+  const files={};cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});
   const fileOrder=les.source_files||Object.keys(files);
-
   const tp=TOPICS[S.topic]||{color:'#F59E0B'};
   m.innerHTML=`<div class="pg">
     <button class="back" onclick="goModules()">← Back to Modules</button>
     <h2 style="margin-bottom:4px;color:${tp.color}">Module ${S.mod}: ${les.module_title}</h2>
-    <p class="sub">${les.source_files?les.source_files.length+' example files':''}${S.topic==='sql'?' · From SQL Bootcamp + your notes':' · From your lecturer'}</p>
+    <p class="sub">${les.source_files?les.source_files.length+' example files':''}</p>
     <div class="stg">
       <div class="stg-b ${S.stage==='learn'?'on':''}" onclick="setStage('learn')">📖 Learn</div>
       <div class="stg-b ${S.stage==='practice'?'on':''}" onclick="setStage('practice')">⚡ Practice (${pQ.length})</div>
       <div class="stg-b ${S.stage==='test'?'on':''}" onclick="setStage('test')">🧠 Test (${tQ.length})</div>
-    </div>
-    <div id="sc"></div>
-  </div>`;
-
+    </div><div id="sc"></div></div>`;
   const sc=document.getElementById('sc');
   if(S.stage==='learn') renderLearn(sc,les,files,fileOrder);
   else if(S.stage==='practice') renderQs(sc,pQ,'PRACTICE');
   else renderQs(sc,tQ,'TEST');
 }
-
 function setStage(s){S.stage=s;S.answers={};S.revealed={};renderModule();}
-
-// ═══ LEARN STAGE ═══
 function renderLearn(sc,les,files,fileOrder){
-  sc.innerHTML=`
-    <div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:12px">YOUR CODE — TAP ANY LINE TO LEARN WHAT IT DOES</div>
-    <div id="sf"></div>
-
+  sc.innerHTML=`<div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:12px">YOUR CODE — TAP ANY LINE TO LEARN WHAT IT DOES</div><div id="sf"></div>
     <div style="margin-top:28px;border-top:1px solid var(--bd);padding-top:20px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;cursor:pointer" onclick="toggleNotes()">
         <div style="font-size:11px;color:var(--tm);font-weight:700;letter-spacing:1px">📚 STUDY NOTES & AI HELP</div>
         <span style="color:var(--td);font-size:14px">${S.notesOpen?'▼':'▶'}</span>
       </div>
-      ${S.notesOpen?`
-        <div class="tabs">
-          <button class="tb ${S.layer==='main'?'on':''}" onclick="setLayer('main')">📖 Explanation</button>
-          <button class="tb ${S.layer==='alt'?'on-p':''}" onclick="setLayer('alt')">🔄 Different Angle</button>
-          <button class="tb ${S.layer==='chat'?'on-g':''}" onclick="setLayer('chat')">💬 Ask Freely</button>
-        </div>
-        <div id="lc"></div>
-      `:'<div style="font-size:12.5px;color:var(--td);padding:8px 0">Click to expand study notes, alternative explanations, or chat with AI</div>'}
-    </div>
-  `;
+      ${S.notesOpen?`<div class="tabs"><button class="tb ${S.layer==='main'?'on':''}" onclick="setLayer('main')">📖 Explanation</button><button class="tb ${S.layer==='alt'?'on-p':''}" onclick="setLayer('alt')">🔄 Different Angle</button><button class="tb ${S.layer==='chat'?'on-g':''}" onclick="setLayer('chat')">💬 Ask Freely</button></div><div id="lc"></div>`:'<div style="font-size:12.5px;color:var(--td);padding:8px 0">Click to expand</div>'}
+    </div>`;
   renderFiles(files,fileOrder);
   if(S.notesOpen) renderLayer(les);
 }
-
 function setLayer(l){S.layer=l;S.notesOpen=true;renderModule();}
-
 function toggleNotes(){S.notesOpen=!S.notesOpen;renderModule();}
-
 function renderLayer(les){
-  const lc=document.getElementById('lc');
-  if(S.layer==='main'){
-    lc.innerHTML=`<div class="lbox">${md(les.explanation_main)}</div>`;
-  } else if(S.layer==='alt'){
-    lc.innerHTML=`<div class="lbox" style="border-color:rgba(167,139,250,.1)"><div style="font-size:10px;color:var(--p);font-weight:700;letter-spacing:1px;margin-bottom:10px">ALTERNATIVE EXPLANATION</div>${md(les.explanation_alt)}<div style="margin-top:14px;padding:9px 11px;background:rgba(167,139,250,.05);border-radius:6px;font-size:12px;color:var(--tm)">Still unclear? Try "Ask Freely" for a personalized explanation.</div></div>`;
-  } else {
-    lc.innerHTML=`<div class="ch-b"><div class="ch-h">Ask anything about <strong style="color:var(--a)">${les.module_title}</strong> — powered by Claude API</div>
-      <div class="ch-m" id="cms">${S.chatMsgs.length===0?'<div class="ch-e">🤔<br>Try asking:<br>"What is the difference between DEL /s and DEL /p?"<br>"Why does PAUSE matter?"<br>"Explain ATTRIB like I am 10"</div>':''}${S.chatMsgs.map(m=>'<div style="display:flex;justify-content:'+(m.r==='a'?'flex-start':'flex-end')+';margin-bottom:8px"><div class="bub '+(m.r==='a'?'ai':'us')+'">'+md(m.t)+'</div></div>').join('')}</div>
-      <div class="ch-i"><input id="ci" placeholder="Describe what confuses you..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Send</button></div></div>`;
-    const cms=document.getElementById('cms');if(cms)cms.scrollTop=cms.scrollHeight;
+  const lc=document.getElementById('lc');if(!lc)return;
+  if(S.layer==='main') lc.innerHTML=`<div class="lbox">${md(les.explanation_main)}</div>`;
+  else if(S.layer==='alt') lc.innerHTML=`<div class="lbox" style="border-color:rgba(167,139,250,.1)"><div style="font-size:10px;color:var(--p);font-weight:700;letter-spacing:1px;margin-bottom:10px">ALTERNATIVE EXPLANATION</div>${md(les.explanation_alt)}<div style="margin-top:14px;padding:9px 11px;background:rgba(167,139,250,.05);border-radius:6px;font-size:12px;color:var(--tm)">Try "Ask Freely" for personalized help.</div></div>`;
+  else{lc.innerHTML=`<div class="ch-b"><div class="ch-h">Ask anything — powered by Claude API</div><div class="ch-m" id="cms">${S.chatMsgs.length===0?'<div class="ch-e">🤔 Ask any question about this topic</div>':''}${S.chatMsgs.map(m=>'<div style="display:flex;justify-content:'+(m.r==='a'?'flex-start':'flex-end')+';margin-bottom:8px"><div class="bub '+(m.r==='a'?'ai':'us')+'">'+md(m.t)+'</div></div>').join('')}</div><div class="ch-i"><input id="ci" placeholder="Ask..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Send</button></div></div>`;const cms=document.getElementById('cms');if(cms)cms.scrollTop=cms.scrollHeight;}
+}
+async function sendMsg(){const i=document.getElementById('ci');const t=i.value.trim();if(!t)return;i.value='';S.chatMsgs.push({r:'u',t});renderLayer(cache.lessons[0]);try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are CodeSensei, a patient coding tutor for a beginner named Aniket in Japan. Under 150 words. Use **bold** and `backticks`. Encouraging.',messages:S.chatMsgs.map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}))})});const d=await r.json();S.chatMsgs.push({r:'a',t:d.content.map(c=>c.text||'').join('')});}catch(e){S.chatMsgs.push({r:'a',t:'Great question! Let me try a different angle.\n\nThink of code like a recipe — each line is one step. The computer follows them top to bottom.\n\nAsk something more specific and I can help!'});}renderLayer(cache.lessons[0]);}
+function renderFiles(files,fileOrder){const sf=document.getElementById('sf');if(!sf)return;sf.innerHTML=fileOrder.map(fn=>{const fn2=fn.trim();const exps=files[fn2];if(!exps||!exps.length)return'';return`<div style="margin-bottom:16px"><div class="sf-h">📄 ${fn2}</div><div class="sf-b">${exps.map(e=>{const k=fn2+'-'+e.line_number;const open=S.openLines[k];const code=e.code_text||e.concept_tag||'';return`<div><div class="sl${open?' on':''}" onclick="togLine('${k}')"><span class="sl-n">${e.line_number}</span><span class="sl-c">${esc(code)}</span><span class="sl-h">${open?'▼':'💡'}</span></div>${open?'<div class="sl-e">'+md(e.explanation)+'</div>':''}</div>`;}).join('')}</div></div>`;}).join('');}
+function togLine(k){S.openLines[k]=!S.openLines[k];const les=cache.lessons[0];const files={};cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});renderFiles(files,les.source_files||Object.keys(files));}
+function renderQs(sc,qs,label){if(!qs.length){sc.innerHTML='<div style="text-align:center;color:var(--td);padding:40px">No questions yet.</div>';return;}const isT=label==='TEST';sc.innerHTML=`<div style="font-size:11px;color:${isT?'var(--p)':'var(--a)'};font-weight:700;letter-spacing:1px;margin-bottom:14px">${label} — ${qs.length} QUESTIONS</div>${qs.map((q,qi)=>{const a=S.answers[qi]!==undefined;const rv=S.revealed[qi];let opts='';if(q.challenge_type==='multiple_choice'&&q.options){const os=typeof q.options==='string'?JSON.parse(q.options):q.options;opts=os.map((o,oi)=>{let c='qo';if(a&&S.answers[qi]===oi)c+=o===q.correct_answer?' ok':' no';if(a&&o===q.correct_answer)c+=' ok';return`<div class="${c}" onclick="ansQ(${qi},${oi})">${esc(o)}</div>`;}).join('');}return`<div class="qc"><div class="ql" style="color:${isT?'var(--p)':'var(--a)'}">Q${qi+1} · ${q.challenge_type.replace(/_/g,' ').toUpperCase()}</div><div class="qt">${md(q.question)}</div>${q.code_snippet?'<pre class="qcd">'+esc(q.code_snippet)+'</pre>':''}${opts}${q.challenge_type!=='multiple_choice'&&!rv?'<button style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--as);color:var(--a)" onclick="revQ('+qi+')">Show Answer</button>':''}${rv||a?'<div style="margin-top:10px"><div style="font-size:11px;color:var(--g);font-weight:600;margin-bottom:6px">ANSWER:</div><pre class="qcd">'+esc(q.correct_answer)+'</pre></div>':''}${(rv||a)&&q.explanation?'<div class="qx">'+md(q.explanation)+'</div>':''}</div>`;}).join('')}${isT?scoreHtml(qs):''}`;
+}
+function ansQ(qi,oi){if(S.answers[qi]!==undefined)return;S.answers[qi]=oi;renderModule();}
+function revQ(qi){S.revealed[qi]=true;renderModule();}
+function scoreHtml(qs){const mc=qs.filter(q=>q.challenge_type==='multiple_choice');const tot=Object.keys(S.answers).length;if(tot<mc.length)return'';let ok=0;mc.forEach((q,qi)=>{const os=typeof q.options==='string'?JSON.parse(q.options):q.options;if(os[S.answers[qi]]===q.correct_answer)ok++;});const pass=ok>=Math.ceil(mc.length*0.6);return`<div class="sc" style="border-color:${pass?'rgba(52,211,153,.2)':'rgba(248,113,113,.2)'}"><div style="font-size:36px;font-weight:700;color:${pass?'var(--g)':'var(--r)'};margin-bottom:4px">${ok}/${mc.length}</div><div style="font-size:13px;color:var(--td)">${pass?'🎉 Passed!':'Need '+Math.ceil(mc.length*0.6)+' to pass.'}</div></div>`;}
+
+// ═══════════════════════════════════════
+// MY PROJECTS
+// ═══════════════════════════════════════
+const PROJECTS=[
+  {id:'ghost',name:'Ghost Tracker',cat:'HTML / CSS / JS',icon:'👻',color:'#38bdf8',repo:'celeritas7/Ghost_tracker_simple',file:'index.html'},
+];
+
+function goProjects(){
+  S.view='projects';setNav('nav-proj');
+  document.getElementById('main').innerHTML=`<div class="pg"><button class="back" onclick="goDash()">← Dashboard</button>
+    <h2>My Projects</h2><p class="sub">Learn from your own code — see how your apps evolved</p>
+    <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">HTML / CSS / JS</div>
+    ${PROJECTS.map(p=>`<div class="cd" onclick="openProject('${p.id}')" style="margin-bottom:8px;border-color:${p.color}18">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:44px;height:44px;border-radius:10px;background:${p.color}15;display:flex;align-items:center;justify-content:center;font-size:20px">${p.icon}</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">${p.name}</div><div style="font-size:12px;color:var(--td)">${p.cat} · GitHub connected</div></div>
+        <span style="color:${p.color};font-size:16px">→</span>
+      </div>
+    </div>`).join('')}
+    <div style="margin-top:24px;padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
+      <div style="font-size:12px;color:var(--tm);margin-bottom:6px">Future projects:</div>
+      <div style="font-size:12px;color:var(--td)">Python · Image Organizer, Udemy exercises<br>Batch · Your automation scripts</div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+// PROJECT DETAIL — COMMIT TIMELINE
+// ═══════════════════════════════════════
+async function openProject(id){
+  const proj=PROJECTS.find(p=>p.id===id);if(!proj)return;
+  S.view='project-detail';S.currentProject=proj;S.diffA=null;S.diffB=null;S.diffResult=null;S.diffAnalysis=null;
+  const m=document.getElementById('main');
+  m.innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading commits from GitHub...</div></div>';
+
+  // Fetch commits if not cached
+  if(!cache.commits){
+    try{
+      const r=await fetch(`${GH_API}/commits?path=${proj.file}&per_page=100`);
+      if(!r.ok)throw new Error('GitHub API: '+r.status);
+      cache.commits=await r.json();
+    }catch(e){
+      m.innerHTML=`<div class="pg"><button class="back" onclick="goProjects()">← Projects</button><div style="color:var(--r);padding:20px;background:var(--c);border-radius:10px;font-size:13px">Failed to load commits: ${esc(e.message)}<br><br>GitHub API has a rate limit of 60 requests/hour for unauthenticated access. Try again in a few minutes.</div></div>`;
+      return;
+    }
+  }
+
+  // Load saved notes/status from Supabase
+  const savedNotes=await sbq('code_sensei_user_notes','select=*&topic_id=eq.ghost_tracker');
+  savedNotes.forEach(n=>{if(n.source_filename)cache.commitNotes[n.source_filename]=n;});
+  const savedStatus=await sbq('code_sensei_progress','select=*&topic_id=eq.ghost_tracker');
+  savedStatus.forEach(s=>{if(s.roadmap_section)cache.commitStatus[s.roadmap_section]=s.status;});
+
+  renderProjectDetail();
+}
+
+function renderProjectDetail(){
+  const proj=S.currentProject;
+  const commits=cache.commits||[];
+  const m=document.getElementById('main');
+
+  m.innerHTML=`<div class="pg">
+    <button class="back" onclick="goProjects()">← My Projects</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+      <span style="font-size:24px">${proj.icon}</span>
+      <h2 style="color:${proj.color}">${proj.name}</h2>
+    </div>
+    <p class="sub">${commits.length} commits · ${proj.cat} · <a href="https://github.com/${proj.repo}" target="_blank" style="color:var(--b);text-decoration:none">GitHub ↗</a></p>
+
+    <!-- Compare selector -->
+    <div style="background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:20px">
+      <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">COMPARE TWO VERSIONS</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <select id="sel-a" onchange="S.diffA=this.value;S.diffResult=null;S.diffAnalysis=null" style="flex:1;min-width:120px">
+          <option value="">Select older commit</option>
+          ${commits.map((c,i)=>`<option value="${c.sha}">#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
+        </select>
+        <span style="color:var(--b);font-size:14px">→</span>
+        <select id="sel-b" onchange="S.diffB=this.value;S.diffResult=null;S.diffAnalysis=null" style="flex:1;min-width:120px">
+          <option value="">Select newer commit</option>
+          ${commits.map((c,i)=>`<option value="${c.sha}">#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
+        </select>
+        <button onclick="loadDiff()" style="padding:8px 16px;background:var(--b);border:none;border-radius:7px;color:var(--bg);font-weight:600;font-size:12px;white-space:nowrap">Compare</button>
+      </div>
+    </div>
+
+    <!-- Diff results area -->
+    <div id="diff-area"></div>
+
+    <!-- Commit Timeline -->
+    <div style="font-size:11px;color:var(--tm);font-weight:700;letter-spacing:1px;margin-bottom:12px">COMMIT TIMELINE (${commits.length})</div>
+    ${commits.map((c,i)=>{
+      const sha7=c.sha.slice(0,7);
+      const msg=c.commit.message.split('\n')[0];
+      const date=fmtDate(c.commit.author.date);
+      const status=cache.commitStatus[c.sha]||'not_reviewed';
+      const note=cache.commitNotes[c.sha];
+      const badgeCls=status==='understood'?'badge-ok':status==='need_review'?'badge-review':'badge-new';
+      const badgeText=status==='understood'?'✓ Understood':status==='need_review'?'⚠ Need Review':'New';
+      return`<div class="commit">
+        <div class="commit-dot" style="background:${i===0?proj.color:'var(--bd)'}"></div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <div class="commit-msg">${esc(msg)}</div>
+            <span class="badge ${badgeCls}">${badgeText}</span>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:4px">
+            <span class="commit-date">${date}</span>
+            <span class="commit-sha">${sha7}</span>
+          </div>
+          ${note?'<div style="margin-top:6px;padding:6px 10px;background:rgba(245,158,11,.04);border-radius:6px;font-size:12px;color:var(--tm);border-left:2px solid var(--a)">'+esc(note.note_text)+'</div>':''}
+          <div style="margin-top:6px;display:flex;gap:6px">
+            <button onclick="setCommitStatus('${c.sha}','understood')" style="padding:3px 8px;border:1px solid rgba(52,211,153,.2);border-radius:4px;background:transparent;color:var(--g);font-size:10px">✓ Got it</button>
+            <button onclick="setCommitStatus('${c.sha}','need_review')" style="padding:3px 8px;border:1px solid rgba(248,113,113,.2);border-radius:4px;background:transparent;color:var(--r);font-size:10px">⚠ Review</button>
+            <button onclick="addNote('${c.sha}')" style="padding:3px 8px;border:1px solid var(--bd);border-radius:4px;background:transparent;color:var(--tm);font-size:10px">📝 Note</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+async function setCommitStatus(sha,status){
+  cache.commitStatus[sha]=status;
+  // Save to Supabase
+  const existing=await sbq('code_sensei_progress',`select=*&topic_id=eq.ghost_tracker&roadmap_section=eq.${sha}`);
+  if(existing.length>0){
+    await sbPatch('code_sensei_progress',existing[0].id,{status});
+  }else{
+    const users=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');
+    if(users.length)await sbPost('code_sensei_progress',{user_id:users[0].id,topic_id:'ghost_tracker',roadmap_section:sha,module_number:0,status});
+  }
+  renderProjectDetail();
+}
+
+function addNote(sha){
+  const existing=cache.commitNotes[sha]?.note_text||'';
+  const note=prompt('Your note for this commit:',existing);
+  if(note===null)return;
+  saveNote(sha,note);
+}
+
+async function saveNote(sha,noteText){
+  const users=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');
+  if(!users.length)return;
+  const existing=cache.commitNotes[sha];
+  if(existing?.id){
+    if(noteText)await sbPatch('code_sensei_user_notes',existing.id,{note_text:noteText});
+    else{await fetch(`${SB}/code_sensei_user_notes?id=eq.${existing.id}`,{method:'DELETE',headers:HDR});delete cache.commitNotes[sha];}
+  }else if(noteText){
+    const r=await sbPost('code_sensei_user_notes',{user_id:users[0].id,topic_id:'ghost_tracker',source_filename:sha,note_text:noteText,note_type:'note'});
+    if(r&&r[0])cache.commitNotes[sha]=r[0];
+  }
+  renderProjectDetail();
+}
+
+// ═══════════════════════════════════════
+// DIFF VIEWER WITH AI ANALYSIS
+// ═══════════════════════════════════════
+async function loadDiff(){
+  if(!S.diffA||!S.diffB){alert('Select both commits');return;}
+  if(S.diffA===S.diffB){alert('Select two different commits');return;}
+  const area=document.getElementById('diff-area');
+  area.innerHTML='<div class="ld"><div class="spin"></div>Loading diff from GitHub...</div>';
+
+  try{
+    const r=await fetch(`${GH_API}/compare/${S.diffA}...${S.diffB}`);
+    if(!r.ok)throw new Error('Compare failed: '+r.status);
+    const data=await r.json();
+    const file=data.files?.find(f=>f.filename==='index.html');
+    if(!file){area.innerHTML='<div style="color:var(--td);padding:20px;text-align:center">No changes to index.html between these commits.</div>';return;}
+    S.diffResult={stats:data,file,aheadBy:data.ahead_by,totalCommits:data.total_commits};
+    renderDiff();
+  }catch(e){
+    area.innerHTML=`<div style="color:var(--r);padding:16px;background:var(--c);border-radius:10px;font-size:13px">Error: ${esc(e.message)}</div>`;
   }
 }
 
-async function sendMsg(){
-  const i=document.getElementById('ci');const t=i.value.trim();if(!t)return;i.value='';
-  S.chatMsgs.push({r:'u',t:t});renderLayer(cache.lessons[0]);
+function renderDiff(){
+  const area=document.getElementById('diff-area');
+  if(!S.diffResult)return;
+  const{file,totalCommits}=S.diffResult;
+  const patch=file.patch||'';
+  const lines=patch.split('\n');
+
+  // Split into CSS / HTML / JS sections
+  let currentSection='';
+  const sections={};
+  lines.forEach(line=>{
+    if(line.startsWith('@@')){
+      // Detect section from context
+      if(line.includes('<style')||line.includes('</style'))currentSection='CSS';
+      else if(line.includes('<script')||line.includes('</script')||line.includes('function ')||line.includes('const '))currentSection='JS';
+      else currentSection='HTML';
+    }
+    if(!currentSection)currentSection='HTML';
+    if(!sections[currentSection])sections[currentSection]=[];
+    sections[currentSection].push(line);
+  });
+
+  const changedPct=Math.round(((file.additions+file.deletions)/Math.max(file.changes,1))*100);
+  const isRewrite=file.additions>200&&file.deletions>200&&changedPct>80;
+
+  area.innerHTML=`
+    <div style="background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="font-size:13px;font-weight:600">index.html</div>
+        <span style="color:var(--g);font-size:12px">+${file.additions}</span>
+        <span style="color:var(--r);font-size:12px">−${file.deletions}</span>
+        <span style="font-size:11px;color:var(--td)">${totalCommits} commit${totalCommits>1?'s':''} between</span>
+        ${isRewrite?'<span class="badge badge-review">⚠ Major rewrite</span>':''}
+      </div>
+    </div>
+
+    <!-- AI Analysis -->
+    <div id="ai-analysis">
+      ${S.diffAnalysis?'<div class="diff-analysis">'+md(S.diffAnalysis)+'</div>':`
+        <button onclick="analyzeDiff()" style="width:100%;padding:12px;background:var(--c);border:1px solid var(--bd);border-radius:10px;color:var(--b);font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+          ${S.analyzing?'<div class="spin" style="margin:0"></div> Analyzing...':'🤖 Analyze with AI — What changed and why?'}
+        </button>`}
+    </div>
+
+    <!-- Diff sections -->
+    ${Object.entries(sections).map(([sec,slines])=>`
+      <div class="diff-box">
+        <div class="diff-sec">${sec==='CSS'?'🎨':'JS'===sec?'⚡':'📄'} ${sec} Changes</div>
+        <div style="max-height:400px;overflow:auto;padding:4px 0">
+          ${slines.slice(0,150).map(l=>{
+            if(l.startsWith('@@'))return`<div style="padding:4px 12px;font-size:10px;color:var(--td);background:rgba(56,189,248,.04);font-family:monospace">${esc(l)}</div>`;
+            if(l.startsWith('+'))return`<div class="diff-add">+${esc(l.slice(1))}</div>`;
+            if(l.startsWith('-'))return`<div class="diff-del">−${esc(l.slice(1))}</div>`;
+            return`<div class="diff-ctx"> ${esc(l.slice(1)||l)}</div>`;
+          }).join('')}
+          ${slines.length>150?`<div style="padding:8px 12px;font-size:11px;color:var(--td);text-align:center">... ${slines.length-150} more lines</div>`:''}
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+async function analyzeDiff(){
+  if(S.analyzing||!S.diffResult)return;
+  S.analyzing=true;
+  renderDiff();
+
+  const{file}=S.diffResult;
+  const patch=(file.patch||'').slice(0,6000); // Limit to 6k chars for API
+
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,
-        system:'You are CodeSensei, a patient coding tutor for Aniket learning batch scripting. Beginner, based in Japan. Under 150 words. Use **bold** and `backticks`. Real-world analogies. Encouraging.',
-        messages:S.chatMsgs.map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}))})});
-    const d=await r.json();S.chatMsgs.push({r:'a',t:d.content.map(c=>c.text||'').join('')});
-  }catch(e){S.chatMsgs.push({r:'a',t:'Think of batch commands like a to-do list. The computer reads top to bottom.\n\n**ECHO** announces what is happening.\n**COPY/MOVE/DEL** are the tasks.\n**PAUSE** stops to let you check.\n\nAsk something more specific!'});}
-  renderLayer(cache.lessons[0]);
+    // Check Supabase cache first
+    const cached=await sbq('code_sensei_diff_explanations',`select=explanation&revision_from=eq.${S.diffA.slice(0,7)}&revision_to=eq.${S.diffB.slice(0,7)}&project_name=eq.ghost_tracker&limit=1`);
+    if(cached.length>0&&cached[0].explanation){
+      S.diffAnalysis=cached[0].explanation;
+    }else{
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+          system:`You are CodeSensei analyzing code changes for Aniket, a beginner developer learning full-stack. Analyze this diff of a single-file HTML app (Ghost Assembly Tracker — used at his company for tracking robot assembly).
+
+Rules:
+- Be honest: if this is a complete rewrite, say so — don't pretend line-by-line analysis helps
+- Split your analysis into CSS changes, HTML changes, and JS changes
+- For each section, explain WHAT changed and WHY in plain language
+- Use **bold** for key terms, \`backticks\` for code
+- Mention specific concepts being used (flexbox, fetch API, event handling, etc.)
+- Connect to learning: "This is a great example of X concept"
+- Keep under 300 words total
+- If the diff is too large, focus on the 3 most important changes`,
+          messages:[{role:'user',content:`Analyze this diff:\n\nAdditions: ${file.additions}, Deletions: ${file.deletions}\n\nPatch:\n${patch}`}]})});
+      const d=await r.json();
+      S.diffAnalysis=d.content.map(c=>c.text||'').join('');
+      // Cache in Supabase
+      await sbPost('code_sensei_diff_explanations',{revision_from:S.diffA.slice(0,7),revision_to:S.diffB.slice(0,7),project_name:'ghost_tracker',filename:'index.html',explanation:S.diffAnalysis,change_type:file.additions>200&&file.deletions>200?'rewrite':'incremental'});
+    }
+  }catch(e){
+    S.diffAnalysis='**Could not analyze this diff automatically.** The Claude API may not be available.\n\nHere is what I can tell from the numbers:\n- **'+file.additions+' lines added**, **'+file.deletions+' lines removed**\n- '+(file.additions>200&&file.deletions>200?'This looks like a **major rewrite** rather than a small fix. The entire structure may have changed.':'This looks like a **targeted change** — specific fixes to a few sections.')+'\n\nTry reading through the diff sections below to see what changed.';
+  }
+  S.analyzing=false;
+  renderDiff();
 }
 
-// ═══ SOURCE FILES — no refetch on toggle ═══
-function renderFiles(files,fileOrder){
-  const sf=document.getElementById('sf');if(!sf)return;
-  sf.innerHTML=fileOrder.map(fn=>{
-    const fn2=fn.trim();const exps=files[fn2];if(!exps||!exps.length)return'';
-    return`<div style="margin-bottom:16px"><div class="sf-h">📄 ${fn2}</div><div class="sf-b">${exps.map((e,i)=>{
-      const k=fn2+'-'+e.line_number;const open=S.openLines[k];
-      const code=e.code_text||e.concept_tag||'';
-      return`<div><div class="sl${open?' on':''}" onclick="togLine('${k}')"><span class="sl-n">${e.line_number}</span><span class="sl-c">${esc(code)}</span><span class="sl-h">${open?'▼':'💡'}</span></div>${open?'<div class="sl-e">'+md(e.explanation)+'</div>':''}</div>`;
-    }).join('')}</div></div>`;
-  }).join('');
-}
-
-function togLine(k){
-  S.openLines[k]=!S.openLines[k];
-  // Re-render ONLY the source files section, not the whole page
-  const les=cache.lessons[0];
-  const files={};cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});
-  const fileOrder=les.source_files||Object.keys(files);
-  renderFiles(files,fileOrder);
-}
-
-// ═══ CHALLENGES ═══
-function renderQs(sc,qs,label){
-  if(!qs.length){sc.innerHTML='<div style="text-align:center;color:var(--td);padding:40px">No questions yet.</div>';return;}
-  const isT=label==='TEST';
-  sc.innerHTML=`<div style="font-size:11px;color:${isT?'var(--p)':'var(--a)'};font-weight:700;letter-spacing:1px;margin-bottom:14px">${label} — ${qs.length} QUESTIONS</div>
-    ${qs.map((q,qi)=>{
-      const ans=S.answers[qi]!==undefined;const rev=S.revealed[qi];
-      let opts='';
-      if(q.challenge_type==='multiple_choice'&&q.options){
-        const os=typeof q.options==='string'?JSON.parse(q.options):q.options;
-        opts=os.map((o,oi)=>{
-          let c='qo';
-          if(ans&&S.answers[qi]===oi)c+=o===q.correct_answer?' ok':' no';
-          if(ans&&o===q.correct_answer)c+=' ok';
-          return`<div class="${c}" onclick="ans(${qi},${oi})">${esc(o)}</div>`;
-        }).join('');
-      }
-      return`<div class="qc"><div class="ql" style="color:${isT?'var(--p)':'var(--a)'}">Q${qi+1} · ${q.challenge_type.replace(/_/g,' ').toUpperCase()}</div>
-        <div class="qt">${md(q.question)}</div>
-        ${q.code_snippet?'<pre class="qcd">'+esc(q.code_snippet)+'</pre>':''}${opts}
-        ${q.challenge_type!=='multiple_choice'&&!rev?'<button style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--as);color:var(--a)" onclick="rev('+qi+')">Show Answer</button>':''}
-        ${rev||ans?'<div style="margin-top:10px"><div style="font-size:11px;color:var(--g);font-weight:600;margin-bottom:6px">ANSWER:</div><pre class="qcd">'+esc(q.correct_answer)+'</pre></div>':''}
-        ${(rev||ans)&&q.explanation?'<div class="qx">'+md(q.explanation)+'</div>':''}
-      </div>`;
-    }).join('')}
-    ${isT?scoreHtml(qs):''}`;
-}
-
-function ans(qi,oi){if(S.answers[qi]!==undefined)return;S.answers[qi]=oi;const pQ=cache.challenges.filter(c=>c.stage==='practice');const tQ=cache.challenges.filter(c=>c.stage==='test');const sc=document.getElementById('sc');if(S.stage==='practice')renderQs(sc,pQ,'PRACTICE');else renderQs(sc,tQ,'TEST');}
-function rev(qi){S.revealed[qi]=true;const pQ=cache.challenges.filter(c=>c.stage==='practice');const tQ=cache.challenges.filter(c=>c.stage==='test');const sc=document.getElementById('sc');if(S.stage==='practice')renderQs(sc,pQ,'PRACTICE');else renderQs(sc,tQ,'TEST');}
-
-function scoreHtml(qs){
-  const mc=qs.filter(q=>q.challenge_type==='multiple_choice');
-  const total=Object.keys(S.answers).length;if(total<mc.length)return'';
-  let ok=0;mc.forEach((q,qi)=>{const os=typeof q.options==='string'?JSON.parse(q.options):q.options;if(os[S.answers[qi]]===q.correct_answer)ok++;});
-  const pass=ok>=Math.ceil(mc.length*0.6);
-  return`<div class="sc" style="border-color:${pass?'rgba(52,211,153,.2)':'rgba(248,113,113,.2)'}"><div style="font-size:36px;font-weight:700;color:${pass?'var(--g)':'var(--r)'};margin-bottom:4px">${ok}/${mc.length}</div><div style="font-size:13px;color:var(--td)">${pass?'🎉 Passed! Module complete.':'Keep practicing — need '+Math.ceil(mc.length*0.6)+' to pass.'}</div></div>`;
-}
-
-// ═══ INIT ═══
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
 goDash();
 </script>
 </body>
