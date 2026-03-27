@@ -89,19 +89,6 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 /* Note input */
 .note-box{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-top:12px}
 .note-input{width:100%;padding:10px;background:var(--s);border:1px solid var(--bd);border-radius:7px;color:var(--tx);font-size:13px;outline:none;resize:vertical;min-height:60px;font-family:inherit}
-/* Prompt buttons */
-.prompt-row{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
-.prompt-btn{padding:5px 10px;border-radius:5px;border:1px solid var(--bd);background:transparent;font-size:10.5px;color:var(--tm);transition:all .12s;display:flex;align-items:center;gap:4px}
-.prompt-btn:hover{border-color:var(--b);color:var(--b);background:rgba(56,189,248,.04)}
-.prompt-btn .pb-icon{font-size:12px}
-/* Prompt popup */
-.prompt-popup{position:fixed;bottom:0;left:0;right:0;z-index:1002;background:var(--s);border-top:1px solid var(--bd);padding:16px;animation:slideUp .25s ease;max-height:70vh;overflow:auto}
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.prompt-text{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:14px;font-size:12.5px;line-height:1.7;color:var(--tx);white-space:pre-wrap;margin-bottom:12px;max-height:40vh;overflow:auto}
-.prompt-actions{display:flex;gap:8px}
-.prompt-copy{flex:1;padding:10px;background:var(--b);border:none;border-radius:8px;color:var(--bg);font-weight:600;font-size:13px}
-.prompt-close{padding:10px 16px;background:var(--c);border:1px solid var(--bd);border-radius:8px;color:var(--tm);font-size:13px}
-.copied-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:8px 20px;border-radius:8px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);color:var(--g);font-size:13px;font-weight:500;z-index:1003;animation:fi .2s ease}
 /* Mobile hamburger */
 .ham{display:none;position:fixed;top:10px;left:10px;z-index:1001;width:36px;height:36px;border-radius:8px;background:var(--s);border:1px solid var(--bd);align-items:center;justify-content:center;font-size:18px;color:var(--a);cursor:pointer}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999}
@@ -157,7 +144,6 @@ const GH_API='https://api.github.com/repos/celeritas7/Ghost_tracker_simple';
 
 let cache={lessons:null,lines:null,challenges:null,commits:null,commitNotes:{},commitStatus:{}};
 let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false,diffA:null,diffB:null,diffResult:null,diffAnalysis:null,analyzing:false};
-let promptContexts=[];
 
 async function sbq(table,query=''){try{const r=await fetch(`${SB}/${table}?${query}`,{headers:HDR});return await r.json();}catch(e){console.error(e);return[];}}
 async function sbPatch(table,id,data){try{await fetch(`${SB}/${table}?id=eq.${id}`,{method:'PATCH',headers:HDR,body:JSON.stringify(data)});}catch(e){console.error(e);}}
@@ -302,7 +288,7 @@ function renderLayer(les){
   else{lc.innerHTML=`<div class="ch-b"><div class="ch-h">Ask anything — powered by Claude API</div><div class="ch-m" id="cms">${S.chatMsgs.length===0?'<div class="ch-e">🤔 Ask any question about this topic</div>':''}${S.chatMsgs.map(m=>'<div style="display:flex;justify-content:'+(m.r==='a'?'flex-start':'flex-end')+';margin-bottom:8px"><div class="bub '+(m.r==='a'?'ai':'us')+'">'+md(m.t)+'</div></div>').join('')}</div><div class="ch-i"><input id="ci" placeholder="Ask..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Send</button></div></div>`;const cms=document.getElementById('cms');if(cms)cms.scrollTop=cms.scrollHeight;}
 }
 async function sendMsg(){const i=document.getElementById('ci');const t=i.value.trim();if(!t)return;i.value='';S.chatMsgs.push({r:'u',t});renderLayer(cache.lessons[0]);try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are CodeSensei, a patient coding tutor for a beginner named Aniket in Japan. Under 150 words. Use **bold** and `backticks`. Encouraging.',messages:S.chatMsgs.map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}))})});const d=await r.json();S.chatMsgs.push({r:'a',t:d.content.map(c=>c.text||'').join('')});}catch(e){S.chatMsgs.push({r:'a',t:'Great question! Let me try a different angle.\n\nThink of code like a recipe — each line is one step. The computer follows them top to bottom.\n\nAsk something more specific and I can help!'});}renderLayer(cache.lessons[0]);}
-function renderFiles(files,fileOrder){const sf=document.getElementById('sf');if(!sf)return;promptContexts=[];const les=cache.lessons?cache.lessons[0]:null;const topicId=S.topic;const modNum=S.mod;const modTitle=les?les.module_title:'';sf.innerHTML=fileOrder.map(fn=>{const fn2=fn.trim();const exps=files[fn2];if(!exps||!exps.length)return'';return`<div style="margin-bottom:16px"><div class="sf-h">📄 ${fn2}</div><div class="sf-b">${exps.map(e=>{const k=fn2+'-'+e.line_number;const open=S.openLines[k];const code=e.code_text||e.concept_tag||'';const ctx={type:'line',topic:topicId,module:modNum,moduleTitle:modTitle,filename:fn2,lineNum:e.line_number,code:code,explanation:e.explanation||''};return`<div><div class="sl${open?' on':''}" onclick="togLine('${k}')"><span class="sl-n">${e.line_number}</span><span class="sl-c">${esc(code)}</span><span class="sl-h">${open?'▼':'💡'}</span></div>${open?'<div class="sl-e">'+md(e.explanation)+promptBtns(ctx)+'</div>':''}</div>`;}).join('')}</div></div>`;}).join('');}
+function renderFiles(files,fileOrder){const sf=document.getElementById('sf');if(!sf)return;sf.innerHTML=fileOrder.map(fn=>{const fn2=fn.trim();const exps=files[fn2];if(!exps||!exps.length)return'';return`<div style="margin-bottom:16px"><div class="sf-h">📄 ${fn2}</div><div class="sf-b">${exps.map(e=>{const k=fn2+'-'+e.line_number;const open=S.openLines[k];const code=e.code_text||e.concept_tag||'';return`<div><div class="sl${open?' on':''}" onclick="togLine('${k}')"><span class="sl-n">${e.line_number}</span><span class="sl-c">${esc(code)}</span><span class="sl-h">${open?'▼':'💡'}</span></div>${open?'<div class="sl-e">'+md(e.explanation)+'</div>':''}</div>`;}).join('')}</div></div>`;}).join('');}
 function togLine(k){S.openLines[k]=!S.openLines[k];const les=cache.lessons[0];const files={};cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});renderFiles(files,les.source_files||Object.keys(files));}
 function renderQs(sc,qs,label){if(!qs.length){sc.innerHTML='<div style="text-align:center;color:var(--td);padding:40px">No questions yet.</div>';return;}const isT=label==='TEST';sc.innerHTML=`<div style="font-size:11px;color:${isT?'var(--p)':'var(--a)'};font-weight:700;letter-spacing:1px;margin-bottom:14px">${label} — ${qs.length} QUESTIONS</div>${qs.map((q,qi)=>{const a=S.answers[qi]!==undefined;const rv=S.revealed[qi];let opts='';if(q.challenge_type==='multiple_choice'&&q.options){const os=typeof q.options==='string'?JSON.parse(q.options):q.options;opts=os.map((o,oi)=>{let c='qo';if(a&&S.answers[qi]===oi)c+=o===q.correct_answer?' ok':' no';if(a&&o===q.correct_answer)c+=' ok';return`<div class="${c}" onclick="ansQ(${qi},${oi})">${esc(o)}</div>`;}).join('');}return`<div class="qc"><div class="ql" style="color:${isT?'var(--p)':'var(--a)'}">Q${qi+1} · ${q.challenge_type.replace(/_/g,' ').toUpperCase()}</div><div class="qt">${md(q.question)}</div>${q.code_snippet?'<pre class="qcd">'+esc(q.code_snippet)+'</pre>':''}${opts}${q.challenge_type!=='multiple_choice'&&!rv?'<button style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--as);color:var(--a)" onclick="revQ('+qi+')">Show Answer</button>':''}${rv||a?'<div style="margin-top:10px"><div style="font-size:11px;color:var(--g);font-weight:600;margin-bottom:6px">ANSWER:</div><pre class="qcd">'+esc(q.correct_answer)+'</pre></div>':''}${(rv||a)&&q.explanation?'<div class="qx">'+md(q.explanation)+'</div>':''}</div>`;}).join('')}${isT?scoreHtml(qs):''}`;
 }
@@ -512,8 +498,6 @@ function renderDiff(){
 
   const changedPct=Math.round(((file.additions+file.deletions)/Math.max(file.changes,1))*100);
   const isRewrite=file.additions>200&&file.deletions>200&&changedPct>80;
-  promptContexts=[];
-  const patchLines=(file.patch||'').split('\n').filter(l=>l.startsWith('+')||l.startsWith('-')).slice(0,8).join('\n');
 
   area.innerHTML=`
     <div style="background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:12px">
@@ -532,12 +516,6 @@ function renderDiff(){
         <button onclick="analyzeDiff()" style="width:100%;padding:12px;background:var(--c);border:1px solid var(--bd);border-radius:10px;color:var(--b);font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">
           ${S.analyzing?'<div class="spin" style="margin:0"></div> Analyzing...':'🤖 Analyze with AI — What changed and why?'}
         </button>`}
-    </div>
-
-    <!-- Ask about this diff -->
-    <div style="background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:12px">
-      <div style="font-size:10px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:8px">📋 ASK CLAUDE ABOUT THIS DIFF</div>
-      ${promptBtns({type:'diff',commitA:S.diffA?.slice(0,7)||'?',commitB:S.diffB?.slice(0,7)||'?',additions:file.additions,deletions:file.deletions,patchSnippet:patchLines})}
     </div>
 
     <!-- Diff sections -->
@@ -596,100 +574,6 @@ Rules:
   }
   S.analyzing=false;
   renderDiff();
-}
-
-// ═══════════════════════════════════════
-// PROMPT GENERATOR (for train study)
-// ═══════════════════════════════════════
-function buildPrompt(intent, context) {
-  const intents = {
-    explain: "I don't fully understand this. Can you explain it using a completely different analogy or approach? Keep it simple — I'm a beginner.",
-    why: "I understand the basic syntax but I don't see why this is useful. When would I actually need this in a real project? Give me a concrete real-world scenario.",
-    example: "Can you show me a practical, real-world example of this concept? Something I could actually type and run to see it working."
-  };
-  const intentText = intents[intent] || intents.explain;
-
-  if (context.type === 'line') {
-    return `I'm studying ${context.topic} Module ${context.module} (${context.moduleTitle}) in CodeSensei.
-
-I'm looking at file: ${context.filename}
-Line ${context.lineNum}: \`${context.code}\`
-
-${context.explanation ? 'The current explanation says: "' + context.explanation.slice(0, 200) + (context.explanation.length > 200 ? '..."' : '"') : 'There is no explanation yet for this line.'}
-
-${intentText}`;
-  }
-
-  if (context.type === 'diff') {
-    return `I'm studying my Ghost Tracker app revisions in CodeSensei.
-
-Comparing: ${context.commitA} → ${context.commitB}
-Changes: +${context.additions} lines added, -${context.deletions} lines removed
-
-${context.patchSnippet ? 'Here is the specific change I am confused about:\n```\n' + context.patchSnippet + '\n```\n' : ''}
-${intentText}`;
-  }
-
-  return intentText;
-}
-
-function showPrompt(intent, context) {
-  const prompt = buildPrompt(intent, context);
-  // Remove any existing popup
-  document.getElementById('prompt-popup')?.remove();
-  document.getElementById('copied-toast')?.remove();
-
-  const popup = document.createElement('div');
-  popup.id = 'prompt-popup';
-  popup.className = 'prompt-popup';
-  popup.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px">READY-MADE PROMPT</div>
-      <div style="font-size:11px;color:var(--td)">Copy → paste into Claude chat</div>
-    </div>
-    <div class="prompt-text" id="prompt-text">${esc(prompt)}</div>
-    <div class="prompt-actions">
-      <button class="prompt-copy" onclick="copyPrompt()">📋 Copy Prompt</button>
-      <button class="prompt-close" onclick="closePrompt()">Close</button>
-    </div>
-  `;
-  document.body.appendChild(popup);
-}
-
-function copyPrompt() {
-  const text = document.getElementById('prompt-text')?.innerText;
-  if (!text) return;
-  navigator.clipboard.writeText(text).then(() => {
-    document.getElementById('copied-toast')?.remove();
-    const toast = document.createElement('div');
-    toast.id = 'copied-toast';
-    toast.className = 'copied-toast';
-    toast.textContent = '✓ Copied! Paste into Claude chat';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
-  }).catch(() => {
-    // Fallback for older browsers
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    ta.remove();
-  });
-}
-
-function closePrompt() {
-  document.getElementById('prompt-popup')?.remove();
-}
-
-function promptBtns(context) {
-  const idx = promptContexts.length;
-  promptContexts.push(context);
-  return `<div class="prompt-row">
-    <button class="prompt-btn" onclick="event.stopPropagation();showPrompt('explain',promptContexts[${idx}])"><span class="pb-icon">🔄</span> Explain differently</button>
-    <button class="prompt-btn" onclick="event.stopPropagation();showPrompt('why',promptContexts[${idx}])"><span class="pb-icon">🎯</span> Why does this matter?</button>
-    <button class="prompt-btn" onclick="event.stopPropagation();showPrompt('example',promptContexts[${idx}])"><span class="pb-icon">💻</span> Show me an example</button>
-  </div>`;
 }
 
 // ═══════════════════════════════════════
