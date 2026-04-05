@@ -1042,7 +1042,7 @@ function tRenderCompare(){
   if(tFiles.length<2){
     const panel=document.getElementById('tpanel');
     if(panel)panel.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:14px;text-align:center;padding:40px">Add at least 2 files using the + tab<br>to compare their structure trees</div>';
-    document.getElementById('tinfo').style.display='none';
+    const ti=document.getElementById('tinfo');if(ti)ti.style.display='none';
     return;
   }
   if(tCmpLeftIdx>=tFiles.length)tCmpLeftIdx=0;
@@ -1073,7 +1073,7 @@ function tRenderCompare(){
       <span><span class="tcmp-legend-dot" style="border-color:#f59e0b;background:#fffbeb"></span>Changed</span>
       <span><span class="tcmp-legend-dot" style="border-color:#d1d5db;background:#fff"></span>Same</span>
     </div>`;
-  document.getElementById('tinfo').style.display='none';
+  const tinfoEl=document.getElementById('tinfo');if(tinfoEl)tinfoEl.style.display='none';
   tRunCompare();
 }
 
