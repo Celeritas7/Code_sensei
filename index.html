@@ -849,17 +849,53 @@ if(hasImp)root.children.unshift(impG);return root;}
 function tCountDesc(n){let c=0;if(n.children)for(const ch of n.children){c++;c+=tCountDesc(ch);}return c;}
 
 // Shape config
-const TS={project:{color:'#dbeafe',stroke:'#60a5fa',w:180,h:44,r:8},file:{color:'#fef9c3',stroke:'#eab308',w:200,h:36,r:4},module:{color:'#dbeafe',stroke:'#60a5fa',w:140,h:40,r:20},class:{color:'#d1fae5',stroke:'#34d399',w:150,h:42,r:21},function:{color:'#fee2e2',stroke:'#f87171',w:140,h:38,r:0},variable:{color:'#fef3c7',stroke:'#f59e0b',w:150,h:32,r:4},loop:{color:'#f1f5f9',stroke:'#94a3b8',w:150,h:60,r:0},import:{color:'#f3e8ff',stroke:'#a78bfa',w:110,h:30,r:15},conditional:{color:'#ffedd5',stroke:'#fb923c',w:130,h:40,r:0},statement:{color:'#fef9c3',stroke:'#d97706',w:150,h:28,r:3}};
+const TS={
+  project:    {color:'#dbeafe',stroke:'#3b82f6',w:180,h:44,r:8},
+  file:       {color:'#fef9c3',stroke:'#ca8a04',w:180,h:38,r:4},
+  module:     {color:'#dbeafe',stroke:'#3b82f6',w:140,h:40,r:20},
+  class:      {color:'#d1fae5',stroke:'#059669',w:150,h:42,r:21},
+  function:   {color:'#fce7f3',stroke:'#db2777',w:140,h:38,r:0},
+  variable:   {color:'#ede9fe',stroke:'#7c3aed',w:140,h:32,r:4},
+  loop:       {color:'#e2e8f0',stroke:'#475569',w:150,h:56,r:0},
+  import:     {color:'#e0f2fe',stroke:'#0284c7',w:110,h:30,r:15},
+  conditional:{color:'#ffedd5',stroke:'#ea580c',w:130,h:40,r:0},
+  statement:  {color:'#fef9c3',stroke:'#a16207',w:140,h:28,r:3}
+};
 function tDrawShape(g,type,w,h){const c=TS[type]||TS.variable;
-if(type==='function'){const hw=w/2,hh=h/2,i=16;g.append('polygon').attr('class','tshape').attr('points',`${-hw+i},${-hh} ${hw-i},${-hh} ${hw},0 ${hw-i},${hh} ${-hw+i},${hh} ${-hw},0`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);}
-else if(type==='loop'){const hw=w/2,hh=h/2;g.append('polygon').attr('class','tshape').attr('points',`${-hw+10},${-hh} ${hw-10},${-hh} ${hw},${-hh+16} ${hw},${hh} ${-hw},${hh} ${-hw},${-hh+16}`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);g.append('line').attr('x1',-hw).attr('x2',hw).attr('y1',-hh+16).attr('y2',-hh+16).attr('stroke',c.stroke).attr('stroke-width',1).attr('opacity',.3);}
-else if(type==='conditional'){const hw=w/2,hh=h/2;g.append('polygon').attr('class','tshape').attr('points',`0,${-hh} ${hw},0 0,${hh} ${-hw},0`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);}
-else if(type==='statement'){g.append('rect').attr('class','tshape').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',c.r).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',1.5).attr('stroke-dasharray','4,3');}
-else{g.append('rect').attr('class','tshape').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',c.r).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);}}
+if(type==='class'){
+  // True ellipse
+  g.append('ellipse').attr('class','tshape').attr('cx',0).attr('cy',0).attr('rx',w/2).attr('ry',h/2).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2.5);
+}else if(type==='function'){
+  // Hexagon
+  const hw=w/2,hh=h/2,i=18;
+  g.append('polygon').attr('class','tshape').attr('points',`${-hw+i},${-hh} ${hw-i},${-hh} ${hw},0 ${hw-i},${hh} ${-hw+i},${hh} ${-hw},0`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2.5);
+}else if(type==='loop'){
+  // Trapezoid header + body box
+  const hw=w/2,hh=h/2;
+  g.append('polygon').attr('class','tshape').attr('points',`${-hw+12},${-hh} ${hw-12},${-hh} ${hw},${-hh+18} ${hw},${hh} ${-hw},${hh} ${-hw},${-hh+18}`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);
+  g.append('line').attr('x1',-hw).attr('x2',hw).attr('y1',-hh+18).attr('y2',-hh+18).attr('stroke',c.stroke).attr('stroke-width',1).attr('opacity',.35);
+}else if(type==='conditional'){
+  // Diamond
+  const hw=w/2,hh=h/2;
+  g.append('polygon').attr('class','tshape').attr('points',`0,${-hh} ${hw},0 0,${hh} ${-hw},0`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2.5);
+}else if(type==='statement'){
+  // Dashed rectangle
+  g.append('rect').attr('class','tshape').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',c.r).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',1.5).attr('stroke-dasharray','5,3');
+}else if(type==='import'){
+  // Pill / capsule
+  g.append('rect').attr('class','tshape').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',h/2).attr('ry',h/2).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);
+}else if(type==='variable'){
+  // Parallelogram (slight slant)
+  const hw=w/2,hh=h/2,sl=8;
+  g.append('polygon').attr('class','tshape').attr('points',`${-hw+sl},${-hh} ${hw+sl},${-hh} ${hw-sl},${hh} ${-hw-sl},${hh}`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);
+}else{
+  // Default rounded rect (project, file, module)
+  g.append('rect').attr('class','tshape').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',c.r).attr('ry',c.r).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);
+}}
 const TB={project:'PROJECT',file:'FILE',module:'MODULE',class:'CLASS',function:'ƒ FUNC',variable:'VAR',loop:'',import:'IMPORT',conditional:'COND',statement:''};
 
 // Layout
-function tLayoutSub(node,x,y){const cfg=TS[node.type]||TS.variable;const pos=[{node,x,y}];const lks=[];const IND=50,VG=18;let curY=y+cfg.h/2+VG+10;
+function tLayoutSub(node,x,y){const cfg=TS[node.type]||TS.variable;const pos=[{node,x,y}];const lks=[];const IND=55,VG=22;let curY=y+cfg.h/2+VG+12;
 if(!tCollapsed.has(node._id)&&node.children&&node.children.length>0){for(const ch of node.children){const cc=TS[ch.type]||TS.variable;const cx=x+IND,cy=curY+cc.h/2;const sub=tLayoutSub(ch,cx,cy);pos.push(...sub.pos);lks.push({src:{x,y,type:node.type},tgt:{x:cx,y:cy,type:ch.type}});lks.push(...sub.lks);curY=sub.maxY+VG;}}
 let maxY=y+cfg.h/2;for(const p of pos){maxY=Math.max(maxY,p.y+(TS[p.node.type]||TS.variable).h/2);}return{pos,lks,maxY};}
 
@@ -870,7 +906,7 @@ const w=panel.clientWidth,h=panel.clientHeight-50;
 const defs=svg.append('defs');defs.append('marker').attr('id','tarrow').attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#b0b8c8');
 tSvgG=svg.append('g');tZoom=d3.zoom().scaleExtent([.05,3]).on('zoom',e=>tSvgG.attr('transform',e.transform));svg.call(tZoom);
 tNodePosMap={};tAllNodeMap={};for(const p of allPos){tNodePosMap[p.node._id]={x:p.x,y:p.y};tAllNodeMap[p.node._id]=p.node;}
-tSvgG.selectAll('.tlink').data(allLks).enter().append('path').attr('class','tlink').attr('marker-end','url(#tarrow)').attr('d',d=>{const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;const sx=d.src.x,sy=d.src.y+sc.h/2,tx=d.tgt.x,ty=d.tgt.y-tc.h/2,my=sy+(ty-sy)*.45;return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;});
+tSvgG.selectAll('.tlink').data(allLks).enter().append('path').attr('class','tlink').attr('marker-end','url(#tarrow)').attr('d',d=>{const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;const sx=d.src.x,sy=d.src.y+sc.h/2+20,tx=d.tgt.x,ty=d.tgt.y-tc.h/2;const my=sy+(ty-sy)*.5;return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;});
 const nodes=tSvgG.selectAll('.tree-node').data(allPos).enter().append('g').attr('class','tree-node').attr('transform',d=>`translate(${d.x},${d.y})`).attr('data-id',d=>d.node._id);
 nodes.each(function(d){tDrawShape(d3.select(this),d.node.type,(TS[d.node.type]||TS.variable).w,(TS[d.node.type]||TS.variable).h);});
 nodes.append('text').attr('class','tlabel').attr('y',d=>d.node.type==='loop'?-6:1).attr('font-size',d=>{const n=d.node.name;return n.length>18?'8.5px':n.length>14?'9.5px':n.length>10?'10px':'11px';}).text(d=>{const n=d.node.name;return n.length>24?n.substring(0,22)+'…':n;});
@@ -1157,7 +1193,7 @@ function tDrawCompareTree(svgId,parsedTree,fileName,diffMap,side){
   // Links
   g.selectAll('.tlink').data(sub.lks).enter().append('path').attr('class','tlink').attr('marker-end','url(#carr-'+side+')').attr('d',d=>{
     const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;
-    const sx=d.src.x,sy=d.src.y+sc.h/2,tx=d.tgt.x,ty=d.tgt.y-tc.h/2,my=sy+(ty-sy)*.45;
+    const sx=d.src.x,sy=d.src.y+sc.h/2+20,tx=d.tgt.x,ty=d.tgt.y-tc.h/2,my=sy+(ty-sy)*.5;
     return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;
   });
 
