@@ -191,18 +191,6 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .tree-mode-btn.flow-on{background:#10b981;color:#fff}
 .tree-ttip{position:fixed;padding:8px 12px;background:#1e293b;border:1px solid #334155;border-radius:8px;font-family:monospace;font-size:11px;color:#e2e8f0;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;max-width:260px;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .tree-ttip.visible{opacity:1}.tree-ttip .ttt{color:#6ee7b7;font-weight:600}.tree-ttip .ttd{color:#94a3b8;margin-top:2px}
-/* Cross-reference flow arrows */
-.xref-arrow{fill:none;stroke-width:2;stroke-dasharray:6,4;pointer-events:none;opacity:.7}
-.xref-import{stroke:#8b5cf6}
-.xref-call{stroke:#f87171}
-.xref-instantiate{stroke:#10b981}
-.xref-label{font-family:monospace;font-size:8px;pointer-events:none;dominant-baseline:middle}
-.xref-label-import{fill:#8b5cf6}.xref-label-call{fill:#f87171}.xref-label-inst{fill:#10b981}
-.xref-legend{position:absolute;top:10px;left:12px;background:rgba(255,255,255,.92);border:1px solid #e5e7eb;border-radius:8px;padding:6px 10px;font-family:monospace;font-size:9px;color:#6b7280;display:flex;gap:10px;z-index:5}
-.xref-legend-item{display:flex;align-items:center;gap:4px}
-.xref-legend-line{width:18px;height:0;border-top:2px dashed;display:inline-block}
-.xref-toggle{padding:4px 10px;font-family:monospace;font-size:10px;border:1px solid var(--bd);border-radius:4px;background:transparent;color:var(--td);cursor:pointer}
-.xref-toggle.xon{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
 @media(max-width:700px){
   .tree-wrap{flex-direction:column}
   .tree-code-panel{width:100%;height:38vh;border-right:none;border-bottom:1px solid var(--bd)}
@@ -784,7 +772,6 @@ let tFiles=[{name:'main.py',code:''}],tActiveIdx=0,tMode='single',tFlowMode=fals
 let tZoom=null,tSvgG=null,tCollapsed=new Set(),tVisited=new Set(),tNodeIdCtr=0;
 let tFlowSteps=[],tFlowIdx=-1,tFlowPlaying=false,tFlowTimer=null;
 let tNodePosMap={},tAllNodeMap={},tLastParsed=null;
-let tXrefOn=false, tXrefLinks=[];
 const T_SAMPLES={
 single:{name:'Star Triangle',files:[{name:'triangle.py',code:'def user_input():\n    height= int(input("Enter height:\\n"))\n    return height\n\nheight = user_input()\nblanks = height - 1\nstars = 1\n\nfor loops in height:\n    blanks -= 1\n    stars += 1\n    print(" ")\n    print("*")'}]},
 quiz:{name:'Quiz Project',files:[
@@ -858,108 +845,11 @@ nodes.on('mouseleave',()=>tip.classList.remove('visible'));
 // Stats
 let nc=0,fc=0,cc=0,fn=0;for(const p of allPos){nc++;if(p.node.type==='file')fc++;if(p.node.type==='class')cc++;if(p.node.type==='function')fn++;}
 document.getElementById('tsN').textContent=nc;document.getElementById('tsF').textContent=fc||1;document.getElementById('tsC').textContent=cc;document.getElementById('tsFn').textContent=fn;
-// Cross-reference arrows
-if(tXrefOn&&tXrefLinks.length>0&&!tFlowMode){
-  const xrefG=tSvgG.append('g').attr('class','xref-layer');
-  // Add arrow markers for each type
-  const svg=d3.select('#tsvg');const defs=svg.select('defs');
-  ['import','call','instantiate'].forEach(t=>{const clr=t==='import'?'#8b5cf6':t==='call'?'#f87171':'#10b981';defs.append('marker').attr('id','xarr-'+t).attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill',clr);});
-  tXrefLinks.forEach(lk=>{
-    const from=tNodePosMap[lk.from];const to=tNodePosMap[lk.to];
-    if(!from||!to)return;
-    const fc=TS[tAllNodeMap[lk.from]?.type]||TS.variable;const tc=TS[tAllNodeMap[lk.to]?.type]||TS.variable;
-    // Curved bezier arrow between nodes
-    const sx=from.x+fc.w/2+4, sy=from.y;
-    const tx2=to.x-tc.w/2-4, ty2=to.y;
-    const dx=Math.abs(tx2-sx), dy=Math.abs(ty2-sy);
-    const cpx=Math.max(dx*0.4,40);
-    const path=`M${sx},${sy} C${sx+cpx},${sy} ${tx2-cpx},${ty2} ${tx2},${ty2}`;
-    xrefG.append('path').attr('class','xref-arrow xref-'+lk.type).attr('d',path).attr('marker-end','url(#xarr-'+lk.type+')');
-    // Label at midpoint
-    const mx=(sx+tx2)/2, my=(sy+ty2)/2-8;
-    xrefG.append('text').attr('class','xref-label xref-label-'+(lk.type==='instantiate'?'inst':lk.type)).attr('x',mx).attr('y',my).attr('text-anchor','middle').text(lk.label);
-  });
-  // Show legend
-  const leg=document.getElementById('txrefLeg');if(leg)leg.style.display=tXrefLinks.length>0?'flex':'none';
-}else{const leg=document.getElementById('txrefLeg');if(leg)leg.style.display='none';}
 // Auto-fit
 requestAnimationFrame(()=>{const b=tSvgG.node().getBBox();const pad=60;const topP=tFlowMode?65:10;const sc=Math.min(w/(b.width+pad*2),(h-topP)/(b.height+pad*2),1);const tx=w/2-(b.x+b.width/2)*sc;const ty=topP+pad+(-b.y)*sc;svg.call(tZoom.transform,d3.zoomIdentity.translate(tx,ty).scale(sc));});
 if(tFlowMode&&tFlowSteps.length>0)tApplyFlow();}
 
 // Render modes
-// Cross-reference detection
-function tBuildXrefs(allPos){
-  tXrefLinks=[];if(!tXrefOn||tMode!=='class')return;
-  // Build symbol table: name → {_id, type, fileId}
-  const symbols={};const fileNodes={};
-  for(const p of allPos){
-    if(p.node.type==='file')fileNodes[p.node.name]=p.node._id;
-    if(p.node.type==='class'||p.node.type==='function'){
-      symbols[p.node.name]=p.node._id;
-    }
-    // Top-level variables (direct children of file)
-    if(p.node.type==='variable'&&p.node.name&&!p.node.name.startsWith('self.')){
-      const vn=p.node.name.match(/^(\w+)/)?.[1];
-      if(vn)symbols[vn]=p.node._id;
-    }
-  }
-  // Scan import nodes for cross-file refs
-  for(const p of allPos){
-    if(p.node.type==='import'&&p.node.detail){
-      const d=p.node.detail;
-      // from X import Y → find Y in symbols
-      const fm=d.match(/^from\s+(\w+)\s+import\s+(.+)/);
-      if(fm){
-        const targets=fm[2].split(',').map(s=>s.trim().split(' as ')[0]);
-        for(const t of targets){
-          if(symbols[t]){
-            tXrefLinks.push({from:p.node._id,to:symbols[t],type:'import',label:'imports '+t});
-          }
-        }
-      }
-      // import X → find X as a file
-      const im=d.match(/^import\s+(\w+)/);
-      if(im&&fileNodes[im[1]]){
-        tXrefLinks.push({from:p.node._id,to:fileNodes[im[1]],type:'import',label:'imports '+im[1]});
-      }
-    }
-  }
-  // Scan variables for class instantiation: var = ClassName(...)
-  for(const p of allPos){
-    if(p.node.type==='variable'){
-      const cm=p.node.name.match(/=\s*([A-Z]\w*)\s*\(/);
-      if(cm&&symbols[cm[1]]){
-        tXrefLinks.push({from:p.node._id,to:symbols[cm[1]],type:'instantiate',label:'creates '+cm[1]});
-      }
-    }
-  }
-  // Scan statements/variables for function calls: funcname(...)
-  for(const p of allPos){
-    if(p.node.type==='statement'||p.node.type==='variable'){
-      const nm=p.node.name;
-      // Match function calls (not class - those start uppercase, handled above)
-      const calls=[...nm.matchAll(/\b([a-z_]\w*)\s*\(/g)];
-      for(const c of calls){
-        const fn=c[1];
-        if(symbols[fn]&&symbols[fn]!==p.node._id&&!['int','str','float','len','print','input','range','type','list','dict','set','tuple','open','super'].includes(fn)){
-          tXrefLinks.push({from:p.node._id,to:symbols[fn],type:'call',label:'calls '+fn});
-        }
-      }
-      // Match method calls: obj.method(...)
-      const mcalls=[...nm.matchAll(/\.(\w+)\s*\(/g)];
-      for(const mc of mcalls){
-        if(symbols[mc[1]]&&symbols[mc[1]]!==p.node._id){
-          tXrefLinks.push({from:p.node._id,to:symbols[mc[1]],type:'call',label:'calls '+mc[1]});
-        }
-      }
-    }
-  }
-  // Deduplicate
-  const seen=new Set();tXrefLinks=tXrefLinks.filter(l=>{const k=l.from+'>'+l.to+l.type;if(seen.has(k))return false;seen.add(k);return true;});
-}
-
-function tToggleXref(){tXrefOn=!tXrefOn;document.getElementById('tXrefBtn')?.classList.toggle('xon',tXrefOn);tReRender();}
-
 function tRenderSingle(){tSave();const f=tFiles[tActiveIdx];if(!f.code.trim())return;
 const parsed=tParse(f.code,'f0_');const fn=f.name.replace(/\.py$/,'');const pn=document.getElementById('tpname')?.value||'Project';
 const proj={name:pn,type:'project',children:[],_line:0,_id:'proj'};const fNode={name:fn,type:'file',children:parsed.children,_line:0,_id:'file_0',detail:f.name};
@@ -977,7 +867,7 @@ const tw=fls.reduce((s,l)=>s+l.cw,0)+FG*(fls.length-1);let cx=-tw/2;
 const proj={name:pn,type:'project',children:[],_line:0,_id:'proj',detail:fts.length+' files'};
 const ap=[{node:proj,x:0,y:PY}];const al=[];
 for(let fi=0;fi<fls.length;fi++){const fl=fls[fi];const ox=cx-fl.mn;for(const p of fl.pos)ap.push({node:p.node,x:p.x+ox,y:p.y});for(const lk of fl.lks)al.push({src:{x:lk.src.x+ox,y:lk.src.y,type:lk.src.type},tgt:{x:lk.tgt.x+ox,y:lk.tgt.y,type:lk.tgt.type}});al.push({src:{x:0,y:PY,type:'project'},tgt:{x:fl.pos[0].x+ox,y:FY,type:'file'}});cx+=fl.cw+FG;}
-tBuildXrefs(ap);tDraw(ap,al);if(tFlowMode)tBuildFlowSteps(ap);}
+tDraw(ap,al);if(tFlowMode)tBuildFlowSteps(ap);}
 
 function tReRender(){if(tMode==='single')tRenderSingle();else tRenderClass();}
 
@@ -1020,8 +910,7 @@ function goTree(){
       <div class="tree-code-top"><h3>Python Source</h3>
         <div style="display:flex;gap:4px;align-items:center">
           <div class="tree-mode-toggle"><button class="tree-mode-btn on" id="tmSingle" onclick="tSetMode('single')">📄</button><button class="tree-mode-btn" id="tmClass" onclick="tSetMode('class')">🏗️</button></div>
-          <button class="tree-mode-btn" id="tFlowBtn" onclick="tToggleFlow()" style="border:1px solid var(--bd);border-radius:4px" title="Logic Flow">⚡</button>
-          <button class="xref-toggle" id="tXrefBtn" onclick="tToggleXref()" title="Show cross-file arrows">🔗</button>
+          <button class="tree-mode-btn" id="tFlowBtn" onclick="tToggleFlow()" style="border:1px solid var(--bd);border-radius:4px">⚡</button>
           <button style="padding:4px 12px;background:var(--a);color:var(--bg);border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer" onclick="tParseAndRender()">▶ Parse</button>
         </div>
       </div>
@@ -1045,11 +934,6 @@ function goTree(){
         <div class="tree-speed"><span>Speed:</span><input type="range" min="300" max="2000" value="800" step="100" id="tfSpeed" /></div>
       </div>
       <svg id="tsvg"></svg>
-      <div class="xref-legend" id="txrefLeg" style="display:none">
-        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#8b5cf6"></span>import</div>
-        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#10b981"></span>instantiate</div>
-        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#f87171"></span>call</div>
-      </div>
       <div class="tree-info" id="tinfo" style="display:none">
         <div class="tstats"><span>Nodes: <span class="tval" id="tsN">0</span></span><span>Files: <span class="tval" id="tsF">0</span></span><span>Classes: <span class="tval" id="tsC">0</span></span><span>Funcs: <span class="tval" id="tsFn">0</span></span></div>
         <div style="display:flex;gap:3px"><button class="tree-zbtn" onclick="tZoomIn()">+</button><button class="tree-zbtn" onclick="tZoomOut()">−</button><button class="tree-zbtn" onclick="tZoomReset()">⌂</button></div>
