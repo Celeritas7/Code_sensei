@@ -203,33 +203,6 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .xref-legend-line{width:18px;height:0;border-top:2px dashed;display:inline-block}
 .xref-toggle{padding:4px 10px;font-family:monospace;font-size:10px;border:1px solid var(--bd);border-radius:4px;background:transparent;color:var(--td);cursor:pointer}
 .xref-toggle.xon{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
-/* Saved projects */
-.tsp-item{display:flex;align-items:center;gap:8px;padding:7px 10px;margin-bottom:3px;background:var(--c);border:1px solid var(--bd);border-radius:6px;cursor:pointer;transition:all .12s}
-.tsp-item:hover{border-color:var(--a);background:var(--ch)}
-.tsp-name{flex:1;font-size:11px;font-weight:600;color:var(--tx)}
-.tsp-meta{font-size:9px;color:var(--td);font-family:monospace}
-.tsp-del{background:none;border:none;color:var(--td);font-size:11px;cursor:pointer;padding:2px 4px;border-radius:3px}
-.tsp-del:hover{color:var(--r);background:rgba(248,113,113,.08)}
-.tsp-empty{padding:12px;text-align:center;font-size:11px;color:var(--td)}
-.tsp-saving{padding:4px 10px;font-size:10px;color:var(--g);text-align:center}
-/* Compare mode */
-.tcmp-wrap{display:flex;flex:1;height:100%}
-.tcmp-side{flex:1;position:relative;overflow:hidden;background:#fff;display:flex;flex-direction:column}
-.tcmp-side+.tcmp-side{border-left:2px solid #e5e7eb}
-.tcmp-header{padding:6px 12px;background:#f8f9fc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.tcmp-header select{padding:4px 8px;border:1px solid #d1d5db;border-radius:5px;font-family:monospace;font-size:11px;background:#fff;color:#1a1e2a;flex:1}
-.tcmp-header .tcmp-label{font-family:monospace;font-size:10px;font-weight:700;color:#6b7280;white-space:nowrap}
-.tcmp-svg{flex:1;width:100%;height:100%}
-.tcmp-bar{position:absolute;top:0;left:0;right:0;padding:8px 12px;background:rgba(255,255,255,.95);border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;gap:12px;z-index:5}
-.tcmp-btn{padding:5px 14px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:monospace}
-.tcmp-btn:hover{filter:brightness(1.1)}
-.tcmp-legend{display:flex;gap:10px;font-family:monospace;font-size:9px;color:#6b7280}
-.tcmp-legend-dot{width:12px;height:12px;border-radius:3px;border:2px solid;display:inline-block;vertical-align:middle;margin-right:3px}
-/* Diff highlight on nodes */
-.tree-node.diff-same .tshape{stroke-width:2}
-.tree-node.diff-left .tshape{stroke:#ef4444!important;stroke-width:3;stroke-dasharray:none;filter:drop-shadow(0 0 4px rgba(239,68,68,.3))}
-.tree-node.diff-right .tshape{stroke:#3b82f6!important;stroke-width:3;stroke-dasharray:none;filter:drop-shadow(0 0 4px rgba(59,130,246,.3))}
-.tree-node.diff-changed .tshape{stroke:#f59e0b!important;stroke-width:3;stroke-dasharray:none;filter:drop-shadow(0 0 4px rgba(245,158,11,.3))}
 @media(max-width:700px){
   .tree-wrap{flex-direction:column}
   .tree-code-panel{width:100%;height:38vh;border-right:none;border-bottom:1px solid var(--bd)}
@@ -1006,6 +979,8 @@ const ap=[{node:proj,x:0,y:PY}];const al=[];
 for(let fi=0;fi<fls.length;fi++){const fl=fls[fi];const ox=cx-fl.mn;for(const p of fl.pos)ap.push({node:p.node,x:p.x+ox,y:p.y});for(const lk of fl.lks)al.push({src:{x:lk.src.x+ox,y:lk.src.y,type:lk.src.type},tgt:{x:lk.tgt.x+ox,y:lk.tgt.y,type:lk.tgt.type}});al.push({src:{x:0,y:PY,type:'project'},tgt:{x:fl.pos[0].x+ox,y:FY,type:'file'}});cx+=fl.cw+FG;}
 tBuildXrefs(ap);tDraw(ap,al);if(tFlowMode)tBuildFlowSteps(ap);}
 
+function tReRender(){if(tMode==='single')tRenderSingle();else tRenderClass();}
+
 // Flow engine
 function tBuildFlowSteps(allPos){const exec=new Set(['variable','function','loop','conditional','statement']);const fdefs={};
 for(const p of allPos)if(p.node.type==='function')fdefs[p.node.name]=p.node._id;
@@ -1030,321 +1005,12 @@ function tfPrev(){if(tFlowIdx>0){tFlowIdx--;tVisited.clear();for(let i=0;i<=tFlo
 function tfReset(){tFlowIdx=-1;tVisited.clear();tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}tApplyFlow();const se=document.getElementById('tfStep');if(se)se.textContent='0';const sn=document.getElementById('tfName');if(sn)sn.textContent='Ready';tUpdateFlowBtns();}
 function tfTogglePlay(){if(tFlowPlaying){tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}return;}tFlowPlaying=true;const pb=document.getElementById('tfPlay');if(pb){pb.textContent='⏸';pb.classList.add('playing');}const spd=parseInt(document.getElementById('tfSpeed')?.value)||800;tFlowTimer=setInterval(()=>{if(tFlowIdx>=tFlowSteps.length-1){tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}return;}tfNext();},spd);}
 function tToggleFlow(){tFlowMode=!tFlowMode;document.getElementById('tFlowBtn')?.classList.toggle('flow-on',tFlowMode);document.getElementById('tflowbar').style.display=tFlowMode?'flex':'none';if(tFlowMode){tCollapsed.clear();tVisited.clear();tfReset();}else{tFlowPlaying=false;clearInterval(tFlowTimer);}tReRender();}
-function tReRender(){if(tMode==='single')tRenderSingle();else if(tMode==='class')tRenderClass();else if(tMode==='compare')tRenderCompare();}
-
-// ═══════════════════════════════════════
-// COMPARE MODE — side-by-side tree diff
-// ═══════════════════════════════════════
-let tCmpLeftIdx=0, tCmpRightIdx=1;
-
-function tRenderCompare(){
-  tSave();
-  if(tFiles.length<2){
-    const panel=document.getElementById('tpanel');
-    if(panel)panel.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:14px;text-align:center;padding:40px">Add at least 2 files using the + tab<br>to compare their structure trees</div>';
-    document.getElementById('tinfo').style.display='none';
-    return;
-  }
-  if(tCmpLeftIdx>=tFiles.length)tCmpLeftIdx=0;
-  if(tCmpRightIdx>=tFiles.length)tCmpRightIdx=Math.min(1,tFiles.length-1);
-
-  const panel=document.getElementById('tpanel');
-  if(!panel)return;
-  panel.innerHTML=`
-    <div class="tcmp-wrap">
-      <div class="tcmp-side" id="tcmpL">
-        <div class="tcmp-header">
-          <span class="tcmp-label" style="color:#ef4444">LEFT:</span>
-          <select id="tcmpSelL" onchange="tCmpLeftIdx=+this.value;tRunCompare()">${tFiles.map((f,i)=>`<option value="${i}"${i===tCmpLeftIdx?' selected':''}>${f.name}</option>`).join('')}</select>
-        </div>
-        <svg class="tcmp-svg" id="tcmpSvgL"></svg>
-      </div>
-      <div class="tcmp-side" id="tcmpR">
-        <div class="tcmp-header">
-          <span class="tcmp-label" style="color:#3b82f6">RIGHT:</span>
-          <select id="tcmpSelR" onchange="tCmpRightIdx=+this.value;tRunCompare()">${tFiles.map((f,i)=>`<option value="${i}"${i===tCmpRightIdx?' selected':''}>${f.name}</option>`).join('')}</select>
-        </div>
-        <svg class="tcmp-svg" id="tcmpSvgR"></svg>
-      </div>
-    </div>
-    <div class="tcmp-legend" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border:1px solid #e5e7eb;border-radius:8px;padding:6px 14px;z-index:5">
-      <span><span class="tcmp-legend-dot" style="border-color:#ef4444;background:#fef2f2"></span>Only in left</span>
-      <span><span class="tcmp-legend-dot" style="border-color:#3b82f6;background:#eff6ff"></span>Only in right</span>
-      <span><span class="tcmp-legend-dot" style="border-color:#f59e0b;background:#fffbeb"></span>Changed</span>
-      <span><span class="tcmp-legend-dot" style="border-color:#d1d5db;background:#fff"></span>Same</span>
-    </div>`;
-  document.getElementById('tinfo').style.display='none';
-  tRunCompare();
-}
-
-function tRunCompare(){
-  const leftFile=tFiles[tCmpLeftIdx];
-  const rightFile=tFiles[tCmpRightIdx];
-  if(!leftFile?.code?.trim()||!rightFile?.code?.trim())return;
-
-  const leftTree=tParse(leftFile.code,'cL_');
-  const rightTree=tParse(rightFile.code,'cR_');
-
-  // Build signature maps for diffing: type+name → node
-  function buildSigMap(node,map,path=''){
-    const sig=path+'/'+node.type+':'+node.name;
-    map[sig]=node;
-    if(node.children)node.children.forEach((ch,i)=>buildSigMap(ch,map,sig));
-    return map;
-  }
-  const leftSigs=buildSigMap(leftTree,{});
-  const rightSigs=buildSigMap(rightTree,{});
-
-  // Determine diff status for each node
-  const leftDiff={};// _id → 'same'|'left'|'changed'
-  const rightDiff={};
-  const allLeftSigKeys=Object.keys(leftSigs);
-  const allRightSigKeys=Object.keys(rightSigs);
-
-  // Mark left nodes
-  for(const sig of allLeftSigKeys){
-    const ln=leftSigs[sig];
-    if(rightSigs[sig]){
-      // Check if content matches
-      const rn=rightSigs[sig];
-      if(ln.name===rn.name&&ln.type===rn.type&&ln.detail===rn.detail){
-        leftDiff[ln._id]='same';
-      }else{
-        leftDiff[ln._id]='changed';
-      }
-    }else{
-      leftDiff[ln._id]='left';
-    }
-  }
-  // Mark right nodes
-  for(const sig of allRightSigKeys){
-    const rn=rightSigs[sig];
-    if(leftSigs[sig]){
-      const ln=leftSigs[sig];
-      if(rn.name===ln.name&&rn.type===ln.type&&rn.detail===ln.detail){
-        rightDiff[rn._id]='same';
-      }else{
-        rightDiff[rn._id]='changed';
-      }
-    }else{
-      rightDiff[rn._id]='right';
-    }
-  }
-
-  // Render left tree
-  tDrawCompareTree('tcmpSvgL',leftTree,leftFile.name,leftDiff,'left');
-  // Render right tree
-  tDrawCompareTree('tcmpSvgR',rightTree,rightFile.name,rightDiff,'right');
-}
-
-function tDrawCompareTree(svgId,parsedTree,fileName,diffMap,side){
-  const svgEl=document.getElementById(svgId);if(!svgEl)return;
-  const svg=d3.select('#'+svgId);svg.selectAll('*').remove();
-  const container=svgEl.parentElement;
-  const w=container.clientWidth,h=container.clientHeight-40;
-
-  const fileNode={name:fileName.replace(/\.py$/,''),type:'file',children:parsedTree.children,_line:0,_id:side+'_file'};
-  const PY=0;
-  const sub=tLayoutSub(fileNode,0,PY);
-
-  const defs=svg.append('defs');
-  defs.append('marker').attr('id','carr-'+side).attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#b0b8c8');
-
-  const g=svg.append('g');
-  const zoom=d3.zoom().scaleExtent([.05,3]).on('zoom',e=>g.attr('transform',e.transform));
-  svg.call(zoom);
-
-  // Links
-  g.selectAll('.tlink').data(sub.lks).enter().append('path').attr('class','tlink').attr('marker-end','url(#carr-'+side+')').attr('d',d=>{
-    const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;
-    const sx=d.src.x,sy=d.src.y+sc.h/2,tx=d.tgt.x,ty=d.tgt.y-tc.h/2,my=sy+(ty-sy)*.45;
-    return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;
-  });
-
-  // Nodes
-  const nodes=g.selectAll('.tree-node').data(sub.pos).enter().append('g')
-    .attr('class',d=>{
-      const ds=diffMap[d.node._id];
-      if(ds==='left')return'tree-node diff-left';
-      if(ds==='right')return'tree-node diff-right';
-      if(ds==='changed')return'tree-node diff-changed';
-      return'tree-node diff-same';
-    })
-    .attr('transform',d=>`translate(${d.x},${d.y})`);
-
-  nodes.each(function(d){tDrawShape(d3.select(this),d.node.type,(TS[d.node.type]||TS.variable).w,(TS[d.node.type]||TS.variable).h);});
-  nodes.append('text').attr('class','tlabel').attr('y',d=>d.node.type==='loop'?-6:1)
-    .attr('font-size',d=>{const n=d.node.name;return n.length>18?'8.5px':n.length>14?'9.5px':'10px';})
-    .text(d=>{const n=d.node.name;return n.length>22?n.substring(0,20)+'…':n;});
-  nodes.filter(d=>d.node.type==='loop'&&d.node.detail).append('text').attr('class','tdetail').attr('y',12).attr('font-size','8px').text(d=>d.node.detail.length>20?d.node.detail.substring(0,18)+'…':d.node.detail);
-  nodes.filter(d=>TB[d.node.type]).append('text').attr('class','tbadge').attr('y',d=>-((TS[d.node.type]||TS.variable).h/2)-5).text(d=>TB[d.node.type]||'');
-
-  // Tooltip
-  const tip=document.getElementById('ttooltip');
-  nodes.on('mouseenter',(e,d)=>{const ds=diffMap[d.node._id]||'same';const dsLabel=ds==='left'?'⚠ Only in this file':ds==='right'?'⚠ Only in other file':ds==='changed'?'⚠ Different from other file':'✓ Same in both';tip.innerHTML=`<div class="ttt">${(d.node.type||'').toUpperCase()}: ${d.node.name}</div><div class="ttd">${dsLabel}</div>`+(d.node.detail?`<div class="ttd">${d.node.detail}</div>`:'');tip.classList.add('visible');});
-  nodes.on('mousemove',e=>{tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';});
-  nodes.on('mouseleave',()=>tip.classList.remove('visible'));
-
-  // Auto-fit
-  requestAnimationFrame(()=>{
-    const b=g.node().getBBox();const pad=40;
-    const sc=Math.min(w/(b.width+pad*2),(h)/(b.height+pad*2),.85);
-    const tx=w/2-(b.x+b.width/2)*sc;
-    const ty=pad+(-b.y)*sc;
-    svg.call(zoom.transform,d3.zoomIdentity.translate(tx,ty).scale(sc));
-  });
-}
-
-function tSetMode(m){tMode=m;document.getElementById('tmSingle')?.classList.toggle('on',m==='single');document.getElementById('tmClass')?.classList.toggle('on',m==='class');document.getElementById('tmCompare')?.classList.toggle('on',m==='compare');tCollapsed.clear();if(tFlowMode)tfReset();tParseAndRender();}
+function tSetMode(m){tMode=m;document.getElementById('tmSingle')?.classList.toggle('on',m==='single');document.getElementById('tmClass')?.classList.toggle('on',m==='class');tCollapsed.clear();if(tFlowMode)tfReset();tParseAndRender();}
 function tParseAndRender(){tSave();tCollapsed.clear();tReRender();}
 function tLoadSample(k){const s=T_SAMPLES[k];tFiles=s.files.map(f=>({...f}));tActiveIdx=0;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');const pe=document.getElementById('tpname');if(ce)ce.value=tFiles[0].code;if(fe)fe.value=tFiles[0].name;if(pe)pe.value=s.name;tCollapsed.clear();if(tFlowMode)tfReset();tRenderTabs();if(k==='quiz')tSetMode('class');else tSetMode('single');}
 function tZoomIn(){d3.select('#tsvg').transition().duration(300).call(tZoom.scaleBy,1.4);}
 function tZoomOut(){d3.select('#tsvg').transition().duration(300).call(tZoom.scaleBy,.7);}
 function tZoomReset(){tReRender();}
-
-// ═══════════════════════════════════════
-// PHASE 5: Cloud Save/Load for Python Projects
-// ═══════════════════════════════════════
-let tSavedProjects=[];
-let tSavedPanelOpen=false;
-
-async function tSaveProject(){
-  tSave();
-  const pn=(document.getElementById('tpname')?.value||'').trim();
-  if(!pn){alert('Enter a project name first');return;}
-  const hasCode=tFiles.some(f=>f.code.trim());
-  if(!hasCode){alert('Add some code to at least one file');return;}
-
-  // Show saving indicator
-  const panel=document.getElementById('tSavedPanel');
-  const list=document.getElementById('tSavedList');
-  if(panel)panel.style.display='block';
-  if(list)list.innerHTML='<div class="tsp-saving">💾 Saving...</div>';
-
-  try{
-    // Get user
-    const users=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');
-    const uid=users.length?users[0].id:null;
-
-    // Check if project with this name already exists
-    const existing=await sbq('code_sensei_py_projects',`select=id&project_name=eq.${encodeURIComponent(pn)}`);
-
-    let projId;
-    if(existing.length>0){
-      // Update existing project
-      projId=existing[0].id;
-      await sbPatch('code_sensei_py_projects',projId,{updated_at:new Date().toISOString(),view_mode:tMode});
-      // Delete old files
-      await fetch(`${SB}/code_sensei_py_files?project_id=eq.${projId}`,{method:'DELETE',headers:HDR});
-    }else{
-      // Create new project
-      const r=await sbPost('code_sensei_py_projects',{user_id:uid,project_name:pn,view_mode:tMode});
-      if(r&&r[0])projId=r[0].id;
-      else throw new Error('Failed to create project');
-    }
-
-    // Insert all files
-    const fileData=tFiles.filter(f=>f.code.trim()).map((f,i)=>({
-      project_id:projId,
-      filename:f.name||'untitled.py',
-      code_content:f.code,
-      file_order:i
-    }));
-    for(const fd of fileData){await sbPost('code_sensei_py_files',fd);}
-
-    if(list)list.innerHTML='<div class="tsp-saving">✅ Saved!</div>';
-    setTimeout(()=>tLoadProjectsList(),1000);
-  }catch(e){
-    console.error(e);
-    if(list)list.innerHTML='<div class="tsp-saving" style="color:var(--r)">❌ Save failed: '+esc(e.message)+'</div>';
-  }
-}
-
-async function tLoadProjectsList(){
-  const list=document.getElementById('tSavedList');
-  if(!list)return;
-  list.innerHTML='<div class="tsp-saving">Loading...</div>';
-
-  try{
-    tSavedProjects=await sbq('code_sensei_py_projects','select=*&order=updated_at.desc');
-    if(!tSavedProjects.length){
-      list.innerHTML='<div class="tsp-empty">No saved projects yet.<br>Paste code and hit 💾 Save.</div>';
-      return;
-    }
-    list.innerHTML=tSavedProjects.map(p=>{
-      const d=new Date(p.updated_at);
-      const dateStr=d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-      return`<div class="tsp-item" onclick="tLoadProject(${p.id})">
-        <span style="font-size:14px">📁</span>
-        <div style="flex:1;min-width:0">
-          <div class="tsp-name">${esc(p.project_name)}</div>
-          <div class="tsp-meta">${dateStr} · ${p.view_mode||'single'}</div>
-        </div>
-        <button class="tsp-del" onclick="event.stopPropagation();tDeleteProject(${p.id},'${esc(p.project_name)}')" title="Delete">🗑</button>
-      </div>`;
-    }).join('');
-  }catch(e){
-    list.innerHTML='<div class="tsp-saving" style="color:var(--r)">Failed to load projects</div>';
-  }
-}
-
-async function tLoadProject(projId){
-  const list=document.getElementById('tSavedList');
-  if(list)list.innerHTML='<div class="tsp-saving">Loading files...</div>';
-
-  try{
-    // Get project info
-    const projs=await sbq('code_sensei_py_projects',`select=*&id=eq.${projId}`);
-    if(!projs.length)throw new Error('Project not found');
-    const proj=projs[0];
-
-    // Get files
-    const pyFiles=await sbq('code_sensei_py_files',`select=*&project_id=eq.${projId}&order=file_order`);
-    if(!pyFiles.length)throw new Error('No files in project');
-
-    // Populate UI
-    tFiles=pyFiles.map(f=>({name:f.filename,code:f.code_content}));
-    tActiveIdx=0;
-    const ce=document.getElementById('tcode');
-    const fe=document.getElementById('tfname');
-    const pe=document.getElementById('tpname');
-    if(ce)ce.value=tFiles[0].code;
-    if(fe)fe.value=tFiles[0].name;
-    if(pe)pe.value=proj.project_name;
-
-    // Set mode
-    if(proj.view_mode==='class')tSetMode('class');
-    else tSetMode('single');
-
-    tCollapsed.clear();
-    if(tFlowMode)tfReset();
-    tRenderTabs();
-    tSavedPanelOpen=false;
-    document.getElementById('tSavedPanel').style.display='none';
-
-    // Auto-parse
-    tParseAndRender();
-  }catch(e){
-    if(list)list.innerHTML='<div class="tsp-saving" style="color:var(--r)">'+esc(e.message)+'</div>';
-  }
-}
-
-async function tDeleteProject(projId,name){
-  if(!confirm('Delete "'+name+'"? This cannot be undone.'))return;
-  try{
-    // Files cascade-delete via FK, but REST API needs manual delete
-    await fetch(`${SB}/code_sensei_py_files?project_id=eq.${projId}`,{method:'DELETE',headers:HDR});
-    await fetch(`${SB}/code_sensei_py_projects?id=eq.${projId}`,{method:'DELETE',headers:HDR});
-    tLoadProjectsList();
-  }catch(e){console.error(e);}
-}
-
-function tToggleSavedPanel(){
-  tSavedPanelOpen=!tSavedPanelOpen;
-  const panel=document.getElementById('tSavedPanel');
-  if(panel){panel.style.display=tSavedPanelOpen?'block':'none';}
-  if(tSavedPanelOpen)tLoadProjectsList();
-}
 
 // Main entry: render the tree section
 function goTree(){
@@ -1353,22 +1019,13 @@ function goTree(){
     <div class="tree-code-panel">
       <div class="tree-code-top"><h3>Python Source</h3>
         <div style="display:flex;gap:4px;align-items:center">
-          <div class="tree-mode-toggle"><button class="tree-mode-btn on" id="tmSingle" onclick="tSetMode('single')">📄</button><button class="tree-mode-btn" id="tmClass" onclick="tSetMode('class')">🏗️</button><button class="tree-mode-btn" id="tmCompare" onclick="tSetMode('compare')">📊</button></div>
+          <div class="tree-mode-toggle"><button class="tree-mode-btn on" id="tmSingle" onclick="tSetMode('single')">📄</button><button class="tree-mode-btn" id="tmClass" onclick="tSetMode('class')">🏗️</button></div>
           <button class="tree-mode-btn" id="tFlowBtn" onclick="tToggleFlow()" style="border:1px solid var(--bd);border-radius:4px" title="Logic Flow">⚡</button>
           <button class="xref-toggle" id="tXrefBtn" onclick="tToggleXref()" title="Show cross-file arrows">🔗</button>
           <button style="padding:4px 12px;background:var(--a);color:var(--bg);border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer" onclick="tParseAndRender()">▶ Parse</button>
         </div>
       </div>
-      <div class="tree-input-row"><label>project:</label><input class="tree-input-sm" id="tpname" value="My Project" style="color:var(--c-proj)" />
-        <button onclick="tSaveProject()" style="padding:3px 8px;background:var(--g);color:var(--bg);border:none;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap" title="Save to cloud">💾 Save</button>
-        <button onclick="tToggleSavedPanel()" style="padding:3px 8px;background:var(--c);border:1px solid var(--bd);border-radius:4px;font-size:10px;color:var(--tm);cursor:pointer;white-space:nowrap" title="Load from cloud">📂 Load</button>
-      </div>
-      <div id="tSavedPanel" style="display:none;border-bottom:1px solid var(--bd);background:var(--bg);max-height:180px;overflow-y:auto">
-        <div style="padding:6px 10px;font-size:10px;color:var(--td);font-weight:600;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center">
-          <span>☁️ SAVED PROJECTS</span><button onclick="tToggleSavedPanel()" style="background:none;border:none;color:var(--td);font-size:12px;cursor:pointer">✕</button>
-        </div>
-        <div id="tSavedList" style="padding:0 6px 6px"></div>
-      </div>
+      <div class="tree-input-row"><label>project:</label><input class="tree-input-sm" id="tpname" value="My Project" /></div>
       <div class="tree-ftabs" id="tftabs"></div>
       <div class="tree-input-row"><label>file:</label><input class="tree-input-sm" id="tfname" value="main.py" style="color:var(--a)" /></div>
       <textarea class="tree-textarea" id="tcode" spellcheck="false" placeholder="Paste Python code here..."></textarea>
