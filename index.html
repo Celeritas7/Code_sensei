@@ -159,7 +159,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .tlabel{font-family:monospace;fill:#1a1e2a;pointer-events:none;dominant-baseline:middle;text-anchor:middle;font-weight:600}
 .tbadge{font-family:monospace;font-size:8px;fill:#6b7280;pointer-events:none;text-anchor:middle}
 .tdetail{font-family:monospace;font-size:8.5px;fill:#6b7280;pointer-events:none;text-anchor:middle}
-.tlink{fill:none;stroke:#b0b8c8;stroke-width:1.5}
+.tlink{fill:none;stroke:#7c8594;stroke-width:1.8}
 .tcoll circle{fill:#f0f2f5;stroke:#c0c8d4;stroke-width:1.5}
 .tcoll text{font-family:monospace;font-size:10px;fill:#6b7280;text-anchor:middle;dominant-baseline:middle;font-weight:600}
 .tcount{font-family:monospace;font-size:8px;fill:#9ca3af;pointer-events:none;text-anchor:start}
@@ -227,9 +227,12 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .tcmp-legend-dot{width:12px;height:12px;border-radius:3px;border:2px solid;display:inline-block;vertical-align:middle;margin-right:3px}
 /* Diff highlight on nodes */
 .tree-node.diff-same .tshape{stroke-width:2}
-.tree-node.diff-left .tshape{stroke:#ef4444!important;stroke-width:3;stroke-dasharray:none;filter:drop-shadow(0 0 4px rgba(239,68,68,.3))}
-.tree-node.diff-right .tshape{stroke:#3b82f6!important;stroke-width:3;stroke-dasharray:none;filter:drop-shadow(0 0 4px rgba(59,130,246,.3))}
-.tree-node.diff-changed .tshape{stroke:#f59e0b!important;stroke-width:3;stroke-dasharray:none;filter:drop-shadow(0 0 4px rgba(245,158,11,.3))}
+.tree-node.diff-left .tshape{fill:#fef2f2!important;stroke:#dc2626!important;stroke-width:3.5}
+.tree-node.diff-left .tlabel{fill:#991b1b!important}
+.tree-node.diff-right .tshape{fill:#eff6ff!important;stroke:#2563eb!important;stroke-width:3.5}
+.tree-node.diff-right .tlabel{fill:#1e3a8a!important}
+.tree-node.diff-changed .tshape{fill:#fef3c7!important;stroke:#d97706!important;stroke-width:3.5;stroke-dasharray:6,3}
+.tree-node.diff-changed .tlabel{fill:#92400e!important}
 @media(max-width:700px){
   .tree-wrap{flex-direction:column}
   .tree-code-panel{width:100%;height:38vh;border-right:none;border-bottom:1px solid var(--bd)}
@@ -895,7 +898,7 @@ if(type==='class'){
 const TB={project:'PROJECT',file:'FILE',module:'MODULE',class:'CLASS',function:'ƒ FUNC',variable:'VAR',loop:'',import:'IMPORT',conditional:'COND',statement:''};
 
 // Layout
-function tLayoutSub(node,x,y){const cfg=TS[node.type]||TS.variable;const pos=[{node,x,y}];const lks=[];const IND=55,VG=22;let curY=y+cfg.h/2+VG+12;
+function tLayoutSub(node,x,y){const cfg=TS[node.type]||TS.variable;const pos=[{node,x,y}];const lks=[];const IND=40,VG=24;let curY=y+cfg.h/2+VG+8;
 if(!tCollapsed.has(node._id)&&node.children&&node.children.length>0){for(const ch of node.children){const cc=TS[ch.type]||TS.variable;const cx=x+IND,cy=curY+cc.h/2;const sub=tLayoutSub(ch,cx,cy);pos.push(...sub.pos);lks.push({src:{x,y,type:node.type},tgt:{x:cx,y:cy,type:ch.type}});lks.push(...sub.lks);curY=sub.maxY+VG;}}
 let maxY=y+cfg.h/2;for(const p of pos){maxY=Math.max(maxY,p.y+(TS[p.node.type]||TS.variable).h/2);}return{pos,lks,maxY};}
 
@@ -903,16 +906,16 @@ let maxY=y+cfg.h/2;for(const p of pos){maxY=Math.max(maxY,p.y+(TS[p.node.type]||
 function tDraw(allPos,allLks){const panel=document.getElementById('tpanel');if(!panel)return;const svg=d3.select('#tsvg');svg.selectAll('*').remove();
 document.getElementById('tinfo').style.display='flex';
 const w=panel.clientWidth,h=panel.clientHeight-50;
-const defs=svg.append('defs');defs.append('marker').attr('id','tarrow').attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#b0b8c8');
+const defs=svg.append('defs');defs.append('marker').attr('id','tarrow').attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#7c8594');
 tSvgG=svg.append('g');tZoom=d3.zoom().scaleExtent([.05,3]).on('zoom',e=>tSvgG.attr('transform',e.transform));svg.call(tZoom);
 tNodePosMap={};tAllNodeMap={};for(const p of allPos){tNodePosMap[p.node._id]={x:p.x,y:p.y};tAllNodeMap[p.node._id]=p.node;}
-tSvgG.selectAll('.tlink').data(allLks).enter().append('path').attr('class','tlink').attr('marker-end','url(#tarrow)').attr('d',d=>{const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;const sx=d.src.x,sy=d.src.y+sc.h/2+20,tx=d.tgt.x,ty=d.tgt.y-tc.h/2;const my=sy+(ty-sy)*.5;return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;});
+tSvgG.selectAll('.tlink').data(allLks).enter().append('path').attr('class','tlink').attr('marker-end','url(#tarrow)').attr('d',d=>{const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;const sx=d.src.x,sy=d.src.y+sc.h/2,tx=d.tgt.x,ty=d.tgt.y-tc.h/2;if(sx===tx)return`M${sx},${sy} L${tx},${ty}`;const my=sy+(ty-sy)*.5;return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;});
 const nodes=tSvgG.selectAll('.tree-node').data(allPos).enter().append('g').attr('class','tree-node').attr('transform',d=>`translate(${d.x},${d.y})`).attr('data-id',d=>d.node._id);
 nodes.each(function(d){tDrawShape(d3.select(this),d.node.type,(TS[d.node.type]||TS.variable).w,(TS[d.node.type]||TS.variable).h);});
 nodes.append('text').attr('class','tlabel').attr('y',d=>d.node.type==='loop'?-6:1).attr('font-size',d=>{const n=d.node.name;return n.length>18?'8.5px':n.length>14?'9.5px':n.length>10?'10px':'11px';}).text(d=>{const n=d.node.name;return n.length>24?n.substring(0,22)+'…':n;});
 nodes.filter(d=>d.node.type==='loop'&&d.node.detail).append('text').attr('class','tdetail').attr('y',12).attr('font-size','8.5px').text(d=>d.node.detail.length>25?d.node.detail.substring(0,23)+'…':d.node.detail);
 nodes.filter(d=>TB[d.node.type]).append('text').attr('class','tbadge').attr('y',d=>-((TS[d.node.type]||TS.variable).h/2)-5).text(d=>TB[d.node.type]||'');
-if(!tFlowMode){nodes.filter(d=>d.node.children&&d.node.children.length>0).each(function(d){const g=d3.select(this);const cfg=TS[d.node.type]||TS.variable;const isC=tCollapsed.has(d.node._id);const cnt=tCountDesc(d.node);const by=cfg.h/2+2;const badge=g.append('g').attr('class','tcoll');badge.append('circle').attr('cx',0).attr('cy',by+9).attr('r',9);badge.append('text').attr('x',0).attr('y',by+10).text(isC?'+':'−');if(isC)g.append('text').attr('class','tcount').attr('x',12).attr('y',by+10).text(cnt+' hidden');});
+if(!tFlowMode){nodes.filter(d=>d.node.children&&d.node.children.length>0).each(function(d){const g=d3.select(this);const cfg=TS[d.node.type]||TS.variable;const isC=tCollapsed.has(d.node._id);const cnt=tCountDesc(d.node);const bx=-(cfg.w/2)-14;const badge=g.append('g').attr('class','tcoll');badge.append('circle').attr('cx',bx).attr('cy',0).attr('r',8);badge.append('text').attr('x',bx).attr('y',1).attr('font-size','9px').text(isC?'+':'−');if(isC)g.append('text').attr('class','tcount').attr('x',bx-20).attr('y',1).attr('text-anchor','end').text(cnt);});
 nodes.on('click',function(e,d){e.stopPropagation();if(!d.node.children||!d.node.children.length)return;if(tCollapsed.has(d.node._id))tCollapsed.delete(d.node._id);else tCollapsed.add(d.node._id);tReRender();});}
 const tip=document.getElementById('ttooltip');
 nodes.on('mouseenter',(e,d)=>{tip.innerHTML=`<div class="ttt">${(d.node.type||'').toUpperCase()}: ${d.node.name}</div>`+(d.node.detail?`<div class="ttd">${d.node.detail}</div>`:'')+(d.node._line?`<div class="ttd">Line ${d.node._line}</div>`:'');tip.classList.add('visible');});
@@ -1103,10 +1106,10 @@ function tRenderCompare(){
         <svg class="tcmp-svg" id="tcmpSvgR"></svg>
       </div>
     </div>
-    <div class="tcmp-legend" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);border:1px solid #e5e7eb;border-radius:8px;padding:6px 14px;z-index:5">
-      <span><span class="tcmp-legend-dot" style="border-color:#ef4444;background:#fef2f2"></span>Only in left</span>
-      <span><span class="tcmp-legend-dot" style="border-color:#3b82f6;background:#eff6ff"></span>Only in right</span>
-      <span><span class="tcmp-legend-dot" style="border-color:#f59e0b;background:#fffbeb"></span>Changed</span>
+    <div class="tcmp-legend" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.95);border:1px solid #e5e7eb;border-radius:8px;padding:8px 16px;z-index:5">
+      <span><span class="tcmp-legend-dot" style="border-color:#dc2626;background:#fef2f2"></span>Only in left</span>
+      <span><span class="tcmp-legend-dot" style="border-color:#2563eb;background:#eff6ff"></span>Only in right</span>
+      <span><span class="tcmp-legend-dot" style="border-color:#d97706;background:#fef3c7;border-style:dashed"></span>Changed</span>
       <span><span class="tcmp-legend-dot" style="border-color:#d1d5db;background:#fff"></span>Same</span>
     </div>`;
   const tinfoEl=document.getElementById('tinfo');if(tinfoEl)tinfoEl.style.display='none';
@@ -1184,7 +1187,7 @@ function tDrawCompareTree(svgId,parsedTree,fileName,diffMap,side){
   const sub=tLayoutSub(fileNode,0,PY);
 
   const defs=svg.append('defs');
-  defs.append('marker').attr('id','carr-'+side).attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#b0b8c8');
+  defs.append('marker').attr('id','carr-'+side).attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#7c8594');
 
   const g=svg.append('g');
   const zoom=d3.zoom().scaleExtent([.05,3]).on('zoom',e=>g.attr('transform',e.transform));
@@ -1193,7 +1196,7 @@ function tDrawCompareTree(svgId,parsedTree,fileName,diffMap,side){
   // Links
   g.selectAll('.tlink').data(sub.lks).enter().append('path').attr('class','tlink').attr('marker-end','url(#carr-'+side+')').attr('d',d=>{
     const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;
-    const sx=d.src.x,sy=d.src.y+sc.h/2+20,tx=d.tgt.x,ty=d.tgt.y-tc.h/2,my=sy+(ty-sy)*.5;
+    const sx=d.src.x,sy=d.src.y+sc.h/2,tx=d.tgt.x,ty=d.tgt.y-tc.h/2;if(sx===tx)return`M${sx},${sy} L${tx},${ty}`;const my=sy+(ty-sy)*.5;
     return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;
   });
 
