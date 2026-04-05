@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CodeSensei</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <style>
 :root{--bg:#0d0d16;--s:#131322;--c:#181830;--ch:#1e1e38;--bd:#1f1f3a;--a:#F59E0B;--as:#2a2210;--tx:#cccce0;--td:#555570;--tm:#8888a0;--g:#34D399;--r:#F87171;--p:#A78BFA;--b:#38bdf8}
 *{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;overflow:hidden;display:flex}
@@ -133,69 +132,6 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
   .lbox{padding:14px;font-size:13px}
   .md-code{padding:10px;font-size:11px}
 }
-/* Python Tree Visualizer */
-.tree-wrap{display:flex;height:calc(100vh - 0px);overflow:hidden}
-.tree-code-panel{width:360px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--bd);background:var(--s)}
-.tree-code-top{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--bd)}
-.tree-code-top h3{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--td)}
-.tree-input-row{display:flex;align-items:center;gap:6px;padding:5px 10px;border-bottom:1px solid var(--bd);background:var(--bg)}
-.tree-input-row label{font-size:10px;color:var(--td);font-family:monospace;flex-shrink:0}
-.tree-input-sm{flex:1;padding:3px 7px;background:var(--c);border:1px solid var(--bd);border-radius:4px;font-family:monospace;font-size:11px;outline:none;color:var(--tx)}
-.tree-ftabs{display:flex;gap:0;border-bottom:1px solid var(--bd);background:var(--bg);overflow-x:auto;flex-shrink:0}
-.tree-ftab{padding:6px 12px;font-family:monospace;font-size:10px;border:none;background:transparent;color:var(--td);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
-.tree-ftab.on{color:var(--a);border-bottom-color:var(--a);background:var(--s)}
-.tree-ftab:hover:not(.on){color:var(--tm);background:var(--c)}
-.tree-ftab .xtab{font-size:11px;opacity:.4;margin-left:4px}
-.tree-ftab .xtab:hover{opacity:1;color:var(--r)}
-.tree-add-tab{padding:6px 8px;font-size:13px;border:none;background:transparent;color:var(--td);cursor:pointer}
-.tree-textarea{flex:1;width:100%;padding:12px;background:var(--bg);color:var(--tx);border:none;outline:none;font-family:monospace;font-size:12px;line-height:1.7;resize:none;tab-size:4}
-.tree-textarea::placeholder{color:var(--td)}
-.tree-samples{display:flex;gap:5px;padding:7px 10px;border-top:1px solid var(--bd);flex-wrap:wrap}
-.tree-sample-btn{padding:3px 8px;background:var(--c);color:var(--td);border:1px solid var(--bd);border-radius:4px;font-family:monospace;font-size:10px;cursor:pointer}
-.tree-sample-btn:hover{color:var(--tx);border-color:var(--tm)}
-.tree-panel{flex:1;position:relative;overflow:hidden;background:#fff}
-.tree-panel svg{width:100%;height:100%}
-.tree-node{cursor:pointer}.tree-node:hover .tshape{filter:brightness(.93) saturate(1.2)}
-.tlabel{font-family:monospace;fill:#1a1e2a;pointer-events:none;dominant-baseline:middle;text-anchor:middle;font-weight:600}
-.tbadge{font-family:monospace;font-size:8px;fill:#6b7280;pointer-events:none;text-anchor:middle}
-.tdetail{font-family:monospace;font-size:8.5px;fill:#6b7280;pointer-events:none;text-anchor:middle}
-.tlink{fill:none;stroke:#b0b8c8;stroke-width:1.5}
-.tcoll circle{fill:#f0f2f5;stroke:#c0c8d4;stroke-width:1.5}
-.tcoll text{font-family:monospace;font-size:10px;fill:#6b7280;text-anchor:middle;dominant-baseline:middle;font-weight:600}
-.tcount{font-family:monospace;font-size:8px;fill:#9ca3af;pointer-events:none;text-anchor:start}
-.tree-node.dimmed{opacity:.12;transition:opacity .3s}
-.tree-node.visited{opacity:1;transition:opacity .3s}
-.tree-node.ancestor{opacity:.45;transition:opacity .3s}
-.tree-node.active-step{opacity:1;transition:opacity .3s}
-.tree-node.active-step .tshape{filter:drop-shadow(0 0 8px rgba(16,185,129,.6)) drop-shadow(0 0 16px rgba(16,185,129,.3))}
-.tree-node.parallel-step{opacity:1;transition:opacity .3s}
-.tree-node.parallel-step .tshape{filter:drop-shadow(0 0 8px rgba(99,102,241,.6))}
-.tlink.dimmed{opacity:.08}
-.tree-flow-bar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;background:rgba(255,255,255,.95);border-bottom:1px solid #e5e7eb;backdrop-filter:blur(8px);z-index:10;flex-wrap:wrap}
-.tree-flow-btn{width:32px;height:32px;border-radius:7px;border:1px solid #d1d5db;background:#fff;color:#1a1e2a;font-size:14px;cursor:pointer;display:grid;place-items:center}
-.tree-flow-btn:hover{background:#f3f4f6}.tree-flow-btn.playing{background:#10b981;color:#fff;border-color:#10b981}
-.tree-flow-btn:disabled{opacity:.3;cursor:default}
-.tree-step-info{font-family:monospace;font-size:11px;color:#6b7280}
-.tree-step-info .snum{color:#10b981;font-weight:700;font-size:13px}
-.tree-step-name{font-family:monospace;font-size:10px;color:#1a1e2a;background:#f0fdf4;border:1px solid #bbf7d0;padding:3px 9px;border-radius:5px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tree-speed{display:flex;align-items:center;gap:4px;font-size:10px;color:#9ca3af;font-family:monospace}
-.tree-speed input{width:50px;accent-color:#10b981}
-.tree-info{position:absolute;bottom:12px;left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:rgba(255,255,255,.92);border:1px solid #e5e7eb;border-radius:8px;font-size:10px;color:#6b7280;font-family:monospace}
-.tree-info .tstats{display:flex;gap:10px}
-.tree-info .tval{color:var(--acc);font-weight:600}
-.tree-zbtn{width:24px;height:24px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:5px;color:#6b7280;font-size:12px;cursor:pointer;display:grid;place-items:center}
-.tree-zbtn:hover{background:#e5e7eb;color:#1a1e2a}
-.tree-mode-toggle{display:flex;gap:0;border:1px solid var(--bd);border-radius:6px;overflow:hidden;margin:0 6px}
-.tree-mode-btn{padding:4px 10px;font-family:monospace;font-size:10px;border:none;background:transparent;color:var(--td);cursor:pointer}
-.tree-mode-btn.on{background:var(--a);color:var(--bg)}
-.tree-mode-btn.flow-on{background:#10b981;color:#fff}
-.tree-ttip{position:fixed;padding:8px 12px;background:#1e293b;border:1px solid #334155;border-radius:8px;font-family:monospace;font-size:11px;color:#e2e8f0;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;max-width:260px;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.3)}
-.tree-ttip.visible{opacity:1}.tree-ttip .ttt{color:#6ee7b7;font-weight:600}.tree-ttip .ttd{color:#94a3b8;margin-top:2px}
-@media(max-width:700px){
-  .tree-wrap{flex-direction:column}
-  .tree-code-panel{width:100%;height:38vh;border-right:none;border-bottom:1px solid var(--bd)}
-  .tree-panel{height:62vh}
-}
 </style>
 </head>
 <body>
@@ -208,7 +144,6 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
     <div class="nv" id="nav-bat" onclick="goModules('bat')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">☰</span>Batch</div>
     <div class="nv" id="nav-sql" onclick="goModules('sql')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">⊞</span>SQL</div>
     <div class="nv" id="nav-proj" onclick="goProjects()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">◧</span>My Projects</div>
-    <div class="nv" id="nav-tree" onclick="goTree()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">🌳</span>Python Tree</div>
   </div>
   <div class="sb-ft">Learning from your own code</div>
 </div>
@@ -258,19 +193,11 @@ function goDash(){
       </div>
     </div>
     <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">MY PROJECTS</div>
-    <div class="cd" onclick="goProjects()" style="margin-bottom:8px;border-color:rgba(56,189,248,.12)">
+    <div class="cd" onclick="goProjects()" style="margin-bottom:16px;border-color:rgba(56,189,248,.12)">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="width:44px;height:44px;border-radius:10px;background:rgba(56,189,248,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🔧</div>
         <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Ghost Tracker</div><div style="font-size:12px;color:var(--td)">HTML/CSS/JS · 30 revisions from GitHub</div></div>
         <span style="color:var(--b);font-size:16px">→</span>
-      </div>
-    </div>
-    <div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:1px;margin-bottom:10px;margin-top:20px">TOOLS</div>
-    <div class="cd" onclick="goTree()" style="margin-bottom:16px;border-color:rgba(52,211,153,.12)">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:44px;height:44px;border-radius:10px;background:rgba(52,211,153,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🌳</div>
-        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Python Structure Tree</div><div style="font-size:12px;color:var(--td)">Visualize code structure · Logic flow stepper</div></div>
-        <span style="color:var(--g);font-size:16px">→</span>
       </div>
     </div>
     <div style="padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
@@ -763,187 +690,6 @@ function promptBtns(context) {
     <button class="prompt-btn" onclick="event.stopPropagation();showPrompt('why',promptContexts[${idx}])"><span class="pb-icon">🎯</span> Why does this matter?</button>
     <button class="prompt-btn" onclick="event.stopPropagation();showPrompt('example',promptContexts[${idx}])"><span class="pb-icon">💻</span> Show me an example</button>
   </div>`;
-}
-
-// ═══════════════════════════════════════
-// PYTHON STRUCTURE TREE VISUALIZER
-// ═══════════════════════════════════════
-let tFiles=[{name:'main.py',code:''}],tActiveIdx=0,tMode='single',tFlowMode=false;
-let tZoom=null,tSvgG=null,tCollapsed=new Set(),tVisited=new Set(),tNodeIdCtr=0;
-let tFlowSteps=[],tFlowIdx=-1,tFlowPlaying=false,tFlowTimer=null;
-let tNodePosMap={},tAllNodeMap={},tLastParsed=null;
-const T_SAMPLES={
-single:{name:'Star Triangle',files:[{name:'triangle.py',code:'def user_input():\n    height= int(input("Enter height:\\n"))\n    return height\n\nheight = user_input()\nblanks = height - 1\nstars = 1\n\nfor loops in height:\n    blanks -= 1\n    stars += 1\n    print(" ")\n    print("*")'}]},
-quiz:{name:'Quiz Project',files:[
-{name:'data.py',code:'question_data = [\n{"text": "A slug blood is green.", "answer": "True"},\n{"text": "The loudest animal is the African Elephant.", "answer": "False"},\n]'},
-{name:'question_model.py',code:'class Question:\n    def __init__(self, q_text, q_answer):\n        self.text = q_text\n        self.answer = q_answer'},
-{name:'quiz_brain.py',code:'from question_model import Question\nfrom data import question_data\n\nclass QuizBrain:\n    def __init__(self, q_list):\n        self.question_number = 0\n        self.question_list = q_list\n        self.score = 0\n\n    def still_has_questions(self):\n        return self.question_number < len(self.question_list)\n\n    def new_question(self):\n        current_question = self.question_list[self.question_number]\n        self.question_number += 1\n        user_answer = input(f"Q.{self.question_number}")\n        self.check_answer(user_answer, current_question.answer)\n\n    def check_answer(self, user_answer, correct_answer):\n        if user_answer.lower() == correct_answer.lower():\n            self.score += 1\n            print("Correct!")\n        else:\n            print("Wrong.")'},
-{name:'main.py',code:'from question_model import Question\nfrom data import question_data\nfrom quiz_brain import QuizBrain\n\nquestion_bank = []\n\nfor question in question_data:\n    question_text = question["text"]\n    question_answer = question["answer"]\n    new_question = Question(question_text,question_answer)\n    question_bank.append(new_question)\n\nquiz = QuizBrain(question_bank)\n\nwhile quiz.still_has_questions():\n    quiz.new_question()\n\nprint("Quiz complete!")'}
-]}};
-
-// Tree file tabs
-function tRenderTabs(){const c=document.getElementById('tftabs');if(!c)return;c.innerHTML='';tFiles.forEach((f,i)=>{const t=document.createElement('button');t.className='tree-ftab'+(i===tActiveIdx?' on':'');t.innerHTML=`<span>${f.name||'untitled.py'}</span>`+(tFiles.length>1?`<span class="xtab" onclick="event.stopPropagation();tRemoveFile(${i})">×</span>`:'');t.onclick=()=>tSwitchFile(i);c.appendChild(t);});const a=document.createElement('button');a.className='tree-add-tab';a.textContent='+';a.onclick=tAddFile;c.appendChild(a);}
-function tSave(){tFiles[tActiveIdx].code=document.getElementById('tcode')?.value||'';tFiles[tActiveIdx].name=document.getElementById('tfname')?.value||'untitled.py';}
-function tSwitchFile(i){tSave();tActiveIdx=i;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');if(ce)ce.value=tFiles[i].code;if(fe)fe.value=tFiles[i].name;tRenderTabs();}
-function tAddFile(){tSave();tFiles.push({name:`file${tFiles.length+1}.py`,code:''});tActiveIdx=tFiles.length-1;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');if(ce)ce.value='';if(fe)fe.value=tFiles[tActiveIdx].name;tRenderTabs();}
-function tRemoveFile(i){if(tFiles.length<=1)return;tFiles.splice(i,1);if(tActiveIdx>=tFiles.length)tActiveIdx=tFiles.length-1;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');if(ce)ce.value=tFiles[tActiveIdx].code;if(fe)fe.value=tFiles[tActiveIdx].name;tRenderTabs();}
-
-// Parser
-function tParse(code,pfx=''){tNodeIdCtr=0;const lines=code.split('\n');const root={name:'module',type:'module',children:[],detail:'',_line:0,_id:pfx+'m_'+tNodeIdCtr++};const stk=[{node:root,indent:-1}];const impG={name:'imports',type:'import',children:[],detail:'',_line:0,_id:pfx+'imp_'+tNodeIdCtr++};let hasImp=false;
-for(let i=0;i<lines.length;i++){const raw=lines[i],tr=raw.trimStart();if(!tr||tr.startsWith('#'))continue;const ind=raw.length-tr.length,ln=i+1;
-while(stk.length>1&&stk[stk.length-1].indent>=ind)stk.pop();const par=stk[stk.length-1].node;let nd=null;
-if(/^(from\s+\S+\s+)?import\s+/.test(tr)){hasImp=true;tr.replace(/^from\s+\S+\s+import\s+/,'').replace(/^import\s+/,'').split(',').map(s=>s.trim().split(' as ')[0].split('.').pop()).forEach(n=>impG.children.push({name:n,type:'import',children:[],detail:tr,_line:ln,_id:pfx+'n_'+tNodeIdCtr++}));continue;}
-if(/^class\s+/.test(tr)){const m=tr.match(/^class\s+(\w+)(\(([^)]*)\))?/);nd={name:m?.[1]||'class',type:'class',children:[],detail:m?.[3]?'inherits: '+m[3]:'',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^(async\s+)?def\s+/.test(tr)){const m=tr.match(/^(?:async\s+)?def\s+(\w+)\(([^)]*)\)/);nd={name:(tr.startsWith('async')?'async ':'')+(m?.[1]||'func'),type:'function',children:[],detail:'('+(m?.[2]||'')+')',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^@\w+/.test(tr)){continue;}
-else if(/^(for|while)\s+/.test(tr)){const k=tr.startsWith('for')?'For':'While';const m=tr.match(/^(?:for|while)\s+(.+):/);nd={name:k,type:'loop',children:[],detail:m?.[1]?.substring(0,40)||'',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^(if|elif|else)\b/.test(tr)){const m=tr.match(/^(if|elif|else)\s*(.*?):/);nd={name:m?.[1]||'if',type:'conditional',children:[],detail:m?.[2]?.substring(0,40)||'',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^(async\s+)?with\s+/.test(tr)){nd={name:'with',type:'loop',children:[],detail:'',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^(try|except|finally)\b/.test(tr)){nd={name:tr.match(/^(try|except|finally)/)[1],type:'conditional',children:[],detail:'',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^self\.(\w+)\s*=/.test(tr)){const m=tr.match(/^self\.(\w+)/);nd={name:'self.'+m[1],type:'variable',children:[],detail:'instance attr',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^[A-Za-z_]\w*\s*([:+\-*\/]?=)/.test(tr)){const vn=tr.match(/^(\w+)/)?.[1]||'var';if(vn==='self')continue;nd={name:tr.substring(0,30),type:'variable',children:[],detail:'',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^[A-Za-z_]\w*(\.\w+)*\s*\(/.test(tr)&&par.type!=='module'){nd={name:tr.substring(0,30),type:'statement',children:[],detail:'',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-else if(/^return\b/.test(tr)&&par.type!=='module'){nd={name:tr.substring(0,30),type:'statement',children:[],detail:'return',_line:ln,_id:pfx+'n_'+tNodeIdCtr++};}
-if(nd){par.children.push(nd);stk.push({node:nd,indent:ind});}}
-if(hasImp)root.children.unshift(impG);return root;}
-function tCountDesc(n){let c=0;if(n.children)for(const ch of n.children){c++;c+=tCountDesc(ch);}return c;}
-
-// Shape config
-const TS={project:{color:'#dbeafe',stroke:'#60a5fa',w:180,h:44,r:8},file:{color:'#fef9c3',stroke:'#eab308',w:200,h:36,r:4},module:{color:'#dbeafe',stroke:'#60a5fa',w:140,h:40,r:20},class:{color:'#d1fae5',stroke:'#34d399',w:150,h:42,r:21},function:{color:'#fee2e2',stroke:'#f87171',w:140,h:38,r:0},variable:{color:'#fef3c7',stroke:'#f59e0b',w:150,h:32,r:4},loop:{color:'#f1f5f9',stroke:'#94a3b8',w:150,h:60,r:0},import:{color:'#f3e8ff',stroke:'#a78bfa',w:110,h:30,r:15},conditional:{color:'#ffedd5',stroke:'#fb923c',w:130,h:40,r:0},statement:{color:'#fef9c3',stroke:'#d97706',w:150,h:28,r:3}};
-function tDrawShape(g,type,w,h){const c=TS[type]||TS.variable;
-if(type==='function'){const hw=w/2,hh=h/2,i=16;g.append('polygon').attr('class','tshape').attr('points',`${-hw+i},${-hh} ${hw-i},${-hh} ${hw},0 ${hw-i},${hh} ${-hw+i},${hh} ${-hw},0`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);}
-else if(type==='loop'){const hw=w/2,hh=h/2;g.append('polygon').attr('class','tshape').attr('points',`${-hw+10},${-hh} ${hw-10},${-hh} ${hw},${-hh+16} ${hw},${hh} ${-hw},${hh} ${-hw},${-hh+16}`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);g.append('line').attr('x1',-hw).attr('x2',hw).attr('y1',-hh+16).attr('y2',-hh+16).attr('stroke',c.stroke).attr('stroke-width',1).attr('opacity',.3);}
-else if(type==='conditional'){const hw=w/2,hh=h/2;g.append('polygon').attr('class','tshape').attr('points',`0,${-hh} ${hw},0 0,${hh} ${-hw},0`).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);}
-else if(type==='statement'){g.append('rect').attr('class','tshape').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',c.r).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',1.5).attr('stroke-dasharray','4,3');}
-else{g.append('rect').attr('class','tshape').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',c.r).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);}}
-const TB={project:'PROJECT',file:'FILE',module:'MODULE',class:'CLASS',function:'ƒ FUNC',variable:'VAR',loop:'',import:'IMPORT',conditional:'COND',statement:''};
-
-// Layout
-function tLayoutSub(node,x,y){const cfg=TS[node.type]||TS.variable;const pos=[{node,x,y}];const lks=[];const IND=50,VG=18;let curY=y+cfg.h/2+VG+10;
-if(!tCollapsed.has(node._id)&&node.children&&node.children.length>0){for(const ch of node.children){const cc=TS[ch.type]||TS.variable;const cx=x+IND,cy=curY+cc.h/2;const sub=tLayoutSub(ch,cx,cy);pos.push(...sub.pos);lks.push({src:{x,y,type:node.type},tgt:{x:cx,y:cy,type:ch.type}});lks.push(...sub.lks);curY=sub.maxY+VG;}}
-let maxY=y+cfg.h/2;for(const p of pos){maxY=Math.max(maxY,p.y+(TS[p.node.type]||TS.variable).h/2);}return{pos,lks,maxY};}
-
-// Draw
-function tDraw(allPos,allLks){const panel=document.getElementById('tpanel');if(!panel)return;const svg=d3.select('#tsvg');svg.selectAll('*').remove();
-document.getElementById('tinfo').style.display='flex';
-const w=panel.clientWidth,h=panel.clientHeight-50;
-const defs=svg.append('defs');defs.append('marker').attr('id','tarrow').attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#b0b8c8');
-tSvgG=svg.append('g');tZoom=d3.zoom().scaleExtent([.05,3]).on('zoom',e=>tSvgG.attr('transform',e.transform));svg.call(tZoom);
-tNodePosMap={};tAllNodeMap={};for(const p of allPos){tNodePosMap[p.node._id]={x:p.x,y:p.y};tAllNodeMap[p.node._id]=p.node;}
-tSvgG.selectAll('.tlink').data(allLks).enter().append('path').attr('class','tlink').attr('marker-end','url(#tarrow)').attr('d',d=>{const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;const sx=d.src.x,sy=d.src.y+sc.h/2,tx=d.tgt.x,ty=d.tgt.y-tc.h/2,my=sy+(ty-sy)*.45;return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;});
-const nodes=tSvgG.selectAll('.tree-node').data(allPos).enter().append('g').attr('class','tree-node').attr('transform',d=>`translate(${d.x},${d.y})`).attr('data-id',d=>d.node._id);
-nodes.each(function(d){tDrawShape(d3.select(this),d.node.type,(TS[d.node.type]||TS.variable).w,(TS[d.node.type]||TS.variable).h);});
-nodes.append('text').attr('class','tlabel').attr('y',d=>d.node.type==='loop'?-6:1).attr('font-size',d=>{const n=d.node.name;return n.length>18?'8.5px':n.length>14?'9.5px':n.length>10?'10px':'11px';}).text(d=>{const n=d.node.name;return n.length>24?n.substring(0,22)+'…':n;});
-nodes.filter(d=>d.node.type==='loop'&&d.node.detail).append('text').attr('class','tdetail').attr('y',12).attr('font-size','8.5px').text(d=>d.node.detail.length>25?d.node.detail.substring(0,23)+'…':d.node.detail);
-nodes.filter(d=>TB[d.node.type]).append('text').attr('class','tbadge').attr('y',d=>-((TS[d.node.type]||TS.variable).h/2)-5).text(d=>TB[d.node.type]||'');
-if(!tFlowMode){nodes.filter(d=>d.node.children&&d.node.children.length>0).each(function(d){const g=d3.select(this);const cfg=TS[d.node.type]||TS.variable;const isC=tCollapsed.has(d.node._id);const cnt=tCountDesc(d.node);const by=cfg.h/2+2;const badge=g.append('g').attr('class','tcoll');badge.append('circle').attr('cx',0).attr('cy',by+9).attr('r',9);badge.append('text').attr('x',0).attr('y',by+10).text(isC?'+':'−');if(isC)g.append('text').attr('class','tcount').attr('x',12).attr('y',by+10).text(cnt+' hidden');});
-nodes.on('click',function(e,d){e.stopPropagation();if(!d.node.children||!d.node.children.length)return;if(tCollapsed.has(d.node._id))tCollapsed.delete(d.node._id);else tCollapsed.add(d.node._id);tReRender();});}
-const tip=document.getElementById('ttooltip');
-nodes.on('mouseenter',(e,d)=>{tip.innerHTML=`<div class="ttt">${(d.node.type||'').toUpperCase()}: ${d.node.name}</div>`+(d.node.detail?`<div class="ttd">${d.node.detail}</div>`:'')+(d.node._line?`<div class="ttd">Line ${d.node._line}</div>`:'');tip.classList.add('visible');});
-nodes.on('mousemove',e=>{tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';});
-nodes.on('mouseleave',()=>tip.classList.remove('visible'));
-// Stats
-let nc=0,fc=0,cc=0,fn=0;for(const p of allPos){nc++;if(p.node.type==='file')fc++;if(p.node.type==='class')cc++;if(p.node.type==='function')fn++;}
-document.getElementById('tsN').textContent=nc;document.getElementById('tsF').textContent=fc||1;document.getElementById('tsC').textContent=cc;document.getElementById('tsFn').textContent=fn;
-// Auto-fit
-requestAnimationFrame(()=>{const b=tSvgG.node().getBBox();const pad=60;const topP=tFlowMode?65:10;const sc=Math.min(w/(b.width+pad*2),(h-topP)/(b.height+pad*2),1);const tx=w/2-(b.x+b.width/2)*sc;const ty=topP+pad+(-b.y)*sc;svg.call(tZoom.transform,d3.zoomIdentity.translate(tx,ty).scale(sc));});
-if(tFlowMode&&tFlowSteps.length>0)tApplyFlow();}
-
-// Render modes
-function tRenderSingle(){tSave();const f=tFiles[tActiveIdx];if(!f.code.trim())return;
-const parsed=tParse(f.code,'f0_');const fn=f.name.replace(/\.py$/,'');const pn=document.getElementById('tpname')?.value||'Project';
-const proj={name:pn,type:'project',children:[],_line:0,_id:'proj'};const fNode={name:fn,type:'file',children:parsed.children,_line:0,_id:'file_0',detail:f.name};
-tLastParsed=[fNode];const PY=0,FY=80;
-const ap=[{node:proj,x:0,y:PY},{node:fNode,x:0,y:FY}];const al=[{src:{x:0,y:PY,type:'project'},tgt:{x:0,y:FY,type:'file'}}];
-const sub=tLayoutSub(fNode,0,FY);for(let i=1;i<sub.pos.length;i++)ap.push(sub.pos[i]);al.push(...sub.lks);
-tDraw(ap,al);if(tFlowMode)tBuildFlowSteps(ap);}
-
-function tRenderClass(){tSave();const pn=document.getElementById('tpname')?.value||'Project';
-const fts=tFiles.map((f,i)=>{if(!f.code.trim())return null;const p=tParse(f.code,'f'+i+'_');return{name:f.name.replace(/\.py$/,''),type:'file',children:p.children,detail:f.name,_line:0,_id:'file_'+i};}).filter(Boolean);
-if(!fts.length)return;tLastParsed=fts;
-const PY=0,FY=80,FG=80;
-const fls=fts.map(ft=>{const sub=tLayoutSub(ft,0,FY);let mn=Infinity,mx=-Infinity;for(const p of sub.pos){const c=TS[p.node.type]||TS.variable;mn=Math.min(mn,p.x-c.w/2);mx=Math.max(mx,p.x+c.w/2);}return{...sub,cw:mx-mn,mn,mx};});
-const tw=fls.reduce((s,l)=>s+l.cw,0)+FG*(fls.length-1);let cx=-tw/2;
-const proj={name:pn,type:'project',children:[],_line:0,_id:'proj',detail:fts.length+' files'};
-const ap=[{node:proj,x:0,y:PY}];const al=[];
-for(let fi=0;fi<fls.length;fi++){const fl=fls[fi];const ox=cx-fl.mn;for(const p of fl.pos)ap.push({node:p.node,x:p.x+ox,y:p.y});for(const lk of fl.lks)al.push({src:{x:lk.src.x+ox,y:lk.src.y,type:lk.src.type},tgt:{x:lk.tgt.x+ox,y:lk.tgt.y,type:lk.tgt.type}});al.push({src:{x:0,y:PY,type:'project'},tgt:{x:fl.pos[0].x+ox,y:FY,type:'file'}});cx+=fl.cw+FG;}
-tDraw(ap,al);if(tFlowMode)tBuildFlowSteps(ap);}
-
-function tReRender(){if(tMode==='single')tRenderSingle();else tRenderClass();}
-
-// Flow engine
-function tBuildFlowSteps(allPos){const exec=new Set(['variable','function','loop','conditional','statement']);const fdefs={};
-for(const p of allPos)if(p.node.type==='function')fdefs[p.node.name]=p.node._id;
-tFlowSteps=allPos.filter(p=>exec.has(p.node.type)&&p.node._line>0).sort((a,b)=>a.node._line-b.node._line).map(en=>{const step={primary:en.node._id,name:en.node.name,type:en.node.type,line:en.node._line,parallel:null};if(en.node.type==='variable'){const cm=en.node.name.match(/=\s*(\w+)\s*\(/);if(cm&&fdefs[cm[1]])step.parallel=fdefs[cm[1]];}return step;});
-tFlowIdx=-1;const te=document.getElementById('tfTotal');if(te)te.textContent=tFlowSteps.length;const se=document.getElementById('tfStep');if(se)se.textContent='0';const sn=document.getElementById('tfName');if(sn)sn.textContent='Ready';tUpdateFlowBtns();}
-
-function tApplyFlow(){if(!tSvgG)return;const nEls=tSvgG.selectAll('.tree-node');const lEls=tSvgG.selectAll('.tlink');
-if(tFlowIdx<0||tFlowIdx>=tFlowSteps.length){nEls.attr('class','tree-node dimmed');lEls.attr('class','tlink dimmed');return;}
-const step=tFlowSteps[tFlowIdx];tVisited.add(step.primary);if(step.parallel)tVisited.add(step.parallel);
-const anc=new Set();function findAnc(tid){const pm={};function walk(n,pid){if(n._id===tid){let p=pid;while(p){anc.add(p);p=pm[p];}return true;}if(n.children)for(const ch of n.children){pm[ch._id]=n._id;if(walk(ch,n._id))return true;}return false;}if(tLastParsed)for(const ft of tLastParsed){pm[ft._id]='proj';walk(ft,ft._id);}anc.add('proj');}
-for(const vid of tVisited)findAnc(vid);
-nEls.attr('class',d=>{const id=d.node._id;if(id===step.primary)return'tree-node active-step';if(step.parallel&&id===step.parallel)return'tree-node parallel-step';if(tVisited.has(id))return'tree-node visited';if(anc.has(id))return'tree-node ancestor';return'tree-node dimmed';});
-lEls.attr('class','tlink dimmed');
-const se=document.getElementById('tfStep');if(se)se.textContent=tFlowIdx+1;
-const sn=document.getElementById('tfName');if(sn)sn.textContent=(step.parallel?step.name+' → calls '+((tAllNodeMap[step.parallel]||{}).name||'func'):step.name);
-tUpdateFlowBtns();
-const pos=tNodePosMap[step.primary];if(pos){const panel=document.getElementById('tpanel');const w=panel.clientWidth,h=panel.clientHeight;const ct=d3.zoomTransform(d3.select('#tsvg').node());d3.select('#tsvg').transition().duration(400).call(tZoom.transform,d3.zoomIdentity.translate(w/2-pos.x*ct.k,h/2-pos.y*ct.k).scale(ct.k));}}
-
-function tUpdateFlowBtns(){const p=document.getElementById('tfPrev');const n=document.getElementById('tfNext');if(p)p.disabled=tFlowIdx<=0;if(n)n.disabled=tFlowIdx>=tFlowSteps.length-1;}
-function tfNext(){if(tFlowIdx<tFlowSteps.length-1){tFlowIdx++;tApplyFlow();}}
-function tfPrev(){if(tFlowIdx>0){tFlowIdx--;tVisited.clear();for(let i=0;i<=tFlowIdx;i++){tVisited.add(tFlowSteps[i].primary);if(tFlowSteps[i].parallel)tVisited.add(tFlowSteps[i].parallel);}tApplyFlow();}else if(tFlowIdx===0){tFlowIdx=-1;tVisited.clear();tApplyFlow();}}
-function tfReset(){tFlowIdx=-1;tVisited.clear();tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}tApplyFlow();const se=document.getElementById('tfStep');if(se)se.textContent='0';const sn=document.getElementById('tfName');if(sn)sn.textContent='Ready';tUpdateFlowBtns();}
-function tfTogglePlay(){if(tFlowPlaying){tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}return;}tFlowPlaying=true;const pb=document.getElementById('tfPlay');if(pb){pb.textContent='⏸';pb.classList.add('playing');}const spd=parseInt(document.getElementById('tfSpeed')?.value)||800;tFlowTimer=setInterval(()=>{if(tFlowIdx>=tFlowSteps.length-1){tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}return;}tfNext();},spd);}
-function tToggleFlow(){tFlowMode=!tFlowMode;document.getElementById('tFlowBtn')?.classList.toggle('flow-on',tFlowMode);document.getElementById('tflowbar').style.display=tFlowMode?'flex':'none';if(tFlowMode){tCollapsed.clear();tVisited.clear();tfReset();}else{tFlowPlaying=false;clearInterval(tFlowTimer);}tReRender();}
-function tSetMode(m){tMode=m;document.getElementById('tmSingle')?.classList.toggle('on',m==='single');document.getElementById('tmClass')?.classList.toggle('on',m==='class');tCollapsed.clear();if(tFlowMode)tfReset();tParseAndRender();}
-function tParseAndRender(){tSave();tCollapsed.clear();tReRender();}
-function tLoadSample(k){const s=T_SAMPLES[k];tFiles=s.files.map(f=>({...f}));tActiveIdx=0;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');const pe=document.getElementById('tpname');if(ce)ce.value=tFiles[0].code;if(fe)fe.value=tFiles[0].name;if(pe)pe.value=s.name;tCollapsed.clear();if(tFlowMode)tfReset();tRenderTabs();if(k==='quiz')tSetMode('class');else tSetMode('single');}
-function tZoomIn(){d3.select('#tsvg').transition().duration(300).call(tZoom.scaleBy,1.4);}
-function tZoomOut(){d3.select('#tsvg').transition().duration(300).call(tZoom.scaleBy,.7);}
-function tZoomReset(){tReRender();}
-
-// Main entry: render the tree section
-function goTree(){
-  S.view='tree';setNav('nav-tree');
-  document.getElementById('main').innerHTML=`<div class="tree-wrap">
-    <div class="tree-code-panel">
-      <div class="tree-code-top"><h3>Python Source</h3>
-        <div style="display:flex;gap:4px;align-items:center">
-          <div class="tree-mode-toggle"><button class="tree-mode-btn on" id="tmSingle" onclick="tSetMode('single')">📄</button><button class="tree-mode-btn" id="tmClass" onclick="tSetMode('class')">🏗️</button></div>
-          <button class="tree-mode-btn" id="tFlowBtn" onclick="tToggleFlow()" style="border:1px solid var(--bd);border-radius:4px">⚡</button>
-          <button style="padding:4px 12px;background:var(--a);color:var(--bg);border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer" onclick="tParseAndRender()">▶ Parse</button>
-        </div>
-      </div>
-      <div class="tree-input-row"><label>project:</label><input class="tree-input-sm" id="tpname" value="My Project" /></div>
-      <div class="tree-ftabs" id="tftabs"></div>
-      <div class="tree-input-row"><label>file:</label><input class="tree-input-sm" id="tfname" value="main.py" style="color:var(--a)" /></div>
-      <textarea class="tree-textarea" id="tcode" spellcheck="false" placeholder="Paste Python code here..."></textarea>
-      <div class="tree-samples">
-        <button class="tree-sample-btn" onclick="tLoadSample('single')">Single File</button>
-        <button class="tree-sample-btn" onclick="tLoadSample('quiz')">Quiz Project</button>
-      </div>
-    </div>
-    <div class="tree-panel" id="tpanel">
-      <div class="tree-flow-bar" id="tflowbar" style="display:none">
-        <button class="tree-flow-btn" onclick="tfReset()">⏮</button>
-        <button class="tree-flow-btn" id="tfPrev" onclick="tfPrev()">◀</button>
-        <button class="tree-flow-btn" id="tfPlay" onclick="tfTogglePlay()">▶</button>
-        <button class="tree-flow-btn" id="tfNext" onclick="tfNext()">▶▶</button>
-        <div class="tree-step-info">Step <span class="snum" id="tfStep">0</span> / <span id="tfTotal">0</span></div>
-        <div class="tree-step-name" id="tfName">—</div>
-        <div class="tree-speed"><span>Speed:</span><input type="range" min="300" max="2000" value="800" step="100" id="tfSpeed" /></div>
-      </div>
-      <svg id="tsvg"></svg>
-      <div class="tree-info" id="tinfo" style="display:none">
-        <div class="tstats"><span>Nodes: <span class="tval" id="tsN">0</span></span><span>Files: <span class="tval" id="tsF">0</span></span><span>Classes: <span class="tval" id="tsC">0</span></span><span>Funcs: <span class="tval" id="tsFn">0</span></span></div>
-        <div style="display:flex;gap:3px"><button class="tree-zbtn" onclick="tZoomIn()">+</button><button class="tree-zbtn" onclick="tZoomOut()">−</button><button class="tree-zbtn" onclick="tZoomReset()">⌂</button></div>
-      </div>
-    </div>
-  </div><div class="tree-ttip" id="ttooltip"></div>`;
-  tRenderTabs();
-  // Load first file content if available
-  const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');
-  if(ce)ce.value=tFiles[tActiveIdx].code;if(fe)fe.value=tFiles[tActiveIdx].name;
 }
 
 // ═══════════════════════════════════════
