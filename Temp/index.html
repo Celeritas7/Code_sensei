@@ -238,33 +238,6 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
   .tree-code-panel{width:100%;height:38vh;border-right:none;border-bottom:1px solid var(--bd)}
   .tree-panel{height:62vh}
 }
-/* Python Lab */
-.lab-cards{display:grid;gap:10px}
-.lab-card{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .15s;display:flex;align-items:flex-start;gap:12px}
-.lab-card:hover{border-color:rgba(167,139,250,.3);transform:translateY(-1px)}
-.lab-card-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.lab-card-title{font-size:14px;font-weight:600;margin-bottom:2px}
-.lab-card-desc{font-size:12px;color:var(--td);margin-bottom:4px}
-.lab-card-tags{display:flex;gap:4px;flex-wrap:wrap}
-.lab-tag{padding:2px 7px;border-radius:3px;font-size:10px;background:rgba(167,139,250,.06);color:var(--p);border:1px solid rgba(167,139,250,.12)}
-.lab-card-actions{display:flex;gap:4px;margin-left:auto;flex-shrink:0}
-.lab-act-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--td);font-size:12px;cursor:pointer;display:grid;place-items:center}
-.lab-act-btn:hover{color:var(--tx);border-color:var(--tm)}
-.lab-act-btn.del:hover{color:var(--r);border-color:rgba(248,113,113,.3)}
-.lab-pin{color:var(--a)!important}
-.lab-add-form{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:16px}
-.lab-input{width:100%;padding:8px 10px;background:var(--s);border:1px solid var(--bd);border-radius:6px;color:var(--tx);font-size:13px;outline:none;font-family:inherit;margin-bottom:8px}
-.lab-input:focus{border-color:var(--p)}
-.lab-input-sm{padding:6px 10px;font-size:12px}
-.lab-btn{padding:8px 16px;border:none;border-radius:6px;font-weight:600;font-size:12px;cursor:pointer}
-.lab-btn-primary{background:var(--p);color:#fff}
-.lab-btn-primary:hover{filter:brightness(1.1)}
-.lab-btn-ghost{background:transparent;border:1px solid var(--bd);color:var(--tm)}
-.lab-empty{text-align:center;padding:40px 20px;color:var(--td)}
-.lab-empty-icon{font-size:36px;margin-bottom:10px}
-.lab-categories{display:flex;gap:5px;margin-bottom:16px;flex-wrap:wrap}
-.lab-cat{padding:6px 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tm);font-size:11px;font-weight:500;cursor:pointer}
-.lab-cat.on{background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.2);color:var(--p)}
 </style>
 </head>
 <body>
@@ -278,7 +251,6 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
     <div class="nv" id="nav-sql" onclick="goModules('sql')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">⊞</span>SQL</div>
     <div class="nv" id="nav-proj" onclick="goProjects()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">◧</span>My Projects</div>
     <div class="nv" id="nav-tree" onclick="goTree()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">🌳</span>Python Tree</div>
-    <div class="nv" id="nav-lab" onclick="goLab()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">🐍</span>Python Lab</div>
   </div>
   <div class="sb-ft">Learning from your own code</div>
 </div>
@@ -336,18 +308,11 @@ function goDash(){
       </div>
     </div>
     <div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:1px;margin-bottom:10px;margin-top:20px">TOOLS</div>
-    <div class="cd" onclick="goTree()" style="margin-bottom:8px;border-color:rgba(52,211,153,.12)">
+    <div class="cd" onclick="goTree()" style="margin-bottom:16px;border-color:rgba(52,211,153,.12)">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="width:44px;height:44px;border-radius:10px;background:rgba(52,211,153,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🌳</div>
         <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Python Structure Tree</div><div style="font-size:12px;color:var(--td)">Visualize code structure · Logic flow stepper</div></div>
         <span style="color:var(--g);font-size:16px">→</span>
-      </div>
-    </div>
-    <div class="cd" onclick="goLab()" style="margin-bottom:16px;border-color:rgba(167,139,250,.12)">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:44px;height:44px;border-radius:10px;background:rgba(167,139,250,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🐍</div>
-        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Python Lab</div><div style="font-size:12px;color:var(--td)">Kaggle notebooks · Code & run in browser</div></div>
-        <span style="color:var(--p);font-size:16px">→</span>
       </div>
     </div>
     <div style="padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
@@ -1477,152 +1442,6 @@ function goTree(){
   // Load first file content if available
   const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');
   if(ce)ce.value=tFiles[tActiveIdx].code;if(fe)fe.value=tFiles[tActiveIdx].name;
-}
-
-// ═══════════════════════════════════════
-// PYTHON LAB — Kaggle Notebook Manager
-// ═══════════════════════════════════════
-let labNotebooks=[];
-let labCategory='all';
-let labShowForm=false;
-let labEditId=null;
-
-async function goLab(){
-  S.view='lab';setNav('nav-lab');
-  const m=document.getElementById('main');
-  m.innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading notebooks...</div></div>';
-
-  try{
-    labNotebooks=await sbq('code_sensei_notebooks','select=*&order=pinned.desc,updated_at.desc');
-  }catch(e){labNotebooks=[];}
-
-  renderLab();
-}
-
-function renderLab(){
-  const m=document.getElementById('main');
-  const cats=['all',...new Set(labNotebooks.map(n=>n.category).filter(Boolean))];
-  const filtered=labCategory==='all'?labNotebooks:labNotebooks.filter(n=>n.category===labCategory);
-
-  m.innerHTML=`<div class="pg">
-    <button class="back" onclick="goDash()">← Dashboard</button>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-      <h2 style="color:var(--p)">🐍 Python Lab</h2>
-      <button class="lab-btn lab-btn-primary" onclick="labToggleForm()">+ Add Notebook</button>
-    </div>
-    <p class="sub">Your Kaggle notebooks — tap to open and code</p>
-
-    ${labShowForm?renderLabForm():''}
-
-    ${labNotebooks.length>0?`<div class="lab-categories">
-      ${cats.map(c=>`<button class="lab-cat${labCategory===c?' on':''}" onclick="labSetCat('${esc(c)}')">${c==='all'?'All':esc(c)}</button>`).join('')}
-    </div>`:''}
-
-    <div class="lab-cards">
-      ${filtered.length===0?`<div class="lab-empty">
-        <div class="lab-empty-icon">📓</div>
-        <div style="font-size:14px;margin-bottom:6px">${labNotebooks.length===0?'No notebooks yet':'No notebooks in this category'}</div>
-        <div style="font-size:12px">Click "+ Add Notebook" to save your first Kaggle link</div>
-      </div>`:filtered.map(n=>renderLabCard(n)).join('')}
-    </div>
-
-    <div style="margin-top:24px;padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
-      <div style="font-size:12px;color:var(--tm);margin-bottom:6px">💡 Tip</div>
-      <div style="font-size:12px;color:var(--td);line-height:1.6">Open a notebook on <a href="https://kaggle.com" target="_blank" style="color:var(--p);text-decoration:none">kaggle.com</a> → copy the URL → paste it here.<br>Next time you're on the train, just tap the card to open it.</div>
-    </div>
-  </div>`;
-}
-
-function renderLabCard(n){
-  const tagHtml=(n.tags||[]).map(t=>`<span class="lab-tag">${esc(t)}</span>`).join('');
-  return`<div class="lab-card" onclick="window.open('${esc(n.url)}','_blank')">
-    <div class="lab-card-icon" style="background:${n.pinned?'rgba(245,158,11,.1)':'rgba(167,139,250,.08)'}">
-      ${n.pinned?'⭐':'📓'}
-    </div>
-    <div style="flex:1;min-width:0">
-      <div class="lab-card-title">${esc(n.title)}</div>
-      ${n.description?`<div class="lab-card-desc">${esc(n.description)}</div>`:''}
-      <div class="lab-card-tags">
-        <span class="lab-tag" style="background:rgba(56,189,248,.06);color:var(--b);border-color:rgba(56,189,248,.12)">${esc(n.category||'general')}</span>
-        ${tagHtml}
-      </div>
-    </div>
-    <div class="lab-card-actions" onclick="event.stopPropagation()">
-      <button class="lab-act-btn" onclick="labTogglePin(${n.id},${!n.pinned})" title="${n.pinned?'Unpin':'Pin'}">
-        <span${n.pinned?' class="lab-pin"':''}>★</span>
-      </button>
-      <button class="lab-act-btn" onclick="labEditNotebook(${n.id})" title="Edit">✎</button>
-      <button class="lab-act-btn del" onclick="labDeleteNotebook(${n.id},'${esc(n.title)}')" title="Delete">✕</button>
-    </div>
-  </div>`;
-}
-
-function renderLabForm(){
-  const editing=labEditId?labNotebooks.find(n=>n.id===labEditId):null;
-  return`<div class="lab-add-form">
-    <div style="font-size:11px;color:var(--p);font-weight:700;letter-spacing:1px;margin-bottom:10px">${editing?'EDIT NOTEBOOK':'ADD NEW NOTEBOOK'}</div>
-    <input class="lab-input" id="labTitle" placeholder="Notebook title (e.g. Day 1 — Variables & Strings)" value="${editing?esc(editing.title):''}" />
-    <input class="lab-input" id="labUrl" placeholder="Kaggle URL (e.g. https://www.kaggle.com/code/...)" value="${editing?esc(editing.url):''}" />
-    <div style="display:flex;gap:8px">
-      <input class="lab-input lab-input-sm" id="labCat" placeholder="Category (e.g. 100 Days of Python)" value="${editing?esc(editing.category||''):''}" style="flex:1" />
-      <input class="lab-input lab-input-sm" id="labTags" placeholder="Tags, comma-separated" value="${editing?(editing.tags||[]).join(', '):''}" style="flex:1" />
-    </div>
-    <input class="lab-input" id="labDesc" placeholder="Short description (optional)" value="${editing?esc(editing.description||''):''}" />
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="lab-btn lab-btn-primary" onclick="labSaveNotebook()">${editing?'Update':'Save'}</button>
-      <button class="lab-btn lab-btn-ghost" onclick="labCancelForm()">Cancel</button>
-    </div>
-  </div>`;
-}
-
-function labToggleForm(){labShowForm=!labShowForm;labEditId=null;renderLab();}
-function labCancelForm(){labShowForm=false;labEditId=null;renderLab();}
-function labSetCat(c){labCategory=c;renderLab();}
-
-async function labSaveNotebook(){
-  const title=(document.getElementById('labTitle')?.value||'').trim();
-  const url=(document.getElementById('labUrl')?.value||'').trim();
-  const cat=(document.getElementById('labCat')?.value||'general').trim();
-  const tags=(document.getElementById('labTags')?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const desc=(document.getElementById('labDesc')?.value||'').trim();
-
-  if(!title){alert('Enter a title');return;}
-  if(!url){alert('Enter the Kaggle notebook URL');return;}
-
-  try{
-    const users=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');
-    const uid=users.length?users[0].id:null;
-
-    if(labEditId){
-      await sbPatch('code_sensei_notebooks',labEditId,{title,url,category:cat,tags,description:desc,updated_at:new Date().toISOString()});
-    }else{
-      await sbPost('code_sensei_notebooks',{user_id:uid,title,url,category:cat,tags,description:desc});
-    }
-    labShowForm=false;labEditId=null;
-    labNotebooks=await sbq('code_sensei_notebooks','select=*&order=pinned.desc,updated_at.desc');
-    renderLab();
-  }catch(e){alert('Save failed: '+e.message);}
-}
-
-function labEditNotebook(id){
-  labEditId=id;labShowForm=true;renderLab();
-}
-
-async function labTogglePin(id,pinned){
-  try{
-    await sbPatch('code_sensei_notebooks',id,{pinned,updated_at:new Date().toISOString()});
-    labNotebooks=await sbq('code_sensei_notebooks','select=*&order=pinned.desc,updated_at.desc');
-    renderLab();
-  }catch(e){console.error(e);}
-}
-
-async function labDeleteNotebook(id,title){
-  if(!confirm('Delete "'+title+'"?'))return;
-  try{
-    await fetch(`${SB}/code_sensei_notebooks?id=eq.${id}`,{method:'DELETE',headers:HDR});
-    labNotebooks=labNotebooks.filter(n=>n.id!==id);
-    renderLab();
-  }catch(e){console.error(e);}
 }
 
 // ═══════════════════════════════════════

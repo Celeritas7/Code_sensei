@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeSensei — Python Structure Tree</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700&display=swap');
+
+  :root {
+    --bg-primary: #0c0e14;
+    --bg-secondary: #13161f;
+    --bg-tertiary: #1a1e2a;
+    --bg-surface: #212636;
+    --border: #2a3042;
+    --border-active: #3d4663;
+    --text-primary: #e8eaf0;
+    --text-secondary: #8b92a8;
+    --text-muted: #555e78;
+    --accent: #6c8cff;
+    --accent-glow: rgba(108, 140, 255, 0.15);
+
+    /* Node type colors */
+    --node-module: #5b8def;
+    --node-class: #34d399;
+    --node-function: #f87171;
+    --node-variable: #fbbf24;
+    --node-loop: #94a3b8;
+    --node-import: #c084fc;
+    --node-conditional: #fb923c;
+
+    --link-color: #2e3650;
+    --link-hover: #4a5580;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ─── Header ─── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    gap: 12px;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .header-brand .logo {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    border-radius: 7px;
+    display: grid; place-items: center;
+    font-size: 14px; font-weight: 700;
+    color: #fff;
+  }
+
+  .header-brand h1 {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .header-brand h1 span {
+    color: var(--text-muted);
+    font-weight: 300;
+    margin-left: 6px;
+    font-size: 13px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ─── Main Layout ─── */
+  .main-container {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* ─── Code Panel ─── */
+  .code-panel {
+    width: 380px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    background: var(--bg-secondary);
+  }
+
+  .code-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-panel-header h2 {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+  }
+
+  .btn-parse {
+    padding: 6px 16px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-parse:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  .btn-parse:active { transform: translateY(0); }
+
+  .code-textarea {
+    flex: 1;
+    width: 100%;
+    padding: 16px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: none;
+    outline: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    resize: none;
+    tab-size: 4;
+  }
+
+  .code-textarea::placeholder { color: var(--text-muted); }
+
+  .sample-buttons {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .btn-sample {
+    padding: 4px 10px;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-sample:hover {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    border-color: var(--border-active);
+  }
+
+  /* ─── Tree Panel ─── */
+  .tree-panel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(108, 140, 255, 0.03) 0%, transparent 60%),
+      var(--bg-primary);
+  }
+
+  .tree-panel svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ─── D3 Tree Styles ─── */
+  .node-group { cursor: pointer; }
+
+  .node-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    fill: var(--text-primary);
+    pointer-events: none;
+    dominant-baseline: middle;
+    text-anchor: start;
+  }
+
+  .node-type-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    fill: rgba(255,255,255,0.6);
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  .link {
+    fill: none;
+    stroke: var(--link-color);
+    stroke-width: 1.5;
+  }
+
+  .collapse-indicator {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    fill: var(--text-muted);
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+
+  /* ─── Info Bar ─── */
+  .info-bar {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: rgba(19, 22, 31, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .info-bar .stats { display: flex; gap: 14px; }
+  .info-bar .stat-val { color: var(--accent); font-weight: 600; }
+
+  .zoom-controls {
+    display: flex; gap: 4px;
+  }
+
+  .btn-zoom {
+    width: 28px; height: 28px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.15s;
+  }
+
+  .btn-zoom:hover {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+  }
+
+  /* ─── Empty State ─── */
+  .empty-state {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .empty-state .icon {
+    width: 56px; height: 56px;
+    background: var(--bg-tertiary);
+    border-radius: 14px;
+    display: grid; place-items: center;
+    font-size: 24px;
+    border: 1px solid var(--border);
+  }
+
+  .empty-state p { font-size: 13px; }
+  .empty-state .hint { font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+
+  /* ─── Tooltip ─── */
+  .tooltip {
+    position: fixed;
+    padding: 8px 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-active);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-primary);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    max-width: 260px;
+    line-height: 1.5;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .tooltip.visible { opacity: 1; }
+  .tooltip .tt-type { color: var(--accent); font-weight: 600; }
+  .tooltip .tt-detail { color: var(--text-secondary); margin-top: 2px; }
+
+  /* ─── Mobile ─── */
+  @media (max-width: 768px) {
+    .main-container { flex-direction: column; }
+
+    .code-panel {
+      width: 100%;
+      height: 45vh;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tree-panel { height: 55vh; }
+    .legend { display: none; }
+
+    .header-brand h1 span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-brand">
+    <div class="logo">CS</div>
+    <h1>Python Structure Tree<span>Phase 1 — CodeSensei</span></h1>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node-module);border-radius:50%"></div>Module</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node-class);border-radius:50%"></div>Class</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node-function)"></div>Function</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node-variable);border-radius:1px"></div>Variable</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node-loop)"></div>Loop</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node-import);border-radius:50%"></div>Import</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node-conditional)"></div>If/Else</div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main-container">
+
+  <!-- Code Input Panel -->
+  <div class="code-panel">
+    <div class="code-panel-header">
+      <h2>Python Source</h2>
+      <button class="btn-parse" onclick="parseAndRender()">▶ Parse</button>
+    </div>
+    <textarea class="code-textarea" id="codeInput" spellcheck="false" placeholder="Paste your Python code here...
+
+Example:
+  class Dog:
+      def __init__(self, name):
+          self.name = name
+
+      def bark(self):
+          return 'Woof!'"></textarea>
+    <div class="sample-buttons">
+      <button class="btn-sample" onclick="loadSample('oop')">OOP Sample</button>
+      <button class="btn-sample" onclick="loadSample('script')">Script Sample</button>
+      <button class="btn-sample" onclick="loadSample('advanced')">Advanced</button>
+    </div>
+  </div>
+
+  <!-- Tree Visualization Panel -->
+  <div class="tree-panel" id="treePanel">
+    <div class="empty-state" id="emptyState">
+      <div class="icon">🌳</div>
+      <p>Paste Python code and hit Parse</p>
+      <div class="hint">or try a sample ↙</div>
+    </div>
+    <svg id="treeSvg"></svg>
+    <div class="info-bar" id="infoBar" style="display:none">
+      <div class="stats">
+        <span>Nodes: <span class="stat-val" id="statNodes">0</span></span>
+        <span>Depth: <span class="stat-val" id="statDepth">0</span></span>
+        <span>Classes: <span class="stat-val" id="statClasses">0</span></span>
+        <span>Funcs: <span class="stat-val" id="statFuncs">0</span></span>
+      </div>
+      <div class="zoom-controls">
+        <button class="btn-zoom" onclick="zoomIn()">+</button>
+        <button class="btn-zoom" onclick="zoomOut()">−</button>
+        <button class="btn-zoom" onclick="zoomReset()">⌂</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+//  PYTHON PARSER — Indentation-based structure detection
+// ══════════════════════════════════════════════════════════════════
+
+const SAMPLES = {
+  oop: `import os
+import json
+from datetime import datetime
+
+MAX_RETRIES = 3
+DB_PATH = "data.db"
+
+class Animal:
+    species_count = 0
+
+    def __init__(self, name, sound):
+        self.name = name
+        self.sound = sound
+        Animal.species_count += 1
+
+    def speak(self):
+        return f"{self.name} says {self.sound}"
+
+    def __repr__(self):
+        return f"Animal({self.name})"
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name, "Woof")
+        self.breed = breed
+        self.tricks = []
+
+    def learn_trick(self, trick):
+        if trick not in self.tricks:
+            self.tricks.append(trick)
+            return True
+        return False
+
+    def show_tricks(self):
+        for trick in self.tricks:
+            print(f"{self.name} can {trick}")
+
+def create_pack(names):
+    pack = []
+    for name in names:
+        dog = Dog(name, "Mixed")
+        pack.append(dog)
+    return pack
+
+if __name__ == "__main__":
+    buddy = Dog("Buddy", "Golden")
+    buddy.learn_trick("sit")
+    buddy.learn_trick("shake")
+    buddy.show_tricks()`,
+
+  script: `import sys
+import csv
+from pathlib import Path
+
+INPUT_DIR = Path("./data")
+OUTPUT_FILE = "results.csv"
+THRESHOLD = 0.75
+
+def load_data(filepath):
+    results = []
+    with open(filepath) as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            score = float(row["score"])
+            if score >= THRESHOLD:
+                results.append(row)
+    return results
+
+def process_batch(directory):
+    all_results = []
+    for file in directory.glob("*.csv"):
+        data = load_data(file)
+        all_results.extend(data)
+    return all_results
+
+def write_output(data, filename):
+    if not data:
+        print("No data to write")
+        return
+    with open(filename, "w") as f:
+        writer = csv.DictWriter(f, fieldnames=data[0].keys())
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
+
+if __name__ == "__main__":
+    results = process_batch(INPUT_DIR)
+    write_output(results, OUTPUT_FILE)
+    print(f"Wrote {len(results)} rows")`,
+
+  advanced: `import asyncio
+import logging
+from typing import Optional, List, Dict
+from dataclasses import dataclass, field
+from enum import Enum
+
+logger = logging.getLogger(__name__)
+
+class Priority(Enum):
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
+
+@dataclass
+class Task:
+    title: str
+    priority: Priority
+    done: bool = False
+    subtasks: List[str] = field(default_factory=list)
+
+    def complete(self):
+        self.done = True
+
+    def add_subtask(self, name):
+        self.subtasks.append(name)
+
+class TaskQueue:
+    def __init__(self, max_size: int = 100):
+        self._queue: List[Task] = []
+        self._max_size = max_size
+        self._processed = 0
+
+    async def enqueue(self, task: Task):
+        if len(self._queue) >= self._max_size:
+            raise OverflowError("Queue full")
+        self._queue.append(task)
+        self._queue.sort(key=lambda t: t.priority.value, reverse=True)
+
+    async def process_next(self) -> Optional[Task]:
+        if not self._queue:
+            return None
+        task = self._queue.pop(0)
+        task.complete()
+        self._processed += 1
+        logger.info(f"Processed: {task.title}")
+        return task
+
+    async def process_all(self):
+        while self._queue:
+            task = await self.process_next()
+            if task:
+                for sub in task.subtasks:
+                    print(f"  Subtask: {sub}")
+
+    @property
+    def stats(self) -> Dict:
+        return {
+            "pending": len(self._queue),
+            "processed": self._processed,
+            "capacity": self._max_size
+        }
+
+async def main():
+    queue = TaskQueue(max_size=50)
+    tasks = [
+        Task("Deploy v2", Priority.HIGH),
+        Task("Write tests", Priority.MEDIUM, subtasks=["unit", "integration"]),
+        Task("Update docs", Priority.LOW),
+    ]
+    for t in tasks:
+        await queue.enqueue(t)
+    await queue.process_all()
+    print(queue.stats)
+
+if __name__ == "__main__":
+    asyncio.run(main())`
+};
+
+
+function parsePython(code) {
+  const lines = code.split('\n');
+  const root = { name: 'module', type: 'module', children: [], detail: '', _line: 0 };
+  // Stack tracks (node, indentLevel)
+  const stack = [{ node: root, indent: -1 }];
+
+  // Gather imports into a single group node
+  const importGroup = { name: 'imports', type: 'import', children: [], detail: '', _line: 0 };
+  let hasImports = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    const trimmed = raw.trimStart();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+
+    const indent = raw.length - raw.trimStart().length;
+    const lineNum = i + 1;
+
+    // Pop stack to find parent at lower indent
+    while (stack.length > 1 && stack[stack.length - 1].indent >= indent) {
+      stack.pop();
+    }
+    const parent = stack[stack.length - 1].node;
+
+    let node = null;
+
+    // ── Imports ──
+    if (/^(from\s+\S+\s+)?import\s+/.test(trimmed)) {
+      const names = trimmed.replace(/^from\s+\S+\s+import\s+/, '')
+                           .replace(/^import\s+/, '')
+                           .split(',').map(s => s.trim().split(' as ')[0].split('.').pop());
+      hasImports = true;
+      for (const n of names) {
+        importGroup.children.push({
+          name: n, type: 'import', children: [], detail: trimmed, _line: lineNum
+        });
+      }
+      continue; // Don't push imports onto the indent stack
+    }
+
+    // ── Class ──
+    if (/^class\s+/.test(trimmed)) {
+      const match = trimmed.match(/^class\s+(\w+)(\(([^)]*)\))?/);
+      const name = match ? match[1] : 'class';
+      const bases = match && match[3] ? match[3] : '';
+      node = {
+        name, type: 'class', children: [],
+        detail: bases ? `inherits: ${bases}` : 'top-level class',
+        _line: lineNum
+      };
+    }
+
+    // ── Function / Method ──
+    else if (/^(async\s+)?def\s+/.test(trimmed)) {
+      const match = trimmed.match(/^(?:async\s+)?def\s+(\w+)\(([^)]*)\)/);
+      const name = match ? match[1] : 'func';
+      const params = match ? match[2] : '';
+      const isAsync = trimmed.startsWith('async');
+      node = {
+        name: (isAsync ? 'async ' : '') + name, type: 'function', children: [],
+        detail: `params: (${params})`,
+        _line: lineNum
+      };
+    }
+
+    // ── Decorated ──
+    else if (/^@\w+/.test(trimmed)) {
+      // Decorators — skip, they'll be associated with next def/class
+      continue;
+    }
+
+    // ── For / While loops ──
+    else if (/^(for|while)\s+/.test(trimmed)) {
+      const match = trimmed.match(/^(for|while)\s+(.+):/);
+      const kind = trimmed.startsWith('for') ? 'for' : 'while';
+      node = {
+        name: `${kind} loop`, type: 'loop', children: [],
+        detail: match ? match[2].substring(0, 40) : '',
+        _line: lineNum
+      };
+    }
+
+    // ── If / Elif / Else ──
+    else if (/^(if|elif|else)\b/.test(trimmed)) {
+      const match = trimmed.match(/^(if|elif|else)\s*(.*?):/);
+      const keyword = match ? match[1] : 'if';
+      node = {
+        name: keyword, type: 'conditional', children: [],
+        detail: match && match[2] ? match[2].substring(0, 40) : '',
+        _line: lineNum
+      };
+    }
+
+    // ── With statement ──
+    else if (/^(async\s+)?with\s+/.test(trimmed)) {
+      const match = trimmed.match(/^(?:async\s+)?with\s+(.+?)(?:\s+as\s+\w+)?:/);
+      node = {
+        name: 'with', type: 'loop', children: [],
+        detail: match ? match[1].substring(0, 40) : '',
+        _line: lineNum
+      };
+    }
+
+    // ── Try / Except ──
+    else if (/^(try|except|finally)\b/.test(trimmed)) {
+      const keyword = trimmed.match(/^(try|except|finally)/)[1];
+      node = {
+        name: keyword, type: 'conditional', children: [],
+        detail: '',
+        _line: lineNum
+      };
+    }
+
+    // ── Dataclass / Enum values at class level — skip ──
+
+    // ── Top-level / class-level variable assignment ──
+    else if (/^[A-Za-z_]\w*\s*(:\s*\w[\w\[\], ]*\s*)?=/.test(trimmed) && indent <= 4) {
+      const match = trimmed.match(/^(\w+)/);
+      const varName = match ? match[1] : 'var';
+      // Skip self.x assignments — those go into the function scope
+      if (varName === 'self') continue;
+      node = {
+        name: varName, type: 'variable', children: [],
+        detail: trimmed.substring(0, 50),
+        _line: lineNum
+      };
+    }
+
+    // ── Self assignments inside methods ──
+    else if (/^self\.(\w+)\s*=/.test(trimmed)) {
+      const match = trimmed.match(/^self\.(\w+)/);
+      node = {
+        name: `self.${match[1]}`, type: 'variable', children: [],
+        detail: 'instance attribute',
+        _line: lineNum
+      };
+    }
+
+    if (node) {
+      parent.children.push(node);
+      stack.push({ node, indent });
+    }
+  }
+
+  // Insert import group at the top if present
+  if (hasImports) {
+    root.children.unshift(importGroup);
+  }
+
+  return root;
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+//  D3 TREE RENDERER
+// ══════════════════════════════════════════════════════════════════
+
+let currentZoom = null;
+let svgGroup = null;
+
+const TYPE_CONFIG = {
+  module:      { color: '#5b8def', shape: 'circle',  size: 18 },
+  class:       { color: '#34d399', shape: 'ellipse', size: 16 },
+  function:    { color: '#f87171', shape: 'hexagon', size: 14 },
+  variable:    { color: '#fbbf24', shape: 'rect',    size: 12 },
+  loop:        { color: '#94a3b8', shape: 'diamond', size: 12 },
+  import:      { color: '#c084fc', shape: 'circle',  size: 10 },
+  conditional: { color: '#fb923c', shape: 'diamond', size: 12 },
+};
+
+function shapeGenerator(type, size) {
+  const cfg = TYPE_CONFIG[type] || TYPE_CONFIG.variable;
+  const s = size || cfg.size;
+
+  switch (cfg.shape) {
+    case 'circle':
+      return `M0,${-s} A${s},${s} 0 1,1 0,${s} A${s},${s} 0 1,1 0,${-s}Z`;
+    case 'ellipse': {
+      const rx = s * 1.4, ry = s;
+      return `M0,${-ry} A${rx},${ry} 0 1,1 0,${ry} A${rx},${ry} 0 1,1 0,${-ry}Z`;
+    }
+    case 'hexagon': {
+      const a = s;
+      const pts = [];
+      for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i - Math.PI / 2;
+        pts.push(`${a * Math.cos(angle)},${a * Math.sin(angle)}`);
+      }
+      return 'M' + pts.join('L') + 'Z';
+    }
+    case 'diamond': {
+      const d = s * 1.2;
+      return `M0,${-d} L${d},0 L0,${d} L${-d},0 Z`;
+    }
+    case 'rect': {
+      const w = s * 1.3, h = s;
+      return `M${-w},${-h} L${w},${-h} L${w},${h} L${-w},${h} Z`;
+    }
+    default:
+      return `M0,${-s} A${s},${s} 0 1,1 0,${s} A${s},${s} 0 1,1 0,${-s}Z`;
+  }
+}
+
+
+function renderTree(data) {
+  const container = document.getElementById('treePanel');
+  const svg = d3.select('#treeSvg');
+  svg.selectAll('*').remove();
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('infoBar').style.display = 'flex';
+
+  const width = container.clientWidth;
+  const height = container.clientHeight - 60;
+
+  // Build D3 hierarchy
+  const rootHierarchy = d3.hierarchy(data);
+
+  // Compute stats
+  let totalNodes = 0, maxDepth = 0, classCount = 0, funcCount = 0;
+  rootHierarchy.each(d => {
+    totalNodes++;
+    if (d.depth > maxDepth) maxDepth = d.depth;
+    if (d.data.type === 'class') classCount++;
+    if (d.data.type === 'function') funcCount++;
+  });
+  document.getElementById('statNodes').textContent = totalNodes;
+  document.getElementById('statDepth').textContent = maxDepth;
+  document.getElementById('statClasses').textContent = classCount;
+  document.getElementById('statFuncs').textContent = funcCount;
+
+  // Tree layout
+  const treeLayout = d3.tree()
+    .nodeSize([36, 220])
+    .separation((a, b) => a.parent === b.parent ? 1 : 1.3);
+
+  treeLayout(rootHierarchy);
+
+  // Create zoomable group
+  svgGroup = svg.append('g');
+
+  // Zoom behavior
+  currentZoom = d3.zoom()
+    .scaleExtent([0.15, 3])
+    .on('zoom', (event) => {
+      svgGroup.attr('transform', event.transform);
+    });
+
+  svg.call(currentZoom);
+
+  // Draw links
+  const linkGen = d3.linkHorizontal()
+    .x(d => d.y)
+    .y(d => d.x);
+
+  svgGroup.selectAll('.link')
+    .data(rootHierarchy.links())
+    .enter().append('path')
+    .attr('class', 'link')
+    .attr('d', linkGen);
+
+  // Draw nodes
+  const nodes = svgGroup.selectAll('.node-group')
+    .data(rootHierarchy.descendants())
+    .enter().append('g')
+    .attr('class', 'node-group')
+    .attr('transform', d => `translate(${d.y},${d.x})`);
+
+  // Node shapes
+  nodes.append('path')
+    .attr('d', d => {
+      const cfg = TYPE_CONFIG[d.data.type] || TYPE_CONFIG.variable;
+      return shapeGenerator(d.data.type, cfg.size);
+    })
+    .attr('fill', d => {
+      const cfg = TYPE_CONFIG[d.data.type] || TYPE_CONFIG.variable;
+      return cfg.color;
+    })
+    .attr('fill-opacity', 0.2)
+    .attr('stroke', d => {
+      const cfg = TYPE_CONFIG[d.data.type] || TYPE_CONFIG.variable;
+      return cfg.color;
+    })
+    .attr('stroke-width', 1.8);
+
+  // Type badge inside shape
+  nodes.append('text')
+    .attr('class', 'node-type-badge')
+    .text(d => {
+      switch (d.data.type) {
+        case 'module': return 'M';
+        case 'class': return 'C';
+        case 'function': return 'ƒ';
+        case 'variable': return 'v';
+        case 'loop': return '↻';
+        case 'import': return '⬡';
+        case 'conditional': return '?';
+        default: return '';
+      }
+    });
+
+  // Labels
+  nodes.append('text')
+    .attr('class', 'node-label')
+    .attr('x', d => {
+      const cfg = TYPE_CONFIG[d.data.type] || TYPE_CONFIG.variable;
+      return cfg.size * 1.5 + 4;
+    })
+    .text(d => d.data.name);
+
+  // Collapse indicator (child count)
+  nodes.filter(d => d.children && d.children.length > 0)
+    .append('text')
+    .attr('class', 'collapse-indicator')
+    .attr('x', d => {
+      const cfg = TYPE_CONFIG[d.data.type] || TYPE_CONFIG.variable;
+      return -(cfg.size * 1.5 + 8);
+    })
+    .text(d => `(${d.children.length})`);
+
+  // Click to collapse/expand
+  nodes.on('click', function(event, d) {
+    event.stopPropagation();
+    if (d.children) {
+      d._children = d.children;
+      d.children = null;
+    } else if (d._children) {
+      d.children = d._children;
+      d._children = null;
+    } else {
+      return; // leaf node
+    }
+    renderTree(rootHierarchy.data);
+    // Re-find the node position and zoom to it
+  });
+
+  // Tooltip
+  const tooltip = document.getElementById('tooltip');
+  nodes.on('mouseenter', function(event, d) {
+    const cfg = TYPE_CONFIG[d.data.type] || TYPE_CONFIG.variable;
+    tooltip.innerHTML = `
+      <div class="tt-type">${d.data.type.toUpperCase()}: ${d.data.name}</div>
+      ${d.data.detail ? `<div class="tt-detail">${d.data.detail}</div>` : ''}
+      ${d.data._line ? `<div class="tt-detail">Line ${d.data._line}</div>` : ''}
+      ${d._children ? `<div class="tt-detail">${d._children.length} children collapsed</div>` : ''}
+    `;
+    tooltip.classList.add('visible');
+  });
+
+  nodes.on('mousemove', function(event) {
+    tooltip.style.left = (event.clientX + 14) + 'px';
+    tooltip.style.top = (event.clientY - 10) + 'px';
+  });
+
+  nodes.on('mouseleave', function() {
+    tooltip.classList.remove('visible');
+  });
+
+  // Auto-fit: compute bounds and center
+  const bounds = svgGroup.node().getBBox();
+  const padding = 60;
+  const scaleX = width / (bounds.width + padding * 2);
+  const scaleY = height / (bounds.height + padding * 2);
+  const scale = Math.min(scaleX, scaleY, 1.2);
+  const tx = width / 2 - (bounds.x + bounds.width / 2) * scale;
+  const ty = height / 2 - (bounds.y + bounds.height / 2) * scale;
+
+  svg.call(currentZoom.transform,
+    d3.zoomIdentity.translate(tx, ty).scale(scale)
+  );
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+//  CONTROLS
+// ══════════════════════════════════════════════════════════════════
+
+function parseAndRender() {
+  const code = document.getElementById('codeInput').value.trim();
+  if (!code) return;
+  const tree = parsePython(code);
+  renderTree(tree);
+}
+
+function loadSample(key) {
+  document.getElementById('codeInput').value = SAMPLES[key];
+  parseAndRender();
+}
+
+function zoomIn() {
+  d3.select('#treeSvg').transition().duration(300)
+    .call(currentZoom.scaleBy, 1.4);
+}
+
+function zoomOut() {
+  d3.select('#treeSvg').transition().duration(300)
+    .call(currentZoom.scaleBy, 0.7);
+}
+
+function zoomReset() {
+  parseAndRender(); // Re-render triggers auto-fit
+}
+
+// Handle resize
+window.addEventListener('resize', () => {
+  const code = document.getElementById('codeInput').value.trim();
+  if (code) parseAndRender();
+});
+</script>
+</body>
+</html>

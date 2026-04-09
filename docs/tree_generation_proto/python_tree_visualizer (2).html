@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeSensei — Python Structure Tree</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700&display=swap');
+
+  :root {
+    --bg-primary: #0c0e14;
+    --bg-secondary: #13161f;
+    --bg-tertiary: #1a1e2a;
+    --bg-surface: #212636;
+    --border: #2a3042;
+    --border-active: #3d4663;
+    --text-primary: #e8eaf0;
+    --text-secondary: #8b92a8;
+    --text-muted: #555e78;
+    --accent: #6c8cff;
+    --node-module: #5b8def;
+    --node-class: #34d399;
+    --node-function: #f87171;
+    --node-variable: #fbbf24;
+    --node-loop: #94a3b8;
+    --node-import: #c084fc;
+    --node-conditional: #fb923c;
+    --link-color: #3a4260;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); flex-shrink: 0; gap: 10px; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .logo { width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent), #a78bfa); border-radius: 7px; display: grid; place-items: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .header h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; white-space: nowrap; }
+  .header h1 span { color: var(--text-muted); font-weight: 300; margin-left: 6px; font-size: 13px; }
+
+  /* Mode toggle */
+  .mode-toggle { display: flex; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+  .mode-btn { padding: 6px 14px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .mode-btn.active { background: var(--accent); color: #fff; }
+  .mode-btn:hover:not(.active) { color: var(--text-primary); background: var(--bg-tertiary); }
+
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+  .legend-dot { width: 10px; height: 10px; flex-shrink: 0; }
+  .leg-circle { border-radius: 50%; }
+  .leg-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+  .leg-diamond { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+
+  .main-container { display: flex; flex: 1; min-height: 0; }
+
+  .code-panel { width: 380px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--border); background: var(--bg-secondary); }
+  .code-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); }
+  .code-panel-header h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-secondary); }
+  .btn-parse { padding: 6px 16px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-parse:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  .code-textarea { flex: 1; width: 100%; padding: 16px; background: var(--bg-primary); color: var(--text-primary); border: none; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; resize: none; tab-size: 4; }
+  .code-textarea::placeholder { color: var(--text-muted); }
+  .sample-buttons { display: flex; gap: 6px; padding: 10px 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .btn-sample { padding: 4px 10px; background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border); border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; cursor: pointer; transition: all 0.15s; }
+  .btn-sample:hover { background: var(--bg-surface); color: var(--text-primary); border-color: var(--border-active); }
+
+  .tree-panel { flex: 1; position: relative; overflow: hidden; background: radial-gradient(circle at 50% 30%, rgba(108,140,255,0.03) 0%, transparent 60%), var(--bg-primary); }
+  .tree-panel svg { width: 100%; height: 100%; }
+
+  .node-group { cursor: pointer; }
+  .node-group:hover .node-shape { filter: brightness(1.3); }
+  .node-label { font-family: 'JetBrains Mono', monospace; fill: #fff; pointer-events: none; dominant-baseline: middle; }
+  .node-badge { font-family: 'JetBrains Mono', monospace; font-size: 8px; fill: rgba(255,255,255,0.45); pointer-events: none; }
+  .link-path { fill: none; stroke: var(--link-color); stroke-width: 1.5; }
+  .child-count { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--text-muted); pointer-events: none; }
+  .collapsed-indicator { fill: none; stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3,3; }
+
+  .info-bar { position: absolute; bottom: 16px; left: 16px; right: 16px; display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; background: rgba(19,22,31,0.92); backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 10px; font-size: 11px; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+  .info-bar .stats { display: flex; gap: 14px; }
+  .info-bar .stat-val { color: var(--accent); font-weight: 600; }
+  .zoom-controls { display: flex; gap: 4px; }
+  .btn-zoom { width: 28px; height: 28px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); font-size: 14px; cursor: pointer; display: grid; place-items: center; transition: all 0.15s; }
+  .btn-zoom:hover { background: var(--bg-surface); color: var(--text-primary); }
+
+  .empty-state { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--text-muted); pointer-events: none; }
+  .empty-state .icon { width: 56px; height: 56px; background: var(--bg-tertiary); border-radius: 14px; display: grid; place-items: center; font-size: 24px; border: 1px solid var(--border); }
+
+  .tooltip { position: fixed; padding: 8px 12px; background: var(--bg-surface); border: 1px solid var(--border-active); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-primary); pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 100; max-width: 280px; line-height: 1.5; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+  .tooltip.visible { opacity: 1; }
+  .tooltip .tt-type { color: var(--accent); font-weight: 600; }
+  .tooltip .tt-detail { color: var(--text-secondary); margin-top: 2px; }
+
+  .mode-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); position: absolute; top: 12px; right: 16px; background: var(--bg-secondary); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border); }
+
+  @media (max-width: 768px) {
+    .main-container { flex-direction: column; }
+    .code-panel { width: 100%; height: 40vh; border-right: none; border-bottom: 1px solid var(--border); }
+    .tree-panel { height: 60vh; }
+    .legend { display: none; }
+    .header h1 span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">CS</div>
+    <h1>Python Structure Tree<span>CodeSensei</span></h1>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="modeSingle" onclick="setMode('single')">📄 Single File</button>
+    <button class="mode-btn" id="modeClass" onclick="setMode('class')">🏗️ Class View</button>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot leg-circle" style="background:var(--node-module)"></div>Module</div>
+    <div class="legend-item"><div class="legend-dot leg-circle" style="background:var(--node-class)"></div>Class</div>
+    <div class="legend-item"><div class="legend-dot leg-hex" style="background:var(--node-function)"></div>Function</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--node-variable)"></div>Variable</div>
+    <div class="legend-item"><div class="legend-dot leg-diamond" style="background:var(--node-loop)"></div>Loop</div>
+    <div class="legend-item"><div class="legend-dot leg-circle" style="background:var(--node-import)"></div>Import</div>
+    <div class="legend-item"><div class="legend-dot leg-diamond" style="background:var(--node-conditional)"></div>If/Else</div>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="code-panel">
+    <div class="code-panel-header">
+      <h2>Python Source</h2>
+      <button class="btn-parse" onclick="parseAndRender()">▶ Parse</button>
+    </div>
+    <textarea class="code-textarea" id="codeInput" spellcheck="false" placeholder="Paste your Python code here..."></textarea>
+    <div class="sample-buttons">
+      <button class="btn-sample" onclick="loadSample('oop')">OOP Sample</button>
+      <button class="btn-sample" onclick="loadSample('script')">Script Sample</button>
+      <button class="btn-sample" onclick="loadSample('advanced')">Advanced</button>
+    </div>
+  </div>
+
+  <div class="tree-panel" id="treePanel">
+    <div class="empty-state" id="emptyState">
+      <div class="icon">🌳</div>
+      <p>Paste Python code and hit Parse</p>
+      <div class="hint" style="font-size:11px;font-family:'JetBrains Mono',monospace">or try a sample ↙</div>
+    </div>
+    <div class="mode-label" id="modeLabel" style="display:none">📄 Single File → Left to Right</div>
+    <svg id="treeSvg"></svg>
+    <div class="info-bar" id="infoBar" style="display:none">
+      <div class="stats">
+        <span>Nodes: <span class="stat-val" id="statNodes">0</span></span>
+        <span>Depth: <span class="stat-val" id="statDepth">0</span></span>
+        <span>Classes: <span class="stat-val" id="statClasses">0</span></span>
+        <span>Funcs: <span class="stat-val" id="statFuncs">0</span></span>
+      </div>
+      <div class="zoom-controls">
+        <button class="btn-zoom" onclick="zoomIn()">+</button>
+        <button class="btn-zoom" onclick="zoomOut()">−</button>
+        <button class="btn-zoom" onclick="zoomReset()">⌂</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  GLOBALS
+// ══════════════════════════════════════════════
+let currentMode = 'single'; // 'single' or 'class'
+let currentZoom = null, svgGroup = null, currentData = null;
+
+const SAMPLES = {
+  oop: `import os\nimport json\nfrom datetime import datetime\n\nMAX_RETRIES = 3\nDB_PATH = "data.db"\n\nclass Animal:\n    species_count = 0\n\n    def __init__(self, name, sound):\n        self.name = name\n        self.sound = sound\n        Animal.species_count += 1\n\n    def speak(self):\n        return f"{self.name} says {self.sound}"\n\n    def __repr__(self):\n        return f"Animal({self.name})"\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name, "Woof")\n        self.breed = breed\n        self.tricks = []\n\n    def learn_trick(self, trick):\n        if trick not in self.tricks:\n            self.tricks.append(trick)\n            return True\n        return False\n\n    def show_tricks(self):\n        for trick in self.tricks:\n            print(f"{self.name} can {trick}")\n\ndef create_pack(names):\n    pack = []\n    for name in names:\n        dog = Dog(name, "Mixed")\n        pack.append(dog)\n    return pack\n\nif __name__ == "__main__":\n    buddy = Dog("Buddy", "Golden")\n    buddy.learn_trick("sit")\n    buddy.learn_trick("shake")\n    buddy.show_tricks()`,
+
+  script: `import sys\nimport csv\nfrom pathlib import Path\n\nINPUT_DIR = Path("./data")\nOUTPUT_FILE = "results.csv"\nTHRESHOLD = 0.75\n\ndef load_data(filepath):\n    results = []\n    with open(filepath) as f:\n        reader = csv.DictReader(f)\n        for row in reader:\n            score = float(row["score"])\n            if score >= THRESHOLD:\n                results.append(row)\n    return results\n\ndef process_batch(directory):\n    all_results = []\n    for file in directory.glob("*.csv"):\n        data = load_data(file)\n        all_results.extend(data)\n    return all_results\n\ndef write_output(data, filename):\n    if not data:\n        print("No data to write")\n        return\n    with open(filename, "w") as f:\n        writer = csv.DictWriter(f, fieldnames=data[0].keys())\n        writer.writeheader()\n        for row in data:\n            writer.writerow(row)\n\nif __name__ == "__main__":\n    results = process_batch(INPUT_DIR)\n    write_output(results, OUTPUT_FILE)\n    print(f"Wrote {len(results)} rows")`,
+
+  advanced: `import asyncio\nimport logging\nfrom typing import Optional, List, Dict\nfrom dataclasses import dataclass, field\nfrom enum import Enum\n\nlogger = logging.getLogger(__name__)\n\nclass Priority(Enum):\n    LOW = 1\n    MEDIUM = 2\n    HIGH = 3\n\n@dataclass\nclass Task:\n    title: str\n    priority: Priority\n    done: bool = False\n    subtasks: List[str] = field(default_factory=list)\n\n    def complete(self):\n        self.done = True\n\n    def add_subtask(self, name):\n        self.subtasks.append(name)\n\nclass TaskQueue:\n    def __init__(self, max_size: int = 100):\n        self._queue: List[Task] = []\n        self._max_size = max_size\n        self._processed = 0\n\n    async def enqueue(self, task: Task):\n        if len(self._queue) >= self._max_size:\n            raise OverflowError("Queue full")\n        self._queue.append(task)\n        self._queue.sort(key=lambda t: t.priority.value, reverse=True)\n\n    async def process_next(self) -> Optional[Task]:\n        if not self._queue:\n            return None\n        task = self._queue.pop(0)\n        task.complete()\n        self._processed += 1\n        logger.info(f"Processed: {task.title}")\n        return task\n\n    async def process_all(self):\n        while self._queue:\n            task = await self.process_next()\n            if task:\n                for sub in task.subtasks:\n                    print(f"  Subtask: {sub}")\n\n    @property\n    def stats(self) -> Dict:\n        return {"pending": len(self._queue), "processed": self._processed, "capacity": self._max_size}\n\nasync def main():\n    queue = TaskQueue(max_size=50)\n    tasks = [\n        Task("Deploy v2", Priority.HIGH),\n        Task("Write tests", Priority.MEDIUM, subtasks=["unit", "integration"]),\n        Task("Update docs", Priority.LOW),\n    ]\n    for t in tasks:\n        await queue.enqueue(t)\n    await queue.process_all()\n    print(queue.stats)\n\nif __name__ == "__main__":\n    asyncio.run(main())`
+};
+
+
+// ══════════════════════════════════════════════
+//  PYTHON PARSER
+// ══════════════════════════════════════════════
+function parsePython(code) {
+  const lines = code.split('\n');
+  const root = { name: 'module', type: 'module', children: [], detail: '', _line: 0 };
+  const stack = [{ node: root, indent: -1 }];
+  const importGroup = { name: 'imports', type: 'import', children: [], detail: '', _line: 0 };
+  let hasImports = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i], trimmed = raw.trimStart();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const indent = raw.length - trimmed.length, lineNum = i + 1;
+
+    while (stack.length > 1 && stack[stack.length - 1].indent >= indent) stack.pop();
+    const parent = stack[stack.length - 1].node;
+    let node = null;
+
+    if (/^(from\s+\S+\s+)?import\s+/.test(trimmed)) {
+      const names = trimmed.replace(/^from\s+\S+\s+import\s+/, '').replace(/^import\s+/, '')
+        .split(',').map(s => s.trim().split(' as ')[0].split('.').pop());
+      hasImports = true;
+      for (const n of names) importGroup.children.push({ name: n, type: 'import', children: [], detail: trimmed, _line: lineNum });
+      continue;
+    }
+    if (/^class\s+/.test(trimmed)) {
+      const m = trimmed.match(/^class\s+(\w+)(\(([^)]*)\))?/);
+      node = { name: m?.[1] || 'class', type: 'class', children: [], detail: m?.[3] ? `inherits: ${m[3]}` : '', _line: lineNum };
+    } else if (/^(async\s+)?def\s+/.test(trimmed)) {
+      const m = trimmed.match(/^(?:async\s+)?def\s+(\w+)\(([^)]*)\)/);
+      node = { name: (trimmed.startsWith('async') ? 'async ' : '') + (m?.[1] || 'func'), type: 'function', children: [], detail: `(${m?.[2] || ''})`, _line: lineNum };
+    } else if (/^@\w+/.test(trimmed)) { continue; }
+    else if (/^(for|while)\s+/.test(trimmed)) {
+      const kind = trimmed.startsWith('for') ? 'for' : 'while';
+      const m = trimmed.match(/^(?:for|while)\s+(.+):/);
+      node = { name: `${kind} loop`, type: 'loop', children: [], detail: m?.[1]?.substring(0, 40) || '', _line: lineNum };
+    } else if (/^(if|elif|else)\b/.test(trimmed)) {
+      const m = trimmed.match(/^(if|elif|else)\s*(.*?):/);
+      node = { name: m?.[1] || 'if', type: 'conditional', children: [], detail: m?.[2]?.substring(0, 40) || '', _line: lineNum };
+    } else if (/^(async\s+)?with\s+/.test(trimmed)) {
+      const m = trimmed.match(/^(?:async\s+)?with\s+(.+?)(?:\s+as\s+\w+)?:/);
+      node = { name: 'with', type: 'loop', children: [], detail: m?.[1]?.substring(0, 40) || '', _line: lineNum };
+    } else if (/^(try|except|finally)\b/.test(trimmed)) {
+      node = { name: trimmed.match(/^(try|except|finally)/)[1], type: 'conditional', children: [], detail: '', _line: lineNum };
+    } else if (/^[A-Za-z_]\w*\s*(:\s*\w[\w\[\], ]*\s*)?=/.test(trimmed) && indent <= 4) {
+      const vn = trimmed.match(/^(\w+)/)?.[1] || 'var';
+      if (vn === 'self') continue;
+      node = { name: vn, type: 'variable', children: [], detail: trimmed.substring(0, 50), _line: lineNum };
+    } else if (/^self\.(\w+)\s*=/.test(trimmed)) {
+      const m = trimmed.match(/^self\.(\w+)/);
+      node = { name: `self.${m[1]}`, type: 'variable', children: [], detail: 'instance attr', _line: lineNum };
+    }
+
+    if (node) { parent.children.push(node); stack.push({ node, indent }); }
+  }
+  if (hasImports) root.children.unshift(importGroup);
+  return root;
+}
+
+
+// ══════════════════════════════════════════════
+//  NODE SHAPE CONFIG
+// ══════════════════════════════════════════════
+const CFG = {
+  module:      { color: '#5b8def', w: 120, h: 42, r: 21 },
+  class:       { color: '#34d399', w: 120, h: 38, r: 19 },
+  function:    { color: '#f87171', w: 120, h: 38, r: 0  },
+  variable:    { color: '#fbbf24', w: 110, h: 34, r: 4  },
+  loop:        { color: '#94a3b8', w: 110, h: 38, r: 0  },
+  import:      { color: '#c084fc', w: 100, h: 32, r: 16 },
+  conditional: { color: '#fb923c', w: 110, h: 38, r: 0  },
+};
+
+function drawShape(g, type, w, h) {
+  const c = CFG[type] || CFG.variable;
+  if (type === 'function') {
+    const hw = w/2, hh = h/2, i = 15;
+    g.append('polygon').attr('class','node-shape')
+      .attr('points', `${-hw+i},${-hh} ${hw-i},${-hh} ${hw},0 ${hw-i},${hh} ${-hw+i},${hh} ${-hw},0`)
+      .attr('fill', c.color+'18').attr('stroke', c.color).attr('stroke-width', 2);
+  } else if (type === 'loop' || type === 'conditional') {
+    const hw = w/2, hh = h/2;
+    g.append('polygon').attr('class','node-shape')
+      .attr('points', `0,${-hh} ${hw},0 0,${hh} ${-hw},0`)
+      .attr('fill', c.color+'18').attr('stroke', c.color).attr('stroke-width', 2);
+  } else {
+    g.append('rect').attr('class','node-shape')
+      .attr('x', -w/2).attr('y', -h/2).attr('width', w).attr('height', h)
+      .attr('rx', c.r).attr('ry', c.r)
+      .attr('fill', c.color+'18').attr('stroke', c.color).attr('stroke-width', 2);
+  }
+}
+
+const TYPE_LABELS = { module:'MODULE', class:'CLASS', function:'ƒ FUNC', variable:'VAR', loop:'LOOP', import:'IMPORT', conditional:'COND' };
+
+
+// ══════════════════════════════════════════════
+//  RENDER — SINGLE FILE MODE (left → right)
+// ══════════════════════════════════════════════
+function renderSingleFile(data) {
+  currentData = data;
+  const container = document.getElementById('treePanel');
+  const svg = d3.select('#treeSvg');
+  svg.selectAll('*').remove();
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('infoBar').style.display = 'flex';
+
+  const width = container.clientWidth, height = container.clientHeight - 60;
+  const root = d3.hierarchy(data);
+  updateStats(root);
+
+  // Horizontal tree: nodeSize[vertical_spacing, horizontal_spacing]
+  d3.tree().nodeSize([44, 240]).separation((a, b) => a.parent === b.parent ? 1 : 1.2)(root);
+
+  const defs = svg.append('defs');
+  defs.append('marker').attr('id','arrow').attr('viewBox','0 -4 8 8')
+    .attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto')
+    .append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','var(--link-color)');
+
+  svgGroup = svg.append('g');
+  currentZoom = d3.zoom().scaleExtent([0.08, 3]).on('zoom', e => svgGroup.attr('transform', e.transform));
+  svg.call(currentZoom);
+
+  // Curved horizontal links (like the original screenshot)
+  svgGroup.selectAll('.link-path').data(root.links()).enter().append('path')
+    .attr('class', 'link-path')
+    .attr('marker-end', 'url(#arrow)')
+    .attr('d', d => {
+      const sc = CFG[d.source.data.type] || CFG.variable;
+      const tc = CFG[d.target.data.type] || CFG.variable;
+      // In horizontal mode: d.y = horizontal position, d.x = vertical position
+      const sx = d.source.y + sc.w / 2;  // right edge of source
+      const sy = d.source.x;
+      const tx = d.target.y - tc.w / 2;  // left edge of target
+      const ty = d.target.x;
+      const midX = sx + (tx - sx) * 0.5;
+      return `M${sx},${sy} C${midX},${sy} ${midX},${ty} ${tx},${ty}`;
+    });
+
+  // Nodes — positioned horizontally: x ← d.y, y ← d.x
+  const nodes = svgGroup.selectAll('.node-group').data(root.descendants()).enter().append('g')
+    .attr('class', 'node-group')
+    .attr('transform', d => `translate(${d.y},${d.x})`);
+
+  nodes.each(function(d) {
+    const c = CFG[d.data.type] || CFG.variable;
+    drawShape(d3.select(this), d.data.type, c.w, c.h);
+  });
+
+  // Label inside shape
+  nodes.append('text').attr('class', 'node-label').attr('text-anchor', 'middle').attr('y', 1)
+    .attr('font-size', d => d.data.name.length > 14 ? '9px' : d.data.name.length > 10 ? '10px' : '11px')
+    .text(d => d.data.name.length > 18 ? d.data.name.substring(0, 16) + '…' : d.data.name);
+
+  // Type badge above
+  nodes.append('text').attr('class', 'node-badge').attr('text-anchor', 'middle')
+    .attr('y', d => -((CFG[d.data.type] || CFG.variable).h / 2) - 6)
+    .text(d => TYPE_LABELS[d.data.type] || '');
+
+  // Child count
+  nodes.filter(d => (d.children?.length > 0) || d._children).append('text').attr('class', 'child-count')
+    .attr('text-anchor', 'middle')
+    .attr('x', d => -((CFG[d.data.type] || CFG.variable).w / 2) - 12)
+    .attr('y', 3)
+    .text(d => `(${d.children?.length || d._children?.length || 0})`);
+
+  // Collapsed dashed line
+  nodes.filter(d => d._children).append('line').attr('class', 'collapsed-indicator')
+    .attr('x1', d => (CFG[d.data.type]?.w || 100) / 2 + 4).attr('x2', d => (CFG[d.data.type]?.w || 100) / 2 + 20)
+    .attr('y1', 0).attr('y2', 0);
+
+  setupInteractions(nodes, root);
+  autoFit(svg, width, height);
+}
+
+
+// ══════════════════════════════════════════════
+//  RENDER — CLASS VIEW MODE (top → down, orthogonal)
+// ══════════════════════════════════════════════
+function renderClassView(data) {
+  currentData = data;
+  const container = document.getElementById('treePanel');
+  const svg = d3.select('#treeSvg');
+  svg.selectAll('*').remove();
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('infoBar').style.display = 'flex';
+
+  const width = container.clientWidth, height = container.clientHeight - 60;
+  const root = d3.hierarchy(data);
+  updateStats(root);
+
+  // Top-down: nodeSize[horizontal_spacing, vertical_spacing]
+  d3.tree().nodeSize([145, 100]).separation((a, b) => a.parent === b.parent ? 1 : 1.15)(root);
+
+  const defs = svg.append('defs');
+  defs.append('marker').attr('id', 'arrow').attr('viewBox', '0 -4 8 8')
+    .attr('refX', 7).attr('refY', 0).attr('markerWidth', 7).attr('markerHeight', 7).attr('orient', 'auto')
+    .append('path').attr('d', 'M0,-3L7,0L0,3Z').attr('fill', 'var(--link-color)');
+
+  svgGroup = svg.append('g');
+  currentZoom = d3.zoom().scaleExtent([0.08, 3]).on('zoom', e => svgGroup.attr('transform', e.transform));
+  svg.call(currentZoom);
+
+  // Orthogonal links (draw.io style)
+  svgGroup.selectAll('.link-path').data(root.links()).enter().append('path')
+    .attr('class', 'link-path')
+    .attr('marker-end', 'url(#arrow)')
+    .attr('d', d => {
+      const sc = CFG[d.source.data.type] || CFG.variable;
+      const tc = CFG[d.target.data.type] || CFG.variable;
+      const sx = d.source.x, sy = d.source.y + sc.h / 2;
+      const tx = d.target.x, ty = d.target.y - tc.h / 2;
+      const midY = sy + (ty - sy) * 0.5;
+      return `M${sx},${sy} L${sx},${midY} L${tx},${midY} L${tx},${ty}`;
+    });
+
+  // Nodes
+  const nodes = svgGroup.selectAll('.node-group').data(root.descendants()).enter().append('g')
+    .attr('class', 'node-group')
+    .attr('transform', d => `translate(${d.x},${d.y})`);
+
+  nodes.each(function(d) {
+    const c = CFG[d.data.type] || CFG.variable;
+    drawShape(d3.select(this), d.data.type, c.w, c.h);
+  });
+
+  // Label
+  nodes.append('text').attr('class', 'node-label').attr('text-anchor', 'middle').attr('y', 1)
+    .attr('font-size', d => d.data.name.length > 14 ? '9px' : d.data.name.length > 10 ? '10px' : '11px')
+    .text(d => d.data.name.length > 18 ? d.data.name.substring(0, 16) + '…' : d.data.name);
+
+  // Badge
+  nodes.append('text').attr('class', 'node-badge').attr('text-anchor', 'middle')
+    .attr('y', d => -((CFG[d.data.type] || CFG.variable).h / 2) - 6)
+    .text(d => TYPE_LABELS[d.data.type] || '');
+
+  // Child count
+  nodes.filter(d => (d.children?.length > 0) || d._children).append('text').attr('class', 'child-count')
+    .attr('text-anchor', 'middle')
+    .attr('x', d => (CFG[d.data.type] || CFG.variable).w / 2 + 10)
+    .attr('y', d => -(CFG[d.data.type] || CFG.variable).h / 2 + 2)
+    .text(d => `(${d.children?.length || d._children?.length || 0})`);
+
+  // Collapsed dashed
+  nodes.filter(d => d._children).append('line').attr('class', 'collapsed-indicator')
+    .attr('x1', d => -(CFG[d.data.type]?.w || 100) / 2).attr('x2', d => (CFG[d.data.type]?.w || 100) / 2)
+    .attr('y1', d => (CFG[d.data.type]?.h || 36) / 2 + 6).attr('y2', d => (CFG[d.data.type]?.h || 36) / 2 + 6);
+
+  setupInteractions(nodes, root);
+  autoFit(svg, width, height);
+}
+
+
+// ══════════════════════════════════════════════
+//  SHARED HELPERS
+// ══════════════════════════════════════════════
+function updateStats(root) {
+  let t = 0, d = 0, c = 0, f = 0;
+  root.each(n => { t++; if (n.depth > d) d = n.depth; if (n.data.type === 'class') c++; if (n.data.type === 'function') f++; });
+  document.getElementById('statNodes').textContent = t;
+  document.getElementById('statDepth').textContent = d;
+  document.getElementById('statClasses').textContent = c;
+  document.getElementById('statFuncs').textContent = f;
+}
+
+function setupInteractions(nodes, root) {
+  // Collapse/expand
+  nodes.on('click', function(event, d) {
+    event.stopPropagation();
+    if (d.children) { d._children = d.children; d.children = null; }
+    else if (d._children) { d.children = d._children; d._children = null; }
+    else return;
+    renderTree(root.data);
+  });
+
+  // Tooltip
+  const tip = document.getElementById('tooltip');
+  nodes.on('mouseenter', (event, d) => {
+    tip.innerHTML = `<div class="tt-type">${d.data.type.toUpperCase()}: ${d.data.name}</div>` +
+      (d.data.detail ? `<div class="tt-detail">${d.data.detail}</div>` : '') +
+      (d.data._line ? `<div class="tt-detail">Line ${d.data._line}</div>` : '') +
+      (d._children ? `<div class="tt-detail">${d._children.length} children (collapsed)</div>` : '') +
+      `<div class="tt-detail" style="margin-top:4px;color:#555e78">Click to ${d.children ? 'collapse' : 'expand'}</div>`;
+    tip.classList.add('visible');
+  });
+  nodes.on('mousemove', e => { tip.style.left = (e.clientX + 14) + 'px'; tip.style.top = (e.clientY - 10) + 'px'; });
+  nodes.on('mouseleave', () => tip.classList.remove('visible'));
+}
+
+function autoFit(svg, width, height) {
+  requestAnimationFrame(() => {
+    const b = svgGroup.node().getBBox();
+    const pad = 80;
+    const scale = Math.min(width / (b.width + pad * 2), height / (b.height + pad * 2), 1.0);
+    const tx = width / 2 - (b.x + b.width / 2) * scale;
+    const ty = height / 2 - (b.y + b.height / 2) * scale;
+    svg.call(currentZoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+  });
+}
+
+function renderTree(data) {
+  const label = document.getElementById('modeLabel');
+  label.style.display = 'block';
+  if (currentMode === 'single') {
+    label.textContent = '📄 Single File → Left to Right';
+    renderSingleFile(data);
+  } else {
+    label.textContent = '🏗️ Class View → Top to Bottom';
+    renderClassView(data);
+  }
+}
+
+
+// ══════════════════════════════════════════════
+//  CONTROLS
+// ══════════════════════════════════════════════
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('modeSingle').classList.toggle('active', mode === 'single');
+  document.getElementById('modeClass').classList.toggle('active', mode === 'class');
+  if (currentData) renderTree(currentData);
+}
+
+function parseAndRender() {
+  const code = document.getElementById('codeInput').value.trim();
+  if (code) renderTree(parsePython(code));
+}
+
+function loadSample(k) {
+  document.getElementById('codeInput').value = SAMPLES[k];
+  parseAndRender();
+}
+
+function zoomIn() { d3.select('#treeSvg').transition().duration(300).call(currentZoom.scaleBy, 1.4); }
+function zoomOut() { d3.select('#treeSvg').transition().duration(300).call(currentZoom.scaleBy, 0.7); }
+function zoomReset() { if (currentData) renderTree(currentData); }
+window.addEventListener('resize', () => { if (currentData) renderTree(currentData); });
+</script>
+</body>
+</html>
