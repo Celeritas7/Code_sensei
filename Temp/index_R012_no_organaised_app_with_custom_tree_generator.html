@@ -276,9 +276,9 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
     <div class="nv on" id="nav-dash" onclick="goDash()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">◈</span>Dashboard</div>
     <div class="nv" id="nav-bat" onclick="goModules('bat')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">☰</span>Batch</div>
     <div class="nv" id="nav-sql" onclick="goModules('sql')"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">⊞</span>SQL</div>
-    <div class="nv" id="nav-py" onclick="goPython()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">🐍</span>Python</div>
-    <div class="nv" id="nav-web" onclick="goWebApps()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">🌐</span>Web Apps</div>
-    <div class="nv" id="nav-aiml" onclick="goAIML()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">🤖</span>AI / ML</div>
+    <div class="nv" id="nav-proj" onclick="goProjects()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">◧</span>My Projects</div>
+    <div class="nv" id="nav-tree" onclick="goTree()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">🌳</span>Python Tree</div>
+    <div class="nv" id="nav-lab" onclick="goLab()"><span style="font-size:15px;width:18px;text-align:center;font-family:monospace">🐍</span>Python Lab</div>
   </div>
   <div class="sb-ft">Learning from your own code</div>
 </div>
@@ -311,9 +311,8 @@ function fmtDate(d){const dt=new Date(d);return dt.toLocaleDateString('en-GB',{d
 function goDash(){
   S.view='dash';setNav('nav-dash');
   document.getElementById('main').innerHTML=`<div class="pg">
-    <h1>Welcome back, Aniket</h1><p class="sub">Your full-stack journey — 5 tracks, one hub</p>
-
-    <div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:10px">LANGUAGES</div>
+    <h1>Welcome back, Aniket</h1><p class="sub">Your full-stack journey — learn from your own code</p>
+    <div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:10px">LESSONS</div>
     <div class="cd" onclick="goModules('bat')" style="margin-bottom:8px;border-color:rgba(245,158,11,.12)">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="width:44px;height:44px;border-radius:10px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center;font-size:20px">📁</div>
@@ -321,40 +320,39 @@ function goDash(){
         <span style="color:var(--a);font-size:16px">→</span>
       </div>
     </div>
-    <div class="cd" onclick="goModules('sql')" style="margin-bottom:8px;border-color:rgba(16,185,129,.12)">
+    <div class="cd" onclick="goModules('sql')" style="margin-bottom:20px;border-color:rgba(16,185,129,.12)">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="width:44px;height:44px;border-radius:10px;background:rgba(16,185,129,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🗄️</div>
         <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">SQL (PostgreSQL)</div><div style="font-size:12px;color:var(--td)">10 modules · Bootcamp + your notes</div></div>
         <span style="color:var(--g);font-size:16px">→</span>
       </div>
     </div>
-    <div class="cd" onclick="goPython()" style="margin-bottom:20px;border-color:rgba(56,189,248,.12)">
+    <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">MY PROJECTS</div>
+    <div class="cd" onclick="goProjects()" style="margin-bottom:8px;border-color:rgba(56,189,248,.12)">
       <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:44px;height:44px;border-radius:10px;background:rgba(56,189,248,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🐍</div>
-        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Python</div><div style="font-size:12px;color:var(--td)">100 Days of Code · Structure Tree Visualizer</div></div>
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(56,189,248,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🔧</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Ghost Tracker</div><div style="font-size:12px;color:var(--td)">HTML/CSS/JS · 30 revisions from GitHub</div></div>
         <span style="color:var(--b);font-size:16px">→</span>
       </div>
     </div>
-
-    <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">BUILD & APPLY</div>
-    <div class="cd" onclick="goWebApps()" style="margin-bottom:8px;border-color:rgba(52,211,153,.12)">
+    <div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:1px;margin-bottom:10px;margin-top:20px">TOOLS</div>
+    <div class="cd" onclick="goTree()" style="margin-bottom:8px;border-color:rgba(52,211,153,.12)">
       <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:44px;height:44px;border-radius:10px;background:rgba(52,211,153,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🌐</div>
-        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Web Apps</div><div style="font-size:12px;color:var(--td)">Ghost Tracker · Learn from your own projects</div></div>
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(52,211,153,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🌳</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Python Structure Tree</div><div style="font-size:12px;color:var(--td)">Visualize code structure · Logic flow stepper</div></div>
         <span style="color:var(--g);font-size:16px">→</span>
       </div>
     </div>
-    <div class="cd" onclick="goAIML()" style="margin-bottom:20px;border-color:rgba(167,139,250,.12)">
+    <div class="cd" onclick="goLab()" style="margin-bottom:16px;border-color:rgba(167,139,250,.12)">
       <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:44px;height:44px;border-radius:10px;background:rgba(167,139,250,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🤖</div>
-        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">AI / ML</div><div style="font-size:12px;color:var(--td)">Kaggle notebooks · Data science experiments</div></div>
+        <div style="width:44px;height:44px;border-radius:10px;background:rgba(167,139,250,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🐍</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Python Lab</div><div style="font-size:12px;color:var(--td)">Kaggle notebooks · Code & run in browser</div></div>
         <span style="color:var(--p);font-size:16px">→</span>
       </div>
     </div>
-
     <div style="padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
       <div style="font-size:12px;color:var(--tm);margin-bottom:8px">Coming soon:</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">${['C++','HTML/CSS','JavaScript','React','Flask','PyTorch'].map(t=>'<span style="padding:3px 8px;background:#1a1a30;border-radius:4px;font-size:11px;color:var(--td)">'+t+'</span>').join('')}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${['HTML','CSS','JavaScript','Python','JSON','Shell'].map(t=>'<span style="padding:3px 8px;background:#1a1a30;border-radius:4px;font-size:11px;color:var(--td)">'+t+'</span>').join('')}</div>
     </div>
   </div>`;
 }
@@ -469,11 +467,11 @@ const PROJECTS=[
   {id:'ghost',name:'Ghost Tracker',cat:'HTML / CSS / JS',icon:'👻',color:'#38bdf8',repo:'celeritas7/Ghost_tracker_simple',file:'index.html'},
 ];
 
-function goWebApps(){
-  S.view='projects';setNav('nav-web');
+function goProjects(){
+  S.view='projects';setNav('nav-proj');
   document.getElementById('main').innerHTML=`<div class="pg"><button class="back" onclick="goDash()">← Dashboard</button>
-    <h2 style="color:var(--g)">🌐 Web Apps</h2><p class="sub">Learn from your own projects — see how your apps evolved</p>
-    <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">YOUR PROJECTS</div>
+    <h2>My Projects</h2><p class="sub">Learn from your own code — see how your apps evolved</p>
+    <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">HTML / CSS / JS</div>
     ${PROJECTS.map(p=>`<div class="cd" onclick="openProject('${p.id}')" style="margin-bottom:8px;border-color:${p.color}18">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="width:44px;height:44px;border-radius:10px;background:${p.color}15;display:flex;align-items:center;justify-content:center;font-size:20px">${p.icon}</div>
@@ -483,7 +481,7 @@ function goWebApps(){
     </div>`).join('')}
     <div style="margin-top:24px;padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
       <div style="font-size:12px;color:var(--tm);margin-bottom:6px">Future projects:</div>
-      <div style="font-size:12px;color:var(--td)">Flask apps · React dashboards · API projects</div>
+      <div style="font-size:12px;color:var(--td)">Python · Image Organizer, Udemy exercises<br>Batch · Your automation scripts</div>
     </div>
   </div>`;
 }
@@ -504,7 +502,7 @@ async function openProject(id){
       if(!r.ok)throw new Error('GitHub API: '+r.status);
       cache.commits=await r.json();
     }catch(e){
-      m.innerHTML=`<div class="pg"><button class="back" onclick="goWebApps()">← Web Apps</button><div style="color:var(--r);padding:20px;background:var(--c);border-radius:10px;font-size:13px">Failed to load commits: ${esc(e.message)}<br><br>GitHub API has a rate limit of 60 requests/hour for unauthenticated access. Try again in a few minutes.</div></div>`;
+      m.innerHTML=`<div class="pg"><button class="back" onclick="goProjects()">← Projects</button><div style="color:var(--r);padding:20px;background:var(--c);border-radius:10px;font-size:13px">Failed to load commits: ${esc(e.message)}<br><br>GitHub API has a rate limit of 60 requests/hour for unauthenticated access. Try again in a few minutes.</div></div>`;
       return;
     }
   }
@@ -524,7 +522,7 @@ function renderProjectDetail(){
   const m=document.getElementById('main');
 
   m.innerHTML=`<div class="pg">
-    <button class="back" onclick="goWebApps()">← Web Apps</button>
+    <button class="back" onclick="goProjects()">← My Projects</button>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
       <span style="font-size:24px">${proj.icon}</span>
       <h2 style="color:${proj.color}">${proj.name}</h2>
@@ -845,134 +843,6 @@ function promptBtns(context) {
 }
 
 // ═══════════════════════════════════════
-// PYTHON SECTION — Landing Page
-// ═══════════════════════════════════════
-const PY100_DAYS=[
-  {d:1,t:'Working with Variables',links:['https://appbrewery.github.io/python-day1-demo/']},
-  {d:2,t:'Data Types & String Manipulation',links:['https://appbrewery.github.io/python-day2-demo/','https://docs.python.org/3/tutorial/floatingpoint.html']},
-  {d:3,t:'Control Flow & Logical Operators',links:['https://appbrewery.github.io/python-day3-demo/']},
-  {d:4,t:'Randomisation & Python Lists',links:['https://appbrewery.github.io/python-day4-demo/','https://docs.python.org/3/library/random.html','https://docs.python.org/3/tutorial/datastructures.html']},
-  {d:5,t:'Python Loops',links:['https://appbrewery.github.io/python-day5-demo/']},
-  {d:6,t:'Functions & Reeborg\'s World',links:['https://docs.python.org/3/library/functions.html','https://reeborg.ca/reeborg.html?lang=en&mode=python&menu=worlds%2Fmenus%2Freeborg_intro_en.json&name=Alone&url=worlds%2Ftutorial_en%2Falone.json','https://peps.python.org/pep-0008/']},
-  {d:7,t:'Hangman Project',links:['https://appbrewery.github.io/python-day7-demo/','https://developers.google.com/edu/python/lists']},
-  {d:8,t:'Function Parameters & Caesar Cipher',links:['https://appbrewery.github.io/python-day8-demo/']},
-  {d:9,t:'Dictionaries & Nesting',links:['https://appbrewery.github.io/python-day9-demo/']},
-  {d:10,t:'Functions with Outputs',links:['https://appbrewery.github.io/python-day10-demo/']},
-  {d:11,t:'Blackjack Capstone',links:['https://appbrewery.github.io/python-day11-demo/','https://docs.python.org/3/library/functions.html#sum']},
-  {d:12,t:'Scope & Number Guessing Game',links:['https://appbrewery.github.io/python-day12-demo/']},
-  {d:13,t:'Debugging',links:['https://stackoverflow.com/questions/tagged/python']},
-  {d:14,t:'Higher Lower Game',links:['https://www.higherlowergame.com/']},
-  {d:15,t:'Coffee Machine Project',links:['https://www.jetbrains.com/help/pycharm/mastering-keyboard-shortcuts.html']},
-  {d:16,t:'OOP — Turtle & Object Oriented Programming',links:['https://docs.python.org/3/library/turtle.html']},
-  {d:17,t:'OOP — Quiz Project & Benefits of OOP',links:['https://appbrewery.github.io/python-day17-demo/','https://opentdb.com/']},
-  {d:18,t:'Turtle Graphics & Hirst Painting',links:['https://docs.python.org/3/library/turtle.html','https://trinket.io/docs/colors']},
-  {d:19,t:'Event Listeners & Higher-Order Functions',links:['https://docs.python.org/3/library/turtle.html#turtle.listen']},
-  {d:20,t:'Snake Game Part 1',links:['https://docs.python.org/3.3/library/turtle.html?highlight=turtle#turtle.tracer']},
-];
-let py100Expanded=null;
-
-function shortenUrl(u){return u.replace(/^https?:\/\/(www\.)?/,'').substring(0,55)+(u.length>65?'…':'');}
-
-function goPython(){
-  S.view='python';setNav('nav-py');
-  const daysList=PY100_DAYS.map(function(day){
-    const isOpen=py100Expanded===day.d;
-    let html='<div style="margin-bottom:4px">';
-    html+='<div class="mod" onclick="togglePy100('+day.d+')" style="margin-bottom:0;padding:12px 14px;'+(isOpen?'border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.03)':'')+'">';
-    html+='<div class="mod-n" style="background:rgba(56,189,248,.1);color:var(--b);width:32px;height:32px;font-size:12px">D'+day.d+'</div>';
-    html+='<div style="flex:1"><div style="font-size:13px;font-weight:600">'+esc(day.t)+'</div><div style="font-size:10.5px;color:var(--td)">'+day.links.length+' resource'+(day.links.length>1?'s':'')+'</div></div>';
-    html+='<span style="color:var(--td);font-size:12px">'+(isOpen?'▼':'▶')+'</span></div>';
-    if(isOpen){
-      html+='<div style="padding:10px 14px 10px 60px;background:rgba(56,189,248,.02);border:1px solid var(--bd);border-top:none;border-radius:0 0 10px 10px">';
-      day.links.forEach(function(lk){
-        html+='<a href="'+esc(lk)+'" target="_blank" style="display:block;padding:5px 0;font-size:12px;color:var(--b);text-decoration:none;word-break:break-all">\uD83D\uDD17 '+esc(shortenUrl(lk))+'</a>';
-      });
-      html+=promptBtns({type:'line',topic:'python',module:day.d,moduleTitle:'100 Days - Day '+day.d+': '+day.t,filename:'day'+day.d+'.py',lineNum:0,code:'Day '+day.d+' concepts',explanation:day.t});
-      html+='</div>';
-    }
-    html+='</div>';
-    return html;
-  }).join('');
-
-  document.getElementById('main').innerHTML='<div class="pg">'
-    +'<button class="back" onclick="goDash()">← Dashboard</button>'
-    +'<h2 style="color:var(--b)">🐍 Python</h2>'
-    +'<p class="sub">100 Days of Code · Structure Tree Visualizer</p>'
-    +'<div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:1px;margin-bottom:10px">TOOLS</div>'
-    +'<div class="cd" onclick="goTree()" style="margin-bottom:20px;border-color:rgba(52,211,153,.12)"><div style="display:flex;align-items:center;gap:14px"><div style="width:44px;height:44px;border-radius:10px;background:rgba(52,211,153,.1);display:flex;align-items:center;justify-content:center;font-size:20px">🌳</div><div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Structure Tree Visualizer</div><div style="font-size:12px;color:var(--td)">Paste code → D3.js tree · Logic flow stepper · Compare mode</div></div><span style="color:var(--g);font-size:16px">→</span></div></div>'
-    +'<div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:10px">100 DAYS OF PYTHON</div>'
-    +'<p style="font-size:12.5px;color:var(--td);margin-bottom:14px">App Brewery bootcamp — tap a day to see lecture resources</p>'
-    +'<div id="py100list">'+daysList+'</div>'
-    +'<div style="padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px;margin-top:16px"><div style="font-size:12px;color:var(--tm);margin-bottom:6px">📚 More days coming soon</div><div style="font-size:12px;color:var(--td);line-height:1.6">Days 21–100 will be added as you progress through the bootcamp.</div></div>'
-    +'</div>';
-}
-
-function togglePy100(d){py100Expanded=py100Expanded===d?null:d;goPython();}
-
-// ═══════════════════════════════════════
-// AI / ML SECTION — Landing Page
-// ═══════════════════════════════════════
-function goAIML(){
-  S.view='aiml';setNav('nav-aiml');
-  document.getElementById('main').innerHTML=`<div class="pg">
-    <button class="back" onclick="goDash()">← Dashboard</button>
-    <h2 style="color:var(--p)">🤖 AI / ML</h2>
-    <p class="sub">Kaggle notebooks · Data science experiments</p>
-
-    <div class="cd" onclick="goLab()" style="margin-bottom:16px;border-color:rgba(167,139,250,.12)">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div style="width:44px;height:44px;border-radius:10px;background:rgba(167,139,250,.1);display:flex;align-items:center;justify-content:center;font-size:20px">📓</div>
-        <div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Kaggle Notebooks</div><div style="font-size:12px;color:var(--td)">Your ML experiments · Open & code in browser</div></div>
-        <span style="color:var(--p);font-size:16px">→</span>
-      </div>
-    </div>
-
-    <div style="padding:14px;background:var(--c);border:1px solid var(--bd);border-radius:10px">
-      <div style="font-size:12px;color:var(--tm);margin-bottom:6px">Coming soon:</div>
-      <div style="font-size:12px;color:var(--td);line-height:1.6">Kaggle Learn courses tracker · TensorFlow / PyTorch exercises · Model comparison tools</div>
-    </div>
-  </div>`;
-}
-
-// ═══════════════════════════════════════
-// UNIVERSAL PARSER ARCHITECTURE
-// ═══════════════════════════════════════
-// Each language parser outputs universal JSON: { name, type, children[], detail, _line, _id }
-// Node types: module, file, project, class, function, variable, loop,
-//             conditional, statement, import, section, command
-const codeParsers = {
-  python: function(code, pfx) { return tParse(code, pfx); },
-  batch: function(code, pfx) {
-    let idCtr=0;const root={name:'script',type:'module',children:[],detail:'',_line:0,_id:pfx+'m_'+(idCtr++)};
-    const lines=code.split('\n');
-    for(let i=0;i<lines.length;i++){const tr=lines[i].trim();if(!tr||tr.startsWith('REM ')||tr.startsWith('::'))continue;const ln=i+1;
-      if(/^@?echo\s+off/i.test(tr))continue;
-      if(/^:(\w+)/i.test(tr)){const m=tr.match(/^:(\w+)/);root.children.push({name:m[1],type:'section',children:[],detail:'label',_line:ln,_id:pfx+'n_'+(idCtr++)});}
-      else if(/^(set|SET)\s+/i.test(tr)){const vn=tr.replace(/^set\s+\/[aApP]\s+/i,'').match(/^(\w+)/)?.[0]||'var';root.children.push({name:vn+'=…',type:'variable',children:[],detail:tr.substring(0,40),_line:ln,_id:pfx+'n_'+(idCtr++)});}
-      else if(/^if\s+/i.test(tr)){root.children.push({name:'IF',type:'conditional',children:[],detail:tr.substring(3,40),_line:ln,_id:pfx+'n_'+(idCtr++)});}
-      else if(/^for\s+/i.test(tr)){root.children.push({name:'FOR',type:'loop',children:[],detail:tr.substring(4,40),_line:ln,_id:pfx+'n_'+(idCtr++)});}
-      else if(/^(call|goto)\s+/i.test(tr)){const m=tr.match(/^(call|goto)\s+:?(\w+)/i);root.children.push({name:(m?.[1]||'call')+' '+(m?.[2]||''),type:'statement',children:[],detail:'',_line:ln,_id:pfx+'n_'+(idCtr++)});}
-      else if(/^echo\s+/i.test(tr)){root.children.push({name:'echo',type:'statement',children:[],detail:tr.substring(5,35),_line:ln,_id:pfx+'n_'+(idCtr++)});}
-    }return root;
-  },
-  sql: function(code, pfx) {
-    let idCtr=0;const root={name:'query',type:'module',children:[],detail:'',_line:0,_id:pfx+'m_'+(idCtr++)};
-    const lines=code.split('\n');let cur='';
-    for(let i=0;i<lines.length;i++){const tr=lines[i].trim();if(!tr||tr.startsWith('--'))continue;cur+=' '+tr;
-      if(tr.endsWith(';')||i===lines.length-1){const s=cur.trim();const ln=i+1;
-        if(/^SELECT/i.test(s))root.children.push({name:'SELECT',type:'function',children:[],detail:s.substring(7,45),_line:ln,_id:pfx+'n_'+(idCtr++)});
-        else if(/^CREATE\s+TABLE/i.test(s)){const m=s.match(/CREATE\s+TABLE\s+(\w+)/i);root.children.push({name:m?.[1]||'table',type:'class',children:[],detail:'CREATE TABLE',_line:ln,_id:pfx+'n_'+(idCtr++)});}
-        else if(/^INSERT/i.test(s))root.children.push({name:'INSERT',type:'statement',children:[],detail:s.substring(7,40),_line:ln,_id:pfx+'n_'+(idCtr++)});
-        else if(/^UPDATE/i.test(s))root.children.push({name:'UPDATE',type:'statement',children:[],detail:s.substring(7,40),_line:ln,_id:pfx+'n_'+(idCtr++)});
-        else if(/^DELETE/i.test(s))root.children.push({name:'DELETE',type:'statement',children:[],detail:s.substring(7,40),_line:ln,_id:pfx+'n_'+(idCtr++)});
-        else if(/^(ALTER|DROP)/i.test(s)){const m=s.match(/^(\w+\s+\w+)/);root.children.push({name:m?.[0]||s.substring(0,20),type:'command',children:[],detail:'',_line:ln,_id:pfx+'n_'+(idCtr++)});}
-        cur='';
-      }
-    }return root;
-  }
-};
-
-// ═══════════════════════════════════════
 // PYTHON STRUCTURE TREE VISUALIZER
 // ═══════════════════════════════════════
 let tFiles=[{name:'main.py',code:''}],tActiveIdx=0,tMode='single',tFlowMode=false;
@@ -1027,9 +897,7 @@ const TS={
   loop:       {color:'#e2e8f0',stroke:'#475569',w:150,h:56,r:0},
   import:     {color:'#e0f2fe',stroke:'#0284c7',w:110,h:30,r:15},
   conditional:{color:'#ffedd5',stroke:'#ea580c',w:130,h:40,r:0},
-  statement:  {color:'#fef9c3',stroke:'#a16207',w:140,h:28,r:3},
-  section:    {color:'#e0e7ff',stroke:'#4f46e5',w:150,h:36,r:6},
-  command:    {color:'#fce7f3',stroke:'#be185d',w:140,h:32,r:4}
+  statement:  {color:'#fef9c3',stroke:'#a16207',w:140,h:28,r:3}
 };
 function tDrawShape(g,type,w,h){const c=TS[type]||TS.variable;
 if(type==='class'){
@@ -1062,7 +930,7 @@ if(type==='class'){
   // Default rounded rect (project, file, module)
   g.append('rect').attr('class','tshape').attr('x',-w/2).attr('y',-h/2).attr('width',w).attr('height',h).attr('rx',c.r).attr('ry',c.r).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2);
 }}
-const TB={project:'PROJECT',file:'FILE',module:'MODULE',class:'CLASS',function:'ƒ FUNC',variable:'VAR',loop:'',import:'IMPORT',conditional:'COND',statement:'',section:'LABEL',command:'CMD'};
+const TB={project:'PROJECT',file:'FILE',module:'MODULE',class:'CLASS',function:'ƒ FUNC',variable:'VAR',loop:'',import:'IMPORT',conditional:'COND',statement:''};
 
 // Layout
 function tLayoutSub(node,x,y){const cfg=TS[node.type]||TS.variable;const pos=[{node,x,y}];const lks=[];const IND=40,VG=24;let curY=y+cfg.h/2+VG+8;
@@ -1554,10 +1422,10 @@ function tToggleSavedPanel(){
 
 // Main entry: render the tree section
 function goTree(){
-  S.view='tree';setNav('nav-py');
+  S.view='tree';setNav('nav-tree');
   document.getElementById('main').innerHTML=`<div class="tree-wrap">
     <div class="tree-code-panel">
-      <div class="tree-code-top"><h3><button class="back" onclick="goPython()" style="display:inline;margin:0;font-size:10px;letter-spacing:.5px">← PYTHON</button> &nbsp;Source</h3>
+      <div class="tree-code-top"><h3>Python Source</h3>
         <div style="display:flex;gap:4px;align-items:center">
           <div class="tree-mode-toggle"><button class="tree-mode-btn on" id="tmSingle" onclick="tSetMode('single')">📄</button><button class="tree-mode-btn" id="tmClass" onclick="tSetMode('class')">🏗️</button><button class="tree-mode-btn" id="tmCompare" onclick="tSetMode('compare')">📊</button></div>
           <button class="tree-mode-btn" id="tFlowBtn" onclick="tToggleFlow()" style="border:1px solid var(--bd);border-radius:4px" title="Logic Flow">⚡</button>
@@ -1620,7 +1488,7 @@ let labShowForm=false;
 let labEditId=null;
 
 async function goLab(){
-  S.view='lab';setNav('nav-aiml');
+  S.view='lab';setNav('nav-lab');
   const m=document.getElementById('main');
   m.innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading notebooks...</div></div>';
 
@@ -1637,12 +1505,12 @@ function renderLab(){
   const filtered=labCategory==='all'?labNotebooks:labNotebooks.filter(n=>n.category===labCategory);
 
   m.innerHTML=`<div class="pg">
-    <button class="back" onclick="goAIML()">← AI / ML</button>
+    <button class="back" onclick="goDash()">← Dashboard</button>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-      <h2 style="color:var(--p)">📓 Kaggle Notebooks</h2>
+      <h2 style="color:var(--p)">🐍 Python Lab</h2>
       <button class="lab-btn lab-btn-primary" onclick="labToggleForm()">+ Add Notebook</button>
     </div>
-    <p class="sub">Your AI/ML notebooks — tap to open and code</p>
+    <p class="sub">Your Kaggle notebooks — tap to open and code</p>
 
     ${labShowForm?renderLabForm():''}
 
