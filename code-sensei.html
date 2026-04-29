@@ -196,8 +196,267 @@ input, textarea, select {
 }
 
 /* ────────────────────────────────────────────────────────────
-   Phase 1 — debug tokens screen
-   Renders every token as a swatch. Removed/relocated in Phase 3.
+   Components — the public surface used by every screen.
+   Each rule pulls colour/spacing from var(--*) only.
+   ──────────────────────────────────────────────────────────── */
+
+/* CodeBlock + syntax tokens */
+.code-block {
+  background: var(--syn-bg);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-input);
+  font: 400 13px/1.6 var(--font-mono);
+  overflow-x: auto;
+  padding: var(--sp-3) 0;
+}
+.code-block.no-frame {
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+.code-line {
+  display: flex;
+  white-space: pre;
+  padding: 0 var(--sp-3);
+}
+.code-line .line-num {
+  width: 22px;
+  flex-shrink: 0;
+  color: var(--muted);
+  opacity: 0.5;
+  text-align: right;
+  margin-right: var(--sp-2);
+  user-select: none;
+}
+.code-line .line-marker {
+  width: 14px;
+  flex-shrink: 0;
+  font-weight: 700;
+  text-align: center;
+  user-select: none;
+}
+.code-line.add { background: rgba(91, 138, 58, 0.10); }
+.code-line.del { background: rgba(184, 65, 46, 0.08); }
+.code-line.hl  { background: var(--accent-bg); }
+.code-line .line-marker.add { color: var(--success); }
+.code-line .line-marker.del { color: var(--error); }
+.code-line .line-content { flex: 1; }
+
+.syn-kw  { color: var(--syn-kw);  font-weight: 600; }
+.syn-str { color: var(--syn-str); }
+.syn-fn  { color: var(--syn-fn);  font-weight: 600; }
+.syn-num { color: var(--syn-num); }
+.syn-com { color: var(--syn-com); font-style: italic; }
+.syn-var { color: var(--syn-var); }
+.syn-op  { color: var(--syn-op); }
+
+/* Pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.pill-lg { padding: 8px 14px; font-size: 13px; }
+.pill-neutral { background: var(--surface-2); color: var(--ink);        border-color: var(--hairline); }
+.pill-accent  { background: var(--accent);    color: var(--accent-ink); }
+.pill-success { background: rgba(91, 138, 58, 0.12);  color: var(--success); border-color: rgba(91, 138, 58, 0.25); }
+.pill-warn    { background: rgba(201, 138, 44, 0.12); color: var(--warn);    border-color: rgba(201, 138, 44, 0.25); }
+.pill-error   { background: rgba(184, 65, 46, 0.10);  color: var(--error);   border-color: rgba(184, 65, 46, 0.20); }
+
+/* Btn */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 18px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  min-height: 44px;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: transparent;
+  box-shadow: 0 4px 0 var(--accent-shadow);
+}
+.btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--accent-shadow);
+}
+.btn-full { width: 100%; }
+
+/* Hearts row */
+.hearts-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 14px;
+  color: var(--error);
+}
+.heart.spent { color: var(--surface-2); }
+.hearts-count {
+  margin-left: 4px;
+  font: 700 12px/1 var(--font-sans);
+  color: var(--error);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Progress dots — spec calls them "dots" but v2 mock renders bars. */
+.progress-dots {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+.dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-2);
+  transition: background var(--t-base) ease-out;
+}
+.dot.done, .dot.on { background: var(--accent); }
+
+/* Blank slot — tap-to-fill landing zones */
+.blank-slot {
+  display: inline-block;
+  min-width: 56px;
+  min-height: 22px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  vertical-align: middle;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+}
+.blank-empty {
+  background: var(--surface-2);
+  border: 1.5px dashed var(--muted);
+}
+.blank-filled {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+}
+.blank-correct {
+  background: rgba(91, 138, 58, 0.15);
+  color: var(--success);
+  border: 1.5px solid var(--success);
+}
+.blank-wrong {
+  background: rgba(184, 65, 46, 0.10);
+  color: var(--error);
+  border: 1.5px solid var(--error);
+  text-decoration: line-through;
+}
+
+/* Token chip — tap-fill tray */
+.token-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 1.5px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  box-shadow: 0 2px 0 var(--hairline);
+  min-height: 44px;
+  transition: transform var(--t-fast), background var(--t-fast);
+}
+.token-chip:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--hairline); }
+.token-chip.token-placed {
+  background: var(--surface-2);
+  opacity: 0.5;
+  text-decoration: line-through;
+  box-shadow: none;
+  cursor: default;
+}
+.token-chip.token-correct {
+  background: rgba(91, 138, 58, 0.15);
+  color: var(--success);
+  border-color: var(--success);
+}
+.token-chip.token-wrong {
+  background: rgba(184, 65, 46, 0.10);
+  color: var(--error);
+  border-color: var(--error);
+}
+
+/* Mascot bubble */
+.mascot-bubble {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: flex-start;
+}
+.mascot-bubble.right { flex-direction: row-reverse; }
+.mascot-bubble .speech {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  border: 1px solid var(--hairline);
+  padding: var(--sp-3) var(--sp-4);
+  font-size: 13px;
+  line-height: 1.55;
+  position: relative;
+  flex: 1;
+}
+.mascot-bubble .speech::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 14px;
+  width: 0; height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid var(--surface);
+}
+.mascot-bubble.right .speech::before {
+  left: auto;
+  right: -6px;
+  border-right: none;
+  border-left: 6px solid var(--surface);
+}
+
+/* Diff sections (used by Review) */
+.diff-yours, .diff-sensei { margin-top: var(--sp-3); }
+
+/* Debug-screen nav strip (Phase 2 only — removed when real Home lands). */
+.debug-nav {
+  display: flex;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-5);
+  border-bottom: 1px dashed var(--hairline);
+  background: var(--accent-bg);
+}
+.debug-nav button {
+  font: 700 10px/1 var(--font-mono);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--muted);
+}
+.debug-nav button.on { background: var(--accent); color: var(--accent-ink); }
+
+/* ────────────────────────────────────────────────────────────
+   Debug screens (tokens + components) — Phase 1/2 scaffolding.
    ──────────────────────────────────────────────────────────── */
 .dbg-section { margin-top: var(--sp-6); }
 .dbg-section:first-of-type { margin-top: var(--sp-3); }
@@ -264,24 +523,27 @@ input, textarea, select {
   margin-bottom: 2px;
 }
 
-.syntax-demo {
-  background: var(--syn-bg);
+/* Component-preview screen layout */
+.preview-card {
+  background: var(--surface);
   border: 1px solid var(--hairline);
-  border-radius: var(--r-input);
-  padding: var(--sp-3) var(--sp-4);
-  font: 400 13px/1.6 var(--font-mono);
+  border-radius: var(--r-card);
+  padding: var(--sp-4);
+  margin-bottom: var(--sp-3);
 }
-.syntax-demo .ln {
-  display: block;
-  white-space: pre;
-  color: var(--syn-var);
+.preview-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  margin-top: var(--sp-2);
 }
-.syntax-demo .kw  { color: var(--syn-kw);  font-weight: 600; }
-.syntax-demo .str { color: var(--syn-str); }
-.syntax-demo .fn  { color: var(--syn-fn);  font-weight: 600; }
-.syntax-demo .num { color: var(--syn-num); }
-.syntax-demo .com { color: var(--syn-com); font-style: italic; }
-.syntax-demo .op  { color: var(--syn-op); }
+.preview-label {
+  font: 700 10px/1.4 var(--font-mono);
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  margin-bottom: var(--sp-1);
+}
 </style>
 </head>
 <body>
@@ -360,15 +622,526 @@ function esc(s) {
 }
 
 /* ────────────────────────────────────────────────────────────
+   Tokenizer + CodeBlock
+   Minimal one-pass tokenizer for Python / JavaScript / SQL.
+   Not a full parser — good enough for the lesson corpus.
+   ──────────────────────────────────────────────────────────── */
+const KEYWORDS = {
+  py: new Set([
+    'def','class','if','elif','else','for','while','in','return',
+    'import','from','as','with','try','except','finally','raise',
+    'pass','break','continue','lambda','yield','True','False','None',
+    'and','or','not','is','global','nonlocal','async','await',
+  ]),
+  js: new Set([
+    'var','let','const','function','if','else','for','while','do',
+    'switch','case','default','break','continue','return','new',
+    'class','extends','super','this','typeof','instanceof','in','of',
+    'true','false','null','undefined','async','await','try','catch',
+    'finally','throw','import','export','from','as',
+  ]),
+  // SQL is matched case-insensitively — see tokenize().
+  sql: new Set([
+    'SELECT','FROM','WHERE','AND','OR','NOT','INSERT','INTO','VALUES',
+    'UPDATE','SET','DELETE','CREATE','TABLE','DROP','ALTER','JOIN',
+    'INNER','LEFT','RIGHT','OUTER','ON','AS','GROUP','BY','ORDER',
+    'HAVING','LIMIT','OFFSET','DISTINCT','COUNT','SUM','AVG','MIN',
+    'MAX','NULL','IS','IN','BETWEEN','LIKE','EXISTS','UNION','ALL',
+  ]),
+};
+
+function tokenize(code, lang) {
+  const kws  = KEYWORDS[lang] || new Set();
+  const out  = [];
+  const len  = code.length;
+  let i = 0;
+
+  while (i < len) {
+    const ch = code[i];
+
+    // whitespace — preserved verbatim
+    if (/\s/.test(ch)) {
+      let j = i;
+      while (j < len && /\s/.test(code[j])) j++;
+      out.push({ type: 'ws', value: code.slice(i, j) });
+      i = j;
+      continue;
+    }
+
+    // line comments (#, //, --) and JS block comment
+    if (lang === 'py' && ch === '#') {
+      const end = code.indexOf('\n', i);
+      const stop = end === -1 ? len : end;
+      out.push({ type: 'com', value: code.slice(i, stop) });
+      i = stop;
+      continue;
+    }
+    if ((lang === 'js' || lang === 'sql') &&
+        ch === '-' && code[i + 1] === '-' && lang === 'sql') {
+      const end = code.indexOf('\n', i);
+      const stop = end === -1 ? len : end;
+      out.push({ type: 'com', value: code.slice(i, stop) });
+      i = stop;
+      continue;
+    }
+    if (lang === 'js' && ch === '/' && code[i + 1] === '/') {
+      const end = code.indexOf('\n', i);
+      const stop = end === -1 ? len : end;
+      out.push({ type: 'com', value: code.slice(i, stop) });
+      i = stop;
+      continue;
+    }
+    if (lang === 'js' && ch === '/' && code[i + 1] === '*') {
+      const end = code.indexOf('*/', i + 2);
+      const stop = end === -1 ? len : end + 2;
+      out.push({ type: 'com', value: code.slice(i, stop) });
+      i = stop;
+      continue;
+    }
+
+    // strings — '...', "...", and JS template literals `...`
+    if (ch === '"' || ch === "'" || (lang === 'js' && ch === '`')) {
+      const quote = ch;
+      let j = i + 1;
+      while (j < len && code[j] !== quote) {
+        if (code[j] === '\\' && j + 1 < len) j += 2;
+        else j++;
+      }
+      if (j < len) j++;
+      out.push({ type: 'str', value: code.slice(i, j) });
+      i = j;
+      continue;
+    }
+
+    // numbers — int, float, 0x.., scientific
+    if (/\d/.test(ch)) {
+      let j = i;
+      while (j < len && /[0-9.eExX_a-fA-F]/.test(code[j])) j++;
+      out.push({ type: 'num', value: code.slice(i, j) });
+      i = j;
+      continue;
+    }
+
+    // identifiers / keywords / function calls
+    if (/[A-Za-z_$]/.test(ch)) {
+      let j = i + 1;
+      while (j < len && /[A-Za-z0-9_$]/.test(code[j])) j++;
+      const word = code.slice(i, j);
+      const probe = (lang === 'sql') ? word.toUpperCase() : word;
+      if (kws.has(probe)) {
+        out.push({ type: 'kw', value: word });
+      } else if (code[j] === '(') {
+        out.push({ type: 'fn', value: word });
+      } else {
+        out.push({ type: 'var', value: word });
+      }
+      i = j;
+      continue;
+    }
+
+    // operators / punctuation
+    if (/[+\-*/%=<>!&|^~?:,.;()\[\]{}]/.test(ch)) {
+      out.push({ type: 'op', value: ch });
+      i++;
+      continue;
+    }
+
+    // fallback — never crash
+    out.push({ type: 'var', value: ch });
+    i++;
+  }
+
+  return out;
+}
+
+function renderTokens(tokens) {
+  return tokens.map(t => {
+    if (t.type === 'ws') return esc(t.value);
+    return `<span class="syn-${t.type}">${esc(t.value)}</span>`;
+  }).join('');
+}
+
+/* CodeBlock — opts: { code, lang, highlight, showLineNumbers, frame } */
+function CodeBlock(opts) {
+  const code            = opts.code || '';
+  const lang            = opts.lang || 'py';
+  const highlight       = opts.highlight || {};   // { lineNo: '+'|'-'|'*' }
+  const showLineNumbers = opts.showLineNumbers !== false;
+  const frame           = opts.frame !== false;
+
+  const lines = code.split('\n');
+  const body = lines.map((line, idx) => {
+    const lineNo = idx + 1;
+    const mark   = highlight[lineNo];
+    const cls    = mark === '+' ? 'add'
+                 : mark === '-' ? 'del'
+                 : mark === '*' ? 'hl'
+                 : '';
+    const numHtml    = showLineNumbers
+      ? `<span class="line-num">${lineNo}</span>`
+      : '';
+    const markerHtml = (mark === '+' || mark === '-')
+      ? `<span class="line-marker ${mark === '+' ? 'add' : 'del'}">${mark}</span>`
+      : '';
+    const tokens = tokenize(line, lang);
+    return `<div class="code-line ${cls}">${numHtml}${markerHtml}<span class="line-content">${renderTokens(tokens)}</span></div>`;
+  }).join('');
+
+  return `<div class="code-block ${frame ? '' : 'no-frame'}">${body}</div>`;
+}
+
+/* ────────────────────────────────────────────────────────────
+   Components
+   Each helper returns an HTML string. Click handling rides on
+   data-action attributes via the global delegate.
+   ──────────────────────────────────────────────────────────── */
+function Pill(text, opts) {
+  opts = opts || {};
+  const tone = opts.tone || 'neutral';
+  const size = opts.size === 'lg' ? 'pill-lg' : '';
+  return `<span class="pill pill-${tone} ${size}">${esc(text)}</span>`;
+}
+
+function dataAttrs(data) {
+  if (!data) return '';
+  return Object.entries(data)
+    .map(([k, v]) => ` data-${esc(k)}="${esc(v)}"`)
+    .join('');
+}
+
+function Btn(label, opts) {
+  opts = opts || {};
+  const cls = ['btn'];
+  if (opts.primary) cls.push('btn-primary');
+  if (opts.full)    cls.push('btn-full');
+  const action = opts.action ? ` data-action="${esc(opts.action)}"` : '';
+  return `<button type="button" class="${cls.join(' ')}"${action}${dataAttrs(opts.data)}>${esc(label)}</button>`;
+}
+
+/* MascotSVG — Theme A · Dojo Paper sensei.
+   Ported verbatim from design/themes.jsx MascotPaper.
+   Colours are intentionally hardcoded: each theme has its own mascot. */
+function MascotSVG(size) {
+  size = size || 56;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
+    <circle cx="32" cy="34" r="20" fill="#f5ead4" stroke="#3a2e22" stroke-width="1.5"/>
+    <path d="M16 26 Q22 14 32 14 Q42 14 48 26 Q44 22 36 22 Q28 22 20 26 Z" fill="#1f1a16"/>
+    <ellipse cx="32" cy="13" rx="4" ry="2.5" fill="#1f1a16"/>
+    <rect x="14" y="26" width="36" height="4" fill="#b8412e"/>
+    <circle cx="32" cy="28" r="1.6" fill="#f5ead4"/>
+    <path d="M24 36 Q26 34.5 28 36" stroke="#1f1a16" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M36 36 Q38 34.5 40 36" stroke="#1f1a16" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M27 43 Q32 45 37 43" stroke="#1f1a16" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M28 47 Q32 49 36 47" stroke="#1f1a16" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function MascotBubble(opts) {
+  opts = opts || {};
+  const size    = opts.size || 48;
+  const message = opts.message || '';
+  const side    = opts.side === 'right' ? 'right' : 'left';
+  return `<div class="mascot-bubble ${side}">
+    <div style="flex-shrink:0">${MascotSVG(size)}</div>
+    <div class="speech">${esc(message)}</div>
+  </div>`;
+}
+
+function HeartsRow(count, max) {
+  if (max == null) max = 5;
+  let html = '<span class="hearts-row" aria-label="' + count + ' of ' + max + ' hearts">';
+  for (let i = 0; i < max; i++) {
+    html += `<span class="heart ${i < count ? '' : 'spent'}" aria-hidden="true">♥</span>`;
+  }
+  html += `<span class="hearts-count">${count}</span>`;
+  html += '</span>';
+  return html;
+}
+
+function ProgressDots(total, current) {
+  let html = '<div class="progress-dots" role="progressbar" aria-valuenow="' + current + '" aria-valuemax="' + total + '">';
+  for (let i = 0; i < total; i++) {
+    const cls = i < current ? 'done' : (i === current ? 'on' : '');
+    html += `<span class="dot ${cls}"></span>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function BlankSlot(opts) {
+  opts = opts || {};
+  const state   = opts.state || 'empty';   // empty | filled | correct | wrong
+  const content = opts.content || '';
+  if (state === 'empty' || !content) {
+    return `<span class="blank-slot blank-empty" data-state="empty"${dataAttrs(opts.data)}></span>`;
+  }
+  return `<span class="blank-slot blank-${state}"${dataAttrs(opts.data)}>${esc(content)}</span>`;
+}
+
+function TokenChip(text, opts) {
+  opts = opts || {};
+  const state    = opts.state || 'idle';   // idle | placed | correct | wrong
+  const action   = opts.action;
+  const tag      = action ? 'button' : 'span';
+  const typeAttr = action ? ' type="button"' : '';
+  const actAttr  = action ? ` data-action="${esc(action)}"` : '';
+  return `<${tag} class="token-chip token-${state}"${typeAttr}${actAttr}${dataAttrs(opts.data)}>${esc(text)}</${tag}>`;
+}
+
+/* DiffView — wraps two CodeBlocks with optional per-line highlight maps.
+   The caller can compute diffs via computeLineDiff(a, b) below. */
+function DiffView(opts) {
+  const userCode  = opts.userCode  || '';
+  const solution  = opts.solution  || '';
+  const lang      = opts.lang      || 'py';
+  const mode      = opts.mode      || 'split';   // split | yours | sensei
+  const userHi    = opts.userHighlight   || {};
+  const senseiHi  = opts.senseiHighlight || {};
+
+  const yours = `<section class="diff-yours">
+    <div class="t-caption error" style="margin-bottom:6px">Yours</div>
+    ${CodeBlock({ code: userCode, lang, highlight: userHi, showLineNumbers: false })}
+  </section>`;
+  const sensei = `<section class="diff-sensei">
+    <div class="t-caption success" style="margin-bottom:6px">Sensei</div>
+    ${CodeBlock({ code: solution, lang, highlight: senseiHi, showLineNumbers: false })}
+  </section>`;
+
+  if (mode === 'yours')  return yours;
+  if (mode === 'sensei') return sensei;
+  return yours + sensei;
+}
+
+function computeLineDiff(a, b) {
+  // Naive line diff — flags any line index where a[i] !== b[i].
+  // Good enough for the V1 corpus. Replace with a real algorithm later.
+  const aLines = (a || '').split('\n');
+  const bLines = (b || '').split('\n');
+  const aHighlight = {};
+  const bHighlight = {};
+  const max = Math.max(aLines.length, bLines.length);
+  for (let i = 0; i < max; i++) {
+    if (aLines[i] !== bLines[i]) {
+      if (aLines[i] !== undefined) aHighlight[i + 1] = '-';
+      if (bLines[i] !== undefined) bHighlight[i + 1] = '+';
+    }
+  }
+  return { aHighlight, bHighlight };
+}
+
+/* ────────────────────────────────────────────────────────────
+   runCode — V1 stub.
+   Real execution (Pyodide / sql.js / sandboxed iframe) wires up later.
+   Always returns the canned shape from HANDOFF.md: { ok, stdout, stderr }.
+   ──────────────────────────────────────────────────────────── */
+function runCode(/* lang, source */) {
+  return Promise.resolve({ ok: true, stdout: '(simulated)', stderr: '' });
+}
+
+/* ────────────────────────────────────────────────────────────
+   Seeded content — one Python lesson, six exercises, three sample
+   mistakes for the Dojo demo. Enough to demo the full V1 loop.
+   ──────────────────────────────────────────────────────────── */
+const TRACKS = [
+  { id: 'py',  name: 'Python',     icon: 'Py',  color: '#3776ab' },
+  { id: 'js',  name: 'JavaScript', icon: 'JS',  color: '#f0c84a' },
+  { id: 'sql', name: 'SQL',        icon: 'SQL', color: '#7a5cf0' },
+  { id: 'css', name: 'HTML/CSS',   icon: 'CSS', color: '#ff7a3d' },
+];
+
+const LESSONS = {
+  'py-loops-1': {
+    id: 'py-loops-1',
+    trackId: 'py',
+    unitName: 'Loops',
+    title: 'The for-loop',
+    number: '2 of 5',
+    steps: [
+      {
+        eyebrow: 'Step 1',
+        title: 'You write the same idea once.',
+        body: "Imagine you have a list of students. To greet each one, you'd write print() once for each — but that gets long.",
+        mascot: "Same code, repeated. There's a better way.",
+      },
+      {
+        eyebrow: 'Step 2',
+        title: 'Loops repeat your code, once per item.',
+        body: "A for-loop walks through every item in a list and runs the same code each pass.",
+        code:    "for student in dojo:\n    print(student)",
+        mascot:  "Tap the line to see what runs each time.",
+        highlight: { 2: '*' },
+      },
+      {
+        eyebrow: 'Step 3',
+        title: 'The variable changes each pass.',
+        body: "Each time through, `student` holds the next name.",
+        code:    'dojo = ["Aiko", "Ryu", "Mei"]\nfor student in dojo:\n    print(student)',
+        mascot:  'Run #1 → Aiko. Run #2 → Ryu. Run #3 → Mei.',
+        highlight: { 2: '*' },
+      },
+      {
+        eyebrow: 'Step 4',
+        title: 'Anything goes inside the loop.',
+        body: "Print, calculate, transform — anything you can write outside, you can write inside.",
+        code:   'for n in [1, 2, 3]:\n    print(n * 2)',
+        mascot: 'Multiplies each number by 2 before printing.',
+      },
+      {
+        eyebrow: 'Step 5',
+        title: 'Use range() for counted loops.',
+        body: "When you don't have a list yet, range() makes one for you.",
+        code:   'for i in range(3):\n    print(i)',
+        mascot: 'Prints 0, 1, 2 — range starts at 0.',
+      },
+      {
+        eyebrow: 'Step 6',
+        title: 'You did it.',
+        body: "Loops are the most-used pattern in code. Time to try one.",
+        mascot: 'Three quick exercises to lock it in.',
+      },
+    ],
+  },
+};
+
+const EXERCISES = [
+  {
+    id: 'ex-mcq-1',  kind: 'mcq',  lang: 'py',  lessonId: 'py-loops-1',
+    xp: 10,  pillTone: 'success',  pillLabel: 'Quick check · 10 XP',
+    prompt: 'What does this print?',
+    code: 'nums = [1, 2, 3]\nfor n in nums:\n    print(n * 2)',
+    options: [
+      { text: '1, 2, 3', correct: false },
+      { text: '2, 4, 6', correct: true  },
+      { text: '2 4 6',   correct: false },
+      { text: 'Error',   correct: false },
+    ],
+    explanation: 'Each pass multiplies n by 2 and prints it on its own line.',
+    topic: 'For-loop output',
+  },
+  {
+    id: 'ex-tap-1',  kind: 'tap',  lang: 'py',  lessonId: 'py-loops-1',
+    xp: 30,  pillTone: 'accent',  pillLabel: 'Tap to fill · 30 XP',
+    prompt: 'Make this loop print every name.',
+    template: 'for name in {0}:\n    {1}(name)',
+    blanks: [
+      { answer: 'names' },
+      { answer: 'print' },
+    ],
+    tokenTray: ['names', 'print', 'range(3)', 'len(names)', 'input'],
+    explanation: '`names` is the list, `print` outputs each name.',
+    topic: 'For-loop · Functions',
+  },
+  {
+    id: 'ex-type-1',  kind: 'type',  lang: 'py',  lessonId: 'py-loops-1',
+    xp: 50,  pillTone: 'warn',  pillLabel: 'Type it · 50 XP',
+    prompt: 'Write a function greet(name) that returns "Hi, " + the name.',
+    starter: 'def greet(name):\n    ',
+    solution: 'def greet(name):\n    return "Hi, " + name',
+    tests: [
+      { input: 'greet("Aiko")', expect: 'Hi, Aiko' },
+      { input: 'greet("Ryu")',  expect: 'Hi, Ryu'  },
+    ],
+    explanation: 'Use return to send back the concatenated string.',
+    topic: 'Functions · Return',
+  },
+  {
+    id: 'ex-mcq-2',  kind: 'mcq',  lang: 'py',  lessonId: 'py-loops-1',
+    xp: 10,  pillTone: 'success',  pillLabel: 'Quick check · 10 XP',
+    prompt: 'How many times does this loop run?',
+    code: 'for i in range(5):\n    print(i)',
+    options: [
+      { text: '4',       correct: false },
+      { text: '5',       correct: true  },
+      { text: '6',       correct: false },
+      { text: 'Forever', correct: false },
+    ],
+    explanation: 'range(5) yields 0, 1, 2, 3, 4 — five values.',
+    topic: 'range() · Off-by-one',
+  },
+  {
+    id: 'ex-mcq-3',  kind: 'mcq',  lang: 'py',  lessonId: 'py-loops-1',
+    xp: 10,  pillTone: 'success',  pillLabel: 'Quick check · 10 XP',
+    prompt: 'Which line filters for even numbers?',
+    code: 'for n in nums:\n    if ___:\n        total += n',
+    options: [
+      { text: 'n % 2 == 0', correct: true  },
+      { text: 'n % 2 == 1', correct: false },
+      { text: 'n / 2 == 0', correct: false },
+      { text: 'n == 2',     correct: false },
+    ],
+    explanation: '`n % 2` is 0 for even numbers — that is the remainder when divided by 2.',
+    topic: 'Modulo · Loops',
+  },
+  {
+    id: 'ex-tap-2',  kind: 'tap',  lang: 'py',  lessonId: 'py-loops-1',
+    xp: 30,  pillTone: 'accent',  pillLabel: 'Tap to fill · 30 XP',
+    prompt: 'Sum the squares of 1..3.',
+    template: 'total = 0\nfor n in range({0}):\n    total += n {1} {2}\nprint(total)',
+    blanks: [
+      { answer: '4' },
+      { answer: '*' },
+      { answer: 'n' },
+    ],
+    tokenTray: ['4', '3', '*', '+', 'n', 'i'],
+    explanation: 'range(4) gives 0..3; n*n is the square; sum into total.',
+    topic: 'range() · Operators',
+  },
+];
+
+const SAMPLE_MISTAKES = [
+  {
+    id: 'm-sample-1', lang: 'py',
+    title: 'Even/odd remainder',
+    topic: 'Modulo · Loops',
+    userCode: 'if n % 2 == 1:\n    total += n',
+    solution: 'if n % 2 == 0:\n    total += n',
+    explanation: 'n % 2 gives the remainder. Even numbers leave 0, not 1.',
+    createdAt: '2026-04-29T08:00:00Z',
+    dueAt:     '2026-04-29T08:00:00Z',
+    attempts: 0, mastered: false,
+  },
+  {
+    id: 'm-sample-2', lang: 'py',
+    title: 'Off-by-one in range',
+    topic: 'range() · Loops',
+    userCode: 'for i in range(5):\n    print(i)',
+    solution: 'for i in range(1, 6):\n    print(i)',
+    explanation: 'range(5) starts at 0. To start at 1, use range(1, 6).',
+    createdAt: '2026-04-28T11:00:00Z',
+    dueAt:     '2026-04-29T11:00:00Z',
+    attempts: 1, mastered: false,
+  },
+  {
+    id: 'm-sample-3', lang: 'sql',
+    title: 'Forgot WHERE clause',
+    topic: 'SELECT basics',
+    userCode: 'SELECT * FROM users;',
+    solution: 'SELECT * FROM users WHERE active = 1;',
+    explanation: 'Without WHERE you select every row — including inactive ones.',
+    createdAt: '2026-04-27T11:00:00Z',
+    dueAt:     '2026-04-29T11:00:00Z',
+    attempts: 0, mastered: false,
+  },
+];
+
+/* ────────────────────────────────────────────────────────────
    Screens — each returns an HTML string.
    New screens are added in later phases; SCREENS is the registry.
    ──────────────────────────────────────────────────────────── */
 const SCREENS = {};
 
+function DebugNav(active) {
+  return `<nav class="debug-nav" aria-label="debug screens">
+    <button type="button" class="${active === 'tokens'     ? 'on' : ''}" data-action="go" data-to="tokens">Tokens</button>
+    <button type="button" class="${active === 'components' ? 'on' : ''}" data-action="go" data-to="components">Components</button>
+  </nav>`;
+}
+
 SCREENS.tokens = function () {
   return `
+    ${DebugNav('tokens')}
     <header class="topbar">
-      <div class="t-caption muted">Code Sensei · Phase 1 debug</div>
+      <div class="t-caption muted">Code Sensei · Phase 2 debug</div>
       <h1 class="t-title" style="margin-top:4px">Design tokens</h1>
       <p class="t-body muted" style="margin-top:4px">
         Theme A · Dojo Paper. Every screen pulls from these.
@@ -454,15 +1227,18 @@ SCREENS.tokens = function () {
 
       <section class="dbg-section">
         <h2>Syntax tokens</h2>
-        <div class="syntax-demo">
-<span class="ln"><span class="com"># count even numbers</span></span>
-<span class="ln"><span class="kw">def</span> <span class="fn">count_even</span><span class="op">(</span><span>nums</span><span class="op">):</span></span>
-<span class="ln">    total <span class="op">=</span> <span class="num">0</span></span>
-<span class="ln">    <span class="kw">for</span> n <span class="kw">in</span> nums<span class="op">:</span></span>
-<span class="ln">        <span class="kw">if</span> n <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span></span>
-<span class="ln">            total <span class="op">+=</span> <span class="num">1</span></span>
-<span class="ln">    <span class="kw">return</span> <span class="str">"got "</span> <span class="op">+</span> <span class="fn">str</span><span class="op">(</span>total<span class="op">)</span></span>
-        </div>
+        ${CodeBlock({
+          code:
+            '# count even numbers\n' +
+            'def count_even(nums):\n' +
+            '    total = 0\n' +
+            '    for n in nums:\n' +
+            '        if n % 2 == 0:\n' +
+            '            total += 1\n' +
+            '    return "got " + str(total)',
+          lang: 'py',
+          showLineNumbers: false,
+        })}
         <div class="swatch-grid" style="margin-top:var(--sp-3)">
           ${swatch('--syn-bg',  '#fffbef', 'editor background')}
           ${swatch('--syn-kw',  '#8a3722', 'keywords (def, for, if)')}
@@ -494,6 +1270,200 @@ function swatch(name, value, desc) {
     </div>
   `;
 }
+
+/* ────────────────────────────────────────────────────────────
+   Components preview — visual smoke test for Phase 2.
+   Renders every helper in isolation so a designer or reviewer can
+   eyeball them. Removed when real Home lands in Phase 3.
+   ──────────────────────────────────────────────────────────── */
+SCREENS.components = function () {
+  // For DiffView demo
+  const userCode = 'if n % 2 == 1:\n    total += n';
+  const senseiCode = 'if n % 2 == 0:\n    total += n';
+  const diffMaps = computeLineDiff(userCode, senseiCode);
+
+  return `
+    ${DebugNav('components')}
+    <header class="topbar">
+      <div class="t-caption muted">Code Sensei · Phase 2 debug</div>
+      <h1 class="t-title" style="margin-top:4px">Components</h1>
+      <p class="t-body muted" style="margin-top:4px">
+        Each helper rendered in isolation against the Theme A tokens.
+      </p>
+    </header>
+
+    <div class="page">
+
+      <section class="dbg-section">
+        <h2>Pill</h2>
+        <div class="preview-card">
+          <div class="preview-label">tones</div>
+          <div class="preview-row">
+            ${Pill('Quick check · 10 XP', { tone: 'success' })}
+            ${Pill('Tap to fill · 30 XP', { tone: 'accent' })}
+            ${Pill('Type it · 50 XP',     { tone: 'warn' })}
+            ${Pill('− 1 ♥',                { tone: 'error' })}
+            ${Pill('Neutral',              { tone: 'neutral' })}
+          </div>
+          <div class="preview-label" style="margin-top:var(--sp-3)">size · lg</div>
+          <div class="preview-row">
+            ${Pill('+30 XP',         { tone: 'accent', size: 'lg' })}
+            ${Pill('🔥 7 day streak', { tone: 'warn',   size: 'lg' })}
+          </div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>Btn</h2>
+        <div class="preview-card">
+          <div class="preview-label">primary / secondary</div>
+          <div class="preview-row">
+            ${Btn('Continue →', { primary: true })}
+            ${Btn('Skip')}
+            ${Btn('Run')}
+          </div>
+          <div class="preview-label" style="margin-top:var(--sp-3)">full-width primary</div>
+          <div style="margin-top:var(--sp-2)">
+            ${Btn('I get it →', { primary: true, full: true })}
+          </div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>MascotSVG · MascotBubble</h2>
+        <div class="preview-card">
+          <div class="preview-label">sizes — 32 / 56 / 96</div>
+          <div class="preview-row" style="align-items:flex-end">
+            ${MascotSVG(32)} ${MascotSVG(56)} ${MascotSVG(96)}
+          </div>
+          <div class="preview-label" style="margin-top:var(--sp-3)">bubble · left</div>
+          <div style="margin-top:var(--sp-2)">
+            ${MascotBubble({ size: 48, message: 'Tap the line to see what runs each time.' })}
+          </div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>HeartsRow</h2>
+        <div class="preview-card">
+          <div class="preview-row">
+            ${HeartsRow(5)} ${HeartsRow(3)} ${HeartsRow(1)} ${HeartsRow(0)}
+          </div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>ProgressDots</h2>
+        <div class="preview-card">
+          <div style="margin-bottom:var(--sp-2)">${ProgressDots(6, 0)}</div>
+          <div style="margin-bottom:var(--sp-2)">${ProgressDots(6, 3)}</div>
+          <div>${ProgressDots(6, 6)}</div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>BlankSlot</h2>
+        <div class="preview-card">
+          <div class="preview-row">
+            ${BlankSlot({ state: 'empty' })}
+            ${BlankSlot({ state: 'filled',  content: 'names' })}
+            ${BlankSlot({ state: 'correct', content: 'print' })}
+            ${BlankSlot({ state: 'wrong',   content: 'rage' })}
+          </div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>TokenChip</h2>
+        <div class="preview-card">
+          <div class="preview-row">
+            ${TokenChip('names')}
+            ${TokenChip('print')}
+            ${TokenChip('range(3)')}
+            ${TokenChip('len(names)', { state: 'placed' })}
+            ${TokenChip('input',      { state: 'placed' })}
+          </div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>CodeBlock</h2>
+        <div class="preview-card">
+          <div class="preview-label">Python · with line numbers</div>
+          <div style="margin-top:var(--sp-2)">
+            ${CodeBlock({
+              code: 'def greet(name):\n    return "Hi, " + name',
+              lang: 'py',
+            })}
+          </div>
+          <div class="preview-label" style="margin-top:var(--sp-3)">Python · highlight line 2 (tap-me)</div>
+          <div style="margin-top:var(--sp-2)">
+            ${CodeBlock({
+              code: 'for student in dojo:\n    print(student)',
+              lang: 'py',
+              highlight: { 2: '*' },
+              showLineNumbers: false,
+            })}
+          </div>
+          <div class="preview-label" style="margin-top:var(--sp-3)">JavaScript</div>
+          <div style="margin-top:var(--sp-2)">
+            ${CodeBlock({
+              code: '// double every number\nconst doubled = [1, 2, 3].map(n => n * 2);\nconsole.log(doubled);',
+              lang: 'js',
+              showLineNumbers: false,
+            })}
+          </div>
+          <div class="preview-label" style="margin-top:var(--sp-3)">SQL</div>
+          <div style="margin-top:var(--sp-2)">
+            ${CodeBlock({
+              code: '-- active users only\nSELECT id, name\nFROM users\nWHERE active = 1\nORDER BY name;',
+              lang: 'sql',
+              showLineNumbers: false,
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>DiffView</h2>
+        <div class="preview-card">
+          <div class="preview-label">split · auto-diffed</div>
+          <div style="margin-top:var(--sp-2)">
+            ${DiffView({
+              userCode,
+              solution: senseiCode,
+              lang: 'py',
+              userHighlight:   diffMaps.aHighlight,
+              senseiHighlight: diffMaps.bHighlight,
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section class="dbg-section">
+        <h2>Seeded content</h2>
+        <div class="preview-card">
+          <div class="t-body">
+            <strong>${esc(String(TRACKS.length))}</strong> tracks ·
+            <strong>${esc(String(Object.keys(LESSONS).length))}</strong> lesson(s) ·
+            <strong>${esc(String(EXERCISES.length))}</strong> exercises ·
+            <strong>${esc(String(SAMPLE_MISTAKES.length))}</strong> sample mistakes
+          </div>
+          <div class="preview-label" style="margin-top:var(--sp-3)">first lesson · ${esc(LESSONS['py-loops-1'].title)}</div>
+          <div class="t-body muted" style="margin-top:var(--sp-1)">
+            ${esc(LESSONS['py-loops-1'].steps.length)} micro-steps · track ${esc(LESSONS['py-loops-1'].trackId)}
+          </div>
+          <div class="preview-label" style="margin-top:var(--sp-3)">exercise kinds</div>
+          <div class="preview-row">
+            ${[...new Set(EXERCISES.map(e => e.kind))].map(k => Pill(k, { tone: 'neutral' })).join('')}
+          </div>
+        </div>
+      </section>
+
+      <div style="height:var(--sp-6)"></div>
+    </div>
+  `;
+};
 
 /* ────────────────────────────────────────────────────────────
    Bottom tabs
