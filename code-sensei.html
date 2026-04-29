@@ -544,6 +544,568 @@ input, textarea, select {
   letter-spacing: 0.5px;
   margin-bottom: var(--sp-1);
 }
+
+/* ────────────────────────────────────────────────────────────
+   v2 SCREENS — production layouts (Phase 3+)
+   ──────────────────────────────────────────────────────────── */
+
+/* When the bottom tab nav is empty (lesson/exercise/result), it disappears. */
+#tabs:empty { display: none; }
+
+/* === Home === */
+.home-greet {
+  padding: var(--sp-4) var(--sp-5) var(--sp-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+.home-greet .greet { font-size: 13px; color: var(--muted); font-weight: 600; }
+.home-pills { display: flex; gap: 10px; }
+
+.hero-card {
+  margin: var(--sp-3) var(--sp-4) 0;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: calc(var(--r-card) * 1.4);
+  padding: var(--sp-5) var(--sp-4);
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: calc(100% - 2 * var(--sp-4));
+  text-align: left;
+  border: none;
+  box-shadow: 0 6px 0 var(--accent-shadow);
+  cursor: pointer;
+  font-family: inherit;
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  opacity: 0.8; text-transform: uppercase;
+}
+.hero-title {
+  font-size: 22px; font-weight: 800; margin-top: 6px;
+  letter-spacing: -0.4px; line-height: 1.15;
+}
+.hero-sub { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+.hero-progress {
+  margin-top: var(--sp-3); height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px; overflow: hidden;
+}
+.hero-progress > div { height: 100%; background: var(--accent-ink); }
+.hero-cta-row {
+  margin-top: var(--sp-3); display: flex; align-items: center; gap: 10px;
+}
+.hero-cta {
+  background: var(--accent-ink); color: var(--accent);
+  padding: 10px 18px; border-radius: var(--r-pill);
+  font-weight: 800; font-size: 14px; min-height: 44px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.hero-mascot { position: absolute; right: -6px; bottom: -8px; opacity: 0.85; }
+
+.belt-strip {
+  padding: var(--sp-5) var(--sp-5) var(--sp-2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.belt-info { display: flex; align-items: center; gap: 10px; }
+.belt-icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: #e8c75a;
+  border: 2px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; color: var(--ink);
+}
+.belt-label { font-size: 13px; font-weight: 700; }
+.belt-sub   { font-size: 11px; color: var(--muted); }
+.belt-link  { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+.section-eyebrow {
+  padding: var(--sp-3) var(--sp-4) var(--sp-2);
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+}
+
+.mission-list {
+  padding: 0 var(--sp-4); display: flex; flex-direction: column; gap: 10px;
+}
+.mission {
+  background: var(--surface); border-radius: var(--r-card);
+  border: 1px solid var(--hairline); padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.mission-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--accent-bg); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800;
+}
+.mission-name { font-size: 14px; font-weight: 600; }
+.mission-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.tracks-row {
+  margin: var(--sp-5) var(--sp-4) var(--sp-4);
+  background: var(--surface); border-radius: var(--r-card);
+  border: 1px solid var(--hairline); padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.track-icons { display: flex; gap: 6px; }
+.track-icon {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: var(--surface-2); color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; font-family: var(--font-mono);
+}
+.track-icon.on { background: var(--accent); color: var(--accent-ink); }
+
+/* === Lesson === */
+.lesson-top {
+  padding: 12px var(--sp-4) 10px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--hairline);
+}
+.icon-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.lesson-step-counter {
+  font-size: 12px; color: var(--muted);
+  font-variant-numeric: tabular-nums; font-weight: 700;
+  flex-shrink: 0;
+}
+
+.lesson-body {
+  padding: var(--sp-6) var(--sp-5) var(--sp-4); flex: 1;
+}
+.lesson-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+}
+.lesson-title {
+  font-size: 28px; font-weight: 800; letter-spacing: -0.6px;
+  margin-top: 8px; line-height: 1.15;
+}
+.lesson-mascot { margin-top: var(--sp-5); }
+.lesson-code   { margin-top: var(--sp-5); }
+.lesson-callout {
+  margin-top: var(--sp-3); padding: 10px 14px;
+  background: var(--accent-bg); border-radius: var(--r-card);
+  font-size: 13px; line-height: 1.5;
+}
+.lesson-cta-bar {
+  padding: var(--sp-4); border-top: 1px solid var(--hairline);
+}
+
+.lesson-screen {
+  display: flex; flex-direction: column; min-height: 100%;
+}
+
+/* === Exercise (shared header) === */
+.ex-screen {
+  display: flex; flex-direction: column; min-height: 100%;
+}
+.ex-top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-bottom: 1px solid var(--hairline);
+}
+.ex-progress {
+  flex: 1; height: 6px; border-radius: 3px;
+  background: var(--surface-2); overflow: hidden;
+}
+.ex-progress > div {
+  height: 100%; background: var(--accent);
+  transition: width var(--t-base) ease-out;
+}
+.ex-hearts {
+  font-size: 12px; color: var(--error); font-weight: 700;
+  flex-shrink: 0;
+}
+.ex-prompt-block { padding: var(--sp-5) var(--sp-5) var(--sp-3); }
+.ex-prompt {
+  font-size: 22px; font-weight: 700; letter-spacing: -0.4px;
+  margin-top: var(--sp-3); line-height: 1.25;
+}
+.ex-prompt.smaller {
+  font-size: 20px; letter-spacing: -0.3px; line-height: 1.3;
+}
+.ex-prompt code {
+  font-family: var(--font-mono);
+  background: var(--surface-2);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 17px;
+  color: var(--syn-fn);
+}
+.ex-cta-bar {
+  padding: var(--sp-4); display: flex; gap: 10px;
+  border-top: 1px solid var(--hairline);
+  margin-top: auto;
+}
+
+/* === MCQ === */
+.mcq-list {
+  padding: var(--sp-5) var(--sp-4) 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.mcq-opt {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1.5px solid var(--hairline);
+  border-radius: var(--r-card);
+  box-shadow: 0 2px 0 var(--hairline);
+  text-align: left; width: 100%; cursor: pointer;
+  min-height: 56px;
+  font-family: inherit; font-size: inherit; color: inherit;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.mcq-opt.on {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  box-shadow: none;
+}
+.mcq-letter {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--hairline);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 800;
+  color: var(--muted); flex-shrink: 0;
+}
+.mcq-opt.on .mcq-letter { border-color: var(--accent); color: var(--accent); }
+.mcq-opt .mcq-text {
+  font-family: var(--font-mono); font-size: 14px; font-weight: 600;
+}
+
+/* === Tap-fill === */
+.tap-code {
+  margin: 6px var(--sp-4) 0;
+  background: var(--syn-bg);
+  border-radius: var(--r-card);
+  border: 1px solid var(--hairline);
+  font-family: var(--font-mono); font-size: 14px; line-height: 1.85;
+  padding: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.tap-code .blank-slot[data-state]:not([data-state="empty"]) { cursor: pointer; }
+.tap-tray-label {
+  padding: var(--sp-5) var(--sp-4) 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+}
+.tap-tray {
+  padding: 6px var(--sp-4) 0;
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+
+/* === Type-it === */
+.type-editor {
+  margin: 0 var(--sp-4);
+  background: var(--syn-bg);
+  border-radius: var(--r-card);
+  border: 1px solid var(--hairline);
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  display: flex;
+}
+.type-editor textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 14px 14px 32px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--syn-var);
+  display: block;
+  -webkit-appearance: none;
+  flex: 1;
+}
+.type-badge {
+  position: absolute; right: 14px; bottom: 8px;
+  font-size: 11px; color: var(--muted);
+  background: var(--syn-bg);
+  padding: 2px 6px;
+  pointer-events: none;
+}
+.kbd-row {
+  padding: 14px 12px 6px;
+  display: flex; gap: 6px; overflow-x: auto;
+}
+.kbd-key {
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+  flex-shrink: 0;
+  box-shadow: 0 1px 0 var(--hairline);
+  min-height: 36px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.hint-card {
+  margin: 14px var(--sp-4) 0;
+  background: var(--surface); border-radius: var(--r-card);
+  border: 1px solid var(--hairline); padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hint-card .hint-text { font-size: 13px; color: var(--muted); flex: 1; }
+.hint-card .hint-action { color: var(--accent); font-weight: 700; }
+.hint-card .hint-arrow { color: var(--muted); }
+
+/* === Result · Correct === */
+.result-correct-screen {
+  background: var(--accent-bg);
+  min-height: 100%;
+  display: flex; flex-direction: column;
+  animation: result-cheer var(--t-cel) ease-out;
+}
+@keyframes result-cheer {
+  from { background: var(--bg); opacity: 0.7; }
+  to   { background: var(--accent-bg); opacity: 1; }
+}
+.result-body {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+}
+.result-cheer {
+  font-size: 32px; font-weight: 800; color: var(--accent);
+  letter-spacing: -0.8px; margin-top: 18px;
+}
+.result-roman {
+  font-size: 14px; color: var(--muted); margin-top: 4px; font-weight: 600;
+}
+.result-headline {
+  font-size: 22px; font-weight: 700; margin-top: 22px;
+  letter-spacing: -0.4px; max-width: 280px;
+}
+.result-pills {
+  margin-top: 22px;
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+}
+.result-bottom { padding: 0 var(--sp-4) 20px; }
+
+/* === Result · Wrong === */
+.result-wrong-screen {
+  background: var(--bg);
+  min-height: 100%;
+  display: flex; flex-direction: column;
+}
+.result-wrong-mascot { opacity: 0.85; }
+.result-wrong-h1 {
+  font-size: 26px; font-weight: 800; letter-spacing: -0.6px;
+  margin-top: 18px;
+}
+.result-why {
+  font-size: 15px; color: var(--muted); margin-top: 8px;
+  line-height: 1.5; max-width: 280px;
+}
+.result-why code {
+  font-family: var(--font-mono); padding: 0 2px;
+  font-weight: 700;
+}
+.result-why code.was   { color: var(--error); }
+.result-why code.right { color: var(--accent); }
+.heart-loss-pill {
+  margin-top: 22px; padding: 10px 16px;
+  background: rgba(184, 65, 46, 0.10);
+  border-radius: var(--r-pill);
+  color: var(--error); font-weight: 700; font-size: 13px;
+}
+.dojo-callout {
+  margin-top: var(--sp-6); padding: 12px 14px;
+  background: var(--surface); border-radius: var(--r-card);
+  border: 1px solid var(--hairline);
+  font-size: 13px; color: var(--muted); max-width: 300px;
+}
+.dojo-callout b { color: var(--ink); }
+
+/* === Review === */
+.rev-top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-bottom: 1px solid var(--hairline);
+}
+.rev-back {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.rev-title { flex: 1; font-size: 15px; font-weight: 700; }
+
+.rev-explain {
+  padding: 22px 20px 18px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.rev-explain-body { flex: 1; min-width: 0; }
+.rev-explain-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--accent); text-transform: uppercase; margin-bottom: 6px;
+}
+.rev-explain-h1 {
+  font-size: 18px; font-weight: 700;
+  line-height: 1.35; letter-spacing: -0.3px;
+}
+.rev-explain-text {
+  font-size: 14px; color: var(--muted);
+  margin-top: 8px; line-height: 1.55;
+}
+.rev-explain-text code {
+  font-family: var(--font-mono);
+  background: var(--surface-2);
+  padding: 1px 5px; border-radius: 4px;
+  font-size: 12px; font-weight: 600; color: var(--ink);
+}
+
+.rev-toggle {
+  display: flex; background: var(--surface-2); padding: 3px;
+  border-radius: var(--r-pill); font-size: 13px; font-weight: 700;
+  margin: 0 var(--sp-4) 8px;
+}
+.rev-toggle button {
+  flex: 1; text-align: center; padding: 7px 0;
+  border-radius: calc(var(--r-pill) - 2px);
+  color: var(--muted);
+  background: transparent;
+}
+.rev-toggle button.on {
+  background: var(--surface); color: var(--ink);
+  box-shadow: 0 1px 2px var(--hairline);
+}
+.rev-diff-wrap { padding: 0 var(--sp-4); }
+
+.tests-card {
+  margin: 14px var(--sp-4) 0;
+  background: var(--surface); border-radius: var(--r-card);
+  border: 1px solid var(--hairline); padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  width: calc(100% - 2 * var(--sp-4));
+  text-align: left;
+  font-family: inherit; color: inherit;
+}
+.tests-card-icon {
+  width: 22px; height: 22px; border-radius: 11px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800;
+}
+.tests-card-icon.fail { background: var(--error); }
+.tests-card-icon.pass { background: var(--success); }
+.tests-card-label { flex: 1; font-weight: 600; }
+.tests-card-toggle { font-size: 12px; color: var(--accent); font-weight: 700; }
+.tests-detail {
+  margin: 0 var(--sp-4) 0;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-top: none;
+  border-radius: 0 0 var(--r-card) var(--r-card);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.tests-detail .test-row { display: flex; gap: 8px; align-items: baseline; }
+.tests-detail .test-row .pass { color: var(--success); }
+.tests-detail .test-row .fail { color: var(--error); }
+
+.rev-cta-bar {
+  padding: 20px var(--sp-4) 18px; display: flex; gap: 10px;
+}
+
+/* === Dojo === */
+.dojo-header { padding: 18px 20px 4px; }
+.dojo-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+}
+.dojo-h1 {
+  font-size: 26px; font-weight: 800;
+  letter-spacing: -0.5px; margin-top: 4px;
+}
+.dojo-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+.drill-all {
+  margin: 14px var(--sp-4) 0;
+  background: var(--accent); border-radius: var(--r-card);
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  color: var(--accent-ink);
+  width: calc(100% - 2 * var(--sp-4));
+  border: none; cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  box-shadow: 0 4px 0 var(--accent-shadow);
+  min-height: 64px;
+}
+.drill-all-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--accent-ink); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800;
+  flex-shrink: 0;
+}
+.drill-all-title { font-size: 14px; font-weight: 800; }
+.drill-all-meta  { font-size: 12px; opacity: 0.85; }
+.drill-all-arrow { font-size: 18px; font-weight: 800; }
+
+.dojo-filters {
+  padding: 18px var(--sp-4) 6px;
+  display: flex; gap: 8px; overflow-x: auto;
+}
+.filter-chip {
+  padding: 6px 12px; border-radius: var(--r-pill);
+  background: var(--surface); color: var(--muted);
+  border: 1px solid var(--hairline);
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+  cursor: pointer; font-family: inherit;
+  min-height: 32px;
+}
+.filter-chip.on {
+  background: var(--ink); color: var(--bg); border-color: var(--ink);
+}
+
+.mistake-list {
+  padding: 12px var(--sp-4) 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.mistake-card {
+  background: var(--surface); border-radius: var(--r-card);
+  border: 1px solid var(--hairline); padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; text-align: left; cursor: pointer;
+  font-family: inherit; color: inherit;
+  min-height: 64px;
+}
+.mistake-lang {
+  width: 36px; height: 36px; border-radius: 8px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 800;
+  flex-shrink: 0;
+}
+.mistake-info { flex: 1; min-width: 0; }
+.mistake-title {
+  font-size: 14px; font-weight: 700;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.mistake-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.mistake-empty {
+  padding: 40px 24px; text-align: center;
+  color: var(--muted);
+}
 </style>
 </head>
 <body>
@@ -559,16 +1121,23 @@ input, textarea, select {
    State
    ──────────────────────────────────────────────────────────── */
 const S = {
-  screen: 'tokens',          // Phase 1 default — debug screen.
-  user: null,                // populated in Phase 4 (onboarding).
+  screen: 'home',            // Phase 3 default — real Home.
+  user: { name: 'Sam' },     // Phase 4 onboarding overwrites.
   hearts: 5,
-  streak: 0,
-  xp: 0,
+  streak: 7,                 // demo seed; real streak logic lands in Phase 5.
+  xp: 312,                   // demo seed.
   progress: {},              // { trackId → { unitIdx, lessonIdx, stepIdx } }
   mistakes: [],              // Mistake[] — see spec-sheet "Components & data".
-  session: null,             // active exercise stack
-  onboarding: { trackIds: [], skill: null, dailyGoalMin: 10 },
-  ui: { reviewTab: 'split', dojoFilter: 'all', dojoShowMastered: false, lessonStep: 0 },
+  session: null,             // active exercise stack — see startLesson/startDrill.
+  seeded: false,             // one-shot flag — see load().
+  onboarding: { trackIds: ['py'], skill: null, dailyGoalMin: 10 },
+  ui: {
+    reviewTab: 'split',      // 'split' | 'yours' | 'sensei'
+    dojoFilter: 'all',       // 'all' | 'due' | 'py' | 'js' | 'sql' | 'css'
+    dojoShowMastered: false,
+    testsOpen: false,
+    lessonStep: 0,
+  },
   params: null,              // route params from the most recent go()
 };
 
@@ -583,13 +1152,21 @@ function load() {
     if (raw) {
       const saved = JSON.parse(raw);
       // Shallow merge — later phases may add slices; we don't want stale
-      // state to clobber new defaults.
+      // state to clobber new defaults. Skip 'screen' and 'params' so a
+      // returning user always lands on Home (predictable cold-start).
+      const skip = new Set(['screen', 'params']);
       Object.keys(saved).forEach(k => {
-        if (k in S) S[k] = saved[k];
+        if (k in S && !skip.has(k)) S[k] = saved[k];
       });
     }
   } catch (e) {
     console.warn('[codesensei] load failed:', e);
+  }
+
+  // First-run seed — populate the Dojo so the demo loop has content.
+  if (!S.seeded) {
+    S.mistakes = SAMPLE_MISTAKES.slice();
+    S.seeded = true;
   }
 }
 
@@ -1466,16 +2043,864 @@ SCREENS.components = function () {
 };
 
 /* ────────────────────────────────────────────────────────────
-   Bottom tabs
-   Phase 1: tabs render but are inert beyond going to 'tokens'.
-   Real tab routing wires up in Phase 3.
+   Session helpers — drive the lesson → exercise → result loop.
    ──────────────────────────────────────────────────────────── */
+
+const LANG_BG = { py: '#3776ab', js: '#f0c84a', sql: '#7a5cf0', css: '#ff7a3d' };
+const LANG_LABEL = { py: 'Py', js: 'JS', sql: 'SQL', css: 'CSS' };
+
+function exerciseQueueFor(lessonId) {
+  return EXERCISES.filter(e => e.lessonId === lessonId).map(e => e.id);
+}
+
+function startLesson(lessonId) {
+  S.session = {
+    type: 'lesson',
+    lessonId,
+    exerciseQueue: exerciseQueueFor(lessonId),
+    exerciseIdx: 0,
+    selectedOption: null,
+    placedTokens: {},
+    typedCode: '',
+    lastCorrect: null,
+    lastWrongMistakeId: null,
+    drillMistakeId: null,
+    correctCount: 0,
+  };
+  S.ui.lessonStep = 0;
+  go('lesson');
+}
+
+function startPractice(lessonId) {
+  // Skip lesson micro-steps; jump straight to the exercise queue.
+  S.session = {
+    type: 'practice',
+    lessonId,
+    exerciseQueue: exerciseQueueFor(lessonId),
+    exerciseIdx: 0,
+    selectedOption: null,
+    placedTokens: {},
+    typedCode: '',
+    lastCorrect: null,
+    lastWrongMistakeId: null,
+    drillMistakeId: null,
+    correctCount: 0,
+  };
+  resetExerciseTransients();
+  go('exercise');
+}
+
+function continueOrStart() {
+  if (S.session && (S.session.type === 'lesson' || S.session.type === 'practice')) {
+    const lesson = LESSONS[S.session.lessonId];
+    if (S.session.type === 'lesson' &&
+        S.ui.lessonStep < lesson.steps.length) {
+      go('lesson');
+    } else {
+      go('exercise');
+    }
+    return;
+  }
+  startLesson('py-loops-1');
+}
+
+function currentExercise() {
+  if (!S.session || !S.session.exerciseQueue) return null;
+  const id = S.session.exerciseQueue[S.session.exerciseIdx];
+  return EXERCISES.find(e => e.id === id) || null;
+}
+
+function resetExerciseTransients() {
+  if (!S.session) return;
+  const ex = currentExercise();
+  S.session.selectedOption = null;
+  S.session.placedTokens = {};
+  S.session.typedCode = (ex && ex.kind === 'type') ? ex.starter : '';
+  S.session.lastCorrect = null;
+}
+
+function lessonNext() {
+  if (!S.session) return;
+  const lesson = LESSONS[S.session.lessonId];
+  if (S.ui.lessonStep < lesson.steps.length - 1) {
+    S.ui.lessonStep++;
+    save();
+    render();
+  } else {
+    resetExerciseTransients();
+    go('exercise');
+  }
+}
+
+function exitToHome() {
+  // Spec says ✕ "confirms exit"; Phase 3 just bails to home — confirmation
+  // modal is a Phase 4 polish item.
+  go('home');
+}
+
+/* === Answer checking === */
+
+function answerReady() {
+  const ex = currentExercise();
+  if (!ex) return false;
+  if (ex.kind === 'mcq') return S.session.selectedOption !== null;
+  if (ex.kind === 'tap') return ex.blanks.every((_, i) => S.session.placedTokens[i] !== undefined);
+  if (ex.kind === 'type') return (S.session.typedCode || '').trim().length > 0;
+  return false;
+}
+
+function isCorrect(ex) {
+  if (ex.kind === 'mcq') {
+    const opt = ex.options[S.session.selectedOption];
+    return !!(opt && opt.correct);
+  }
+  if (ex.kind === 'tap') {
+    return ex.blanks.every((b, i) => {
+      const idx = S.session.placedTokens[i];
+      if (idx === undefined) return false;
+      return ex.tokenTray[idx] === b.answer;
+    });
+  }
+  if (ex.kind === 'type') {
+    const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+    return norm(S.session.typedCode) === norm(ex.solution);
+  }
+  return false;
+}
+
+function checkAnswer() {
+  const ex = currentExercise();
+  if (!ex || !answerReady()) return;
+
+  const correct = isCorrect(ex);
+  S.session.lastCorrect = correct;
+
+  if (correct) {
+    S.xp += ex.xp;
+    S.session.correctCount++;
+    go('result-correct');
+  } else {
+    S.hearts = Math.max(0, S.hearts - 1);
+    // Mistake-bank write-through — non-negotiable per HANDOFF.
+    const mistake = mistakeFromExercise(ex);
+    S.mistakes.push(mistake);
+    S.session.lastWrongMistakeId = mistake.id;
+    go('result-wrong');
+  }
+}
+
+function mistakeFromExercise(ex) {
+  return {
+    id: 'm-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+    lang: ex.lang,
+    title: ex.topic,
+    topic: ex.topic,
+    userCode: userAttemptString(ex),
+    solution: solutionString(ex),
+    explanation: ex.explanation,
+    exerciseId: ex.id,
+    createdAt: new Date().toISOString(),
+    dueAt: new Date().toISOString(),
+    attempts: 0,
+    mastered: false,
+  };
+}
+
+function userAttemptString(ex) {
+  if (ex.kind === 'mcq') {
+    const sel = ex.options[S.session.selectedOption];
+    const tag = sel ? sel.text : '(no choice)';
+    return (ex.code ? ex.code + '\n' : '') + '# You picked: ' + tag;
+  }
+  if (ex.kind === 'tap') {
+    return fillTapTemplate(ex, i => {
+      const idx = S.session.placedTokens[i];
+      return idx === undefined ? '___' : ex.tokenTray[idx];
+    });
+  }
+  if (ex.kind === 'type') {
+    return S.session.typedCode || ex.starter || '';
+  }
+  return '';
+}
+
+function solutionString(ex) {
+  if (ex.kind === 'mcq') {
+    const correctOpt = ex.options.find(o => o.correct);
+    return (ex.code ? ex.code + '\n' : '') +
+           '# Correct: ' + (correctOpt ? correctOpt.text : '(missing)');
+  }
+  if (ex.kind === 'tap') return fillTapTemplate(ex, i => ex.blanks[i].answer);
+  if (ex.kind === 'type') return ex.solution || '';
+  return '';
+}
+
+function fillTapTemplate(ex, getter) {
+  let out = ex.template;
+  ex.blanks.forEach((_, i) => {
+    out = out.split('{' + i + '}').join(getter(i));
+  });
+  return out;
+}
+
+/* === Result transitions === */
+
+function resultNext() {
+  if (!S.session) { go('home'); return; }
+  const next = S.session.exerciseIdx + 1;
+  if (next < S.session.exerciseQueue.length) {
+    S.session.exerciseIdx = next;
+    resetExerciseTransients();
+    go('exercise');
+  } else {
+    // Lesson complete. Phase 4 hooks lesson-summary; Phase 3 just lands home.
+    S.session = null;
+    go('home');
+  }
+}
+
+function tryAgain() {
+  // From Review (post-wrong) — re-attempt same exercise.
+  if (!S.session) { go('home'); return; }
+  resetExerciseTransients();
+  go('exercise');
+}
+
+/* === MCQ / Tap / Type input handlers === */
+
+function pickMCQ(idx) {
+  if (!S.session) return;
+  S.session.selectedOption = idx;
+  save();
+  render();
+}
+
+function placeToken(tokenIdx) {
+  if (!S.session) return;
+  const ex = currentExercise();
+  if (!ex || ex.kind !== 'tap') return;
+  // Skip if this token chip is already placed in some blank.
+  for (const k in S.session.placedTokens) {
+    if (S.session.placedTokens[k] === tokenIdx) return;
+  }
+  // Place in the next empty blank.
+  for (let i = 0; i < ex.blanks.length; i++) {
+    if (S.session.placedTokens[i] === undefined) {
+      S.session.placedTokens[i] = tokenIdx;
+      save();
+      render();
+      return;
+    }
+  }
+}
+
+function clearBlank(blankIdx) {
+  if (!S.session) return;
+  delete S.session.placedTokens[blankIdx];
+  save();
+  render();
+}
+
+/* === Drill (Dojo focused re-attempt) === */
+
+function startDrill(mistakeId) {
+  S.session = {
+    type: 'drill',
+    drillMistakeId: mistakeId,
+    lastCorrect: null,
+  };
+  S.ui.testsOpen = false;
+  go('review');   // shared screen — branches by S.session.type.
+}
+
+function drillResolve(correct) {
+  if (!S.session) { go('dojo'); return; }
+  const m = S.mistakes.find(mm => mm.id === S.session.drillMistakeId);
+  if (!m) { S.session = null; go('dojo'); return; }
+
+  if (correct) {
+    m.attempts = (m.attempts || 0) + 1;
+    // Phase 3 SRS-lite — full SM-2 lands in Phase 5.
+    const days = Math.min(Math.pow(2, m.attempts), 30);
+    const next = new Date();
+    next.setTime(next.getTime() + days * 24 * 60 * 60 * 1000);
+    m.dueAt = next.toISOString();
+    if (m.attempts >= 5) m.mastered = true;
+    // Heart-refill loop (HANDOFF "easy to miss" #2).
+    S.hearts = Math.min(5, S.hearts + 1);
+  } else {
+    m.attempts = 0;
+    m.dueAt = new Date().toISOString();
+  }
+  S.session = null;
+  go('dojo');
+}
+
+/* === Time / due helpers === */
+
+function isDue(mistake) {
+  if (mistake.mastered) return false;
+  return new Date(mistake.dueAt).getTime() <= Date.now();
+}
+
+function dueMistakes() {
+  return S.mistakes.filter(isDue);
+}
+
+function timeAgo(iso) {
+  const ms = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(ms / 60000);
+  if (min < 60) return min <= 1 ? 'Just now' : min + 'm ago';
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return hr + 'h ago';
+  const d = Math.floor(hr / 24);
+  if (d === 1) return 'Yesterday';
+  if (d < 7) return d + ' days ago';
+  return Math.floor(d / 7) + 'w ago';
+}
+
+function dueLabel(mistake) {
+  if (mistake.mastered) return 'Mastered';
+  const ms = new Date(mistake.dueAt).getTime() - Date.now();
+  if (ms <= 0) return 'Now';
+  const hr = Math.floor(ms / (60 * 60 * 1000));
+  if (hr < 24) return 'Today';
+  const d = Math.floor(hr / 24);
+  if (d === 1) return 'Tomorrow';
+  if (d < 7) return 'In ' + d + 'd';
+  return 'In ' + Math.floor(d / 7) + 'w';
+}
+
+function dueTone(mistake) {
+  if (mistake.mastered) return 'success';
+  const ms = new Date(mistake.dueAt).getTime() - Date.now();
+  if (ms <= 0) return 'error';
+  if (ms < 24 * 60 * 60 * 1000) return 'warn';
+  return 'neutral';
+}
+
+/* ────────────────────────────────────────────────────────────
+   v2 Screens — production layouts.
+   Each pulls from S; transitions through go(...).
+   ──────────────────────────────────────────────────────────── */
+
+SCREENS.home = function () {
+  const lesson = LESSONS['py-loops-1'];
+  // Resume label if mid-lesson, otherwise default copy.
+  const inProgress = S.session && (S.session.type === 'lesson' || S.session.type === 'practice');
+  const ctaLabel = inProgress ? 'Continue →' : 'Start →';
+  const progressPct = inProgress
+    ? Math.round((S.session.exerciseIdx / Math.max(1, S.session.exerciseQueue.length)) * 100)
+    : 40;
+  const dueCount = dueMistakes().length;
+
+  return `
+    <div class="home-greet">
+      <div class="greet">Ohayō, ${esc(S.user && S.user.name || 'Sam')}</div>
+      <div class="home-pills">
+        ${Pill('🔥 ' + S.streak,  { tone: 'warn' })}
+        ${Pill('♥ ' + S.hearts,   { tone: 'error' })}
+        ${Pill('✦ ' + S.xp,        { tone: 'accent' })}
+      </div>
+    </div>
+
+    <button type="button" class="hero-card" data-action="continue">
+      <div class="hero-eyebrow">${inProgress ? 'Continue training' : 'Start training'}</div>
+      <div class="hero-title">Python · ${esc(lesson.unitName)}</div>
+      <div class="hero-sub">Lesson ${esc(lesson.number)} · ${esc(lesson.title)}</div>
+      <div class="hero-progress"><div style="width:${progressPct}%"></div></div>
+      <div class="hero-cta-row">
+        <div style="flex:1"></div>
+        <span class="hero-cta">${esc(ctaLabel)}</span>
+      </div>
+      <div class="hero-mascot">${MascotSVG(80)}</div>
+    </button>
+
+    <div class="belt-strip">
+      <div class="belt-info">
+        <div class="belt-icon">★</div>
+        <div>
+          <div class="belt-label">Yellow belt</div>
+          <div class="belt-sub">${esc(Math.max(0, 500 - (S.xp % 500)))} XP to Green</div>
+        </div>
+      </div>
+      <span class="belt-link">See path →</span>
+    </div>
+
+    <div class="section-eyebrow">Today's missions</div>
+    <div class="mission-list">
+      <div class="mission">
+        <div class="mission-icon">✦</div>
+        <div style="flex:1">
+          <div class="mission-name">Finish 1 lesson</div>
+          <div class="mission-meta">0 / 1 · +30 XP</div>
+        </div>
+      </div>
+      <button type="button" class="mission" data-action="go" data-to="dojo" style="cursor:pointer; text-align:left; font-family:inherit; color:inherit; width:100%; border:1px solid var(--hairline); background:var(--surface)">
+        <div class="mission-icon">⚔</div>
+        <div style="flex:1">
+          <div class="mission-name">Drill ${dueCount} mistake${dueCount === 1 ? '' : 's'}</div>
+          <div class="mission-meta">0 / ${dueCount || 3} · +20 XP</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="tracks-row">
+      <div class="track-icons">
+        ${TRACKS.map((t, i) => `<div class="track-icon ${i === 0 ? 'on' : ''}">${esc(t.icon)}</div>`).join('')}
+      </div>
+      <div style="flex:1; font-size:13px; font-weight:600">Switch track</div>
+      <span style="font-size:13px; color:var(--muted)">›</span>
+    </div>
+
+    <div style="height:var(--sp-4)"></div>
+  `;
+};
+
+SCREENS.lesson = function () {
+  if (!S.session) { startLesson('py-loops-1'); return ''; }
+  const lesson = LESSONS[S.session.lessonId];
+  const total = lesson.steps.length;
+  const idx = Math.min(S.ui.lessonStep, total - 1);
+  const step = lesson.steps[idx];
+  const isLast = idx === total - 1;
+
+  return `
+    <div class="lesson-screen">
+      <header class="lesson-top">
+        <button type="button" class="icon-btn" data-action="exit" aria-label="Exit lesson">✕</button>
+        ${ProgressDots(total, idx + 1)}
+        <span class="lesson-step-counter">${idx + 1}/${total}</span>
+      </header>
+
+      <div class="lesson-body">
+        <div class="lesson-eyebrow">${esc(step.eyebrow)}</div>
+        <h1 class="lesson-title">${esc(step.title)}</h1>
+
+        ${step.mascot ? `
+          <div class="lesson-mascot">
+            ${MascotBubble({ size: 48, message: step.mascot })}
+          </div>
+        ` : ''}
+
+        ${step.code ? `
+          <div class="lesson-code">
+            ${CodeBlock({ code: step.code, lang: 'py', highlight: step.highlight, showLineNumbers: false })}
+          </div>
+        ` : ''}
+
+        ${step.body ? `
+          <div class="lesson-callout">
+            <b class="accent">Each time:</b> ${esc(step.body)}
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="lesson-cta-bar">
+        ${Btn(isLast ? 'Start exercises →' : 'I get it →', {
+          primary: true, full: true, action: 'lesson-next',
+        })}
+      </div>
+    </div>
+  `;
+};
+
+SCREENS.exercise = function () {
+  const ex = currentExercise();
+  if (!ex || !S.session) { go('home'); return ''; }
+
+  // Progress bar reflects how far we are through the queue.
+  const progress = S.session.exerciseIdx / Math.max(1, S.session.exerciseQueue.length);
+
+  const header = `
+    <header class="ex-top">
+      <button type="button" class="icon-btn" data-action="exit" aria-label="Exit exercise">✕</button>
+      <div class="ex-progress"><div style="width:${(progress * 100).toFixed(1)}%"></div></div>
+      <span class="ex-hearts">♥ ${S.hearts}</span>
+    </header>
+  `;
+
+  const ctaDisabled = !answerReady();
+  const ctaAction   = ctaDisabled ? '' : 'check-answer';
+  const submitLabel = ex.kind === 'type' ? 'Submit' : 'Check';
+  const ctaBar = `
+    <div class="ex-cta-bar">
+      ${ex.kind === 'type'
+        ? `${Btn('Run',  { action: 'run-code' })}
+           <div style="flex:1">${Btn(submitLabel, {
+             primary: true, full: true,
+             action: ctaAction,
+           })}</div>`
+        : Btn(submitLabel, {
+            primary: true, full: true,
+            action: ctaAction,
+          })}
+    </div>
+  `;
+
+  if (ex.kind === 'mcq')  return mcqScreen(ex, header, ctaBar);
+  if (ex.kind === 'tap')  return tapScreen(ex, header, ctaBar);
+  if (ex.kind === 'type') return typeScreen(ex, header, ctaBar);
+  return header + '<div class="page">Unknown exercise kind.</div>' + ctaBar;
+};
+
+function mcqScreen(ex, header, ctaBar) {
+  const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+  return `
+    <div class="ex-screen">
+      ${header}
+      <div class="ex-prompt-block">
+        ${Pill(ex.pillLabel, { tone: ex.pillTone })}
+        <div class="ex-prompt">${esc(ex.prompt)}</div>
+      </div>
+      ${ex.code ? `<div style="padding:0 var(--sp-4)">${CodeBlock({ code: ex.code, lang: ex.lang, showLineNumbers: false })}</div>` : ''}
+      <div class="mcq-list">
+        ${ex.options.map((opt, i) => `
+          <button type="button"
+                  class="mcq-opt ${S.session.selectedOption === i ? 'on' : ''}"
+                  data-action="mcq-pick"
+                  data-idx="${i}">
+            <span class="mcq-letter">${letters[i] || (i + 1)}</span>
+            <span class="mcq-text">${esc(opt.text)}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div style="flex:1"></div>
+      ${ctaBar}
+    </div>
+  `;
+}
+
+function tapScreen(ex, header, ctaBar) {
+  // Build the code block from template + placedTokens. We render the template
+  // with a placeholder for each blank, then post-process to inject BlankSlots.
+  const lines = ex.template.split('\n');
+  const lineNumWidth = String(lines.length).length;
+
+  function renderBlankSlot(blankIdx) {
+    const tokenIdx = S.session.placedTokens[blankIdx];
+    if (tokenIdx === undefined) return BlankSlot({ state: 'empty' });
+    const text = ex.tokenTray[tokenIdx];
+    return BlankSlot({
+      state: 'filled',
+      content: text,
+      data: { action: 'tap-clear', 'blank-idx': blankIdx },
+    });
+  }
+
+  // For each line, tokenize the parts BETWEEN blank markers and inject slots.
+  // This is a lightweight render — it's the tap-fill exercise template,
+  // not a parser pipeline.
+  const codeHtml = lines.map((line, lineIdx) => {
+    const parts = line.split(/\{(\d+)\}/);   // ["pre", "0", "mid", "1", "post"]
+    let html = '';
+    for (let i = 0; i < parts.length; i++) {
+      if (i % 2 === 0) {
+        const tokens = tokenize(parts[i], ex.lang);
+        html += renderTokens(tokens);
+      } else {
+        const blankIdx = parseInt(parts[i], 10);
+        // Wrap so taps on the slot fire 'tap-clear' via the data already on it.
+        html += renderBlankSlot(blankIdx).replace('<span class="blank-slot ',
+                                                   '<span data-action="tap-clear" data-blank-idx="' + blankIdx + '" class="blank-slot ');
+      }
+    }
+    return `<div style="display:flex; min-height:24px"><span style="display:inline-block; width:${lineNumWidth + 1}ch; color:var(--muted); opacity:0.5; user-select:none">${lineIdx + 1}</span><span style="flex:1">${html}</span></div>`;
+  }).join('');
+
+  return `
+    <div class="ex-screen">
+      ${header}
+      <div class="ex-prompt-block">
+        ${Pill(ex.pillLabel, { tone: ex.pillTone })}
+        <div class="ex-prompt">${esc(ex.prompt)}</div>
+      </div>
+      <div class="tap-code">${codeHtml}</div>
+      <div class="tap-tray-label">Tokens</div>
+      <div class="tap-tray">
+        ${ex.tokenTray.map((tok, i) => {
+          const placed = Object.values(S.session.placedTokens).includes(i);
+          return TokenChip(tok, {
+            state: placed ? 'placed' : 'idle',
+            action: placed ? null : 'tap-place',
+            data: { idx: i },
+          });
+        }).join('')}
+      </div>
+      <div style="flex:1"></div>
+      ${ctaBar}
+    </div>
+  `;
+}
+
+function typeScreen(ex, header, ctaBar) {
+  const code = S.session.typedCode || ex.starter || '';
+  return `
+    <div class="ex-screen">
+      ${header}
+      <div class="ex-prompt-block">
+        ${Pill(ex.pillLabel, { tone: ex.pillTone })}
+        <div class="ex-prompt smaller">${esc(ex.prompt)}</div>
+      </div>
+
+      <div style="padding:0 var(--sp-4); flex:1; display:flex; flex-direction:column">
+        <div class="type-editor">
+          <textarea
+            data-input="type-code"
+            spellcheck="false"
+            autocapitalize="off"
+            autocorrect="off"
+            autocomplete="off">${esc(code)}</textarea>
+          <span class="type-badge">● Python 3</span>
+        </div>
+      </div>
+
+      <div class="hint-card">
+        <div style="flex-shrink:0">${MascotSVG(28)}</div>
+        <span class="hint-text">Stuck? <span class="hint-action">Show hint</span></span>
+        <span class="hint-arrow">›</span>
+      </div>
+
+      <div class="kbd-row">
+        ${['Tab','def','"','(',')',':','+','=','_','#'].map(k =>
+          `<button type="button" class="kbd-key" data-action="kbd-insert" data-key="${esc(k)}">${esc(k)}</button>`
+        ).join('')}
+      </div>
+
+      ${ctaBar}
+    </div>
+  `;
+}
+
+SCREENS['result-correct'] = function () {
+  const ex = currentExercise();
+  const xpGain = ex ? ex.xp : 30;
+  return `
+    <div class="result-correct-screen">
+      <div class="result-body">
+        <div>${MascotSVG(120)}</div>
+        <div class="result-cheer">見事！</div>
+        <div class="result-roman">(Migoto — well done.)</div>
+        <div class="result-headline">${ex && S.session.correctCount === 1
+          ? 'You got it on the first try.'
+          : 'Nailed it.'}</div>
+        <div class="result-pills">
+          ${Pill('+' + xpGain + ' XP', { tone: 'accent', size: 'lg' })}
+          ${Pill('🔥 ' + S.streak + ' day streak', { tone: 'warn', size: 'lg' })}
+        </div>
+      </div>
+      <div class="result-bottom">
+        ${Btn('Next →', { primary: true, full: true, action: 'result-next' })}
+      </div>
+    </div>
+  `;
+};
+
+SCREENS['result-wrong'] = function () {
+  const ex = currentExercise();
+  const why = ex ? ex.explanation : '';
+  return `
+    <div class="result-wrong-screen">
+      <div class="result-body">
+        <div class="result-wrong-mascot">${MascotSVG(110)}</div>
+        <div class="result-wrong-h1">Not quite.</div>
+        <div class="result-why">${esc(why)}</div>
+        <div class="heart-loss-pill">− 1 ♥ · ${S.hearts} left</div>
+        <div class="dojo-callout">
+          We'll add this to your <b>Dojo</b> for a re-match later.
+        </div>
+      </div>
+      <div class="ex-cta-bar" style="margin-top:0; border-top:none">
+        ${Btn('Skip', { action: 'result-skip' })}
+        <div style="flex:1">${Btn('See review →', { primary: true, full: true, action: 'go-review' })}</div>
+      </div>
+    </div>
+  `;
+};
+
+SCREENS.review = function () {
+  // Decide which mistake to render and which CTAs to show.
+  const drillMode = S.session && S.session.type === 'drill';
+  const mistakeId = drillMode
+    ? S.session.drillMistakeId
+    : (S.session && S.session.lastWrongMistakeId);
+
+  const m = mistakeId ? S.mistakes.find(mm => mm.id === mistakeId) : null;
+  if (!m) {
+    return `
+      <header class="rev-top">
+        <button type="button" class="rev-back" data-action="go" data-to="${drillMode ? 'dojo' : 'home'}">‹</button>
+        <div class="rev-title">Review</div>
+      </header>
+      <div class="page t-body muted">No review available.</div>
+    `;
+  }
+
+  const diff = computeLineDiff(m.userCode, m.solution);
+  const tab  = S.ui.reviewTab || 'split';
+  const explainEyebrow = drillMode ? 'Drill — review' : "Sensei's lesson";
+
+  return `
+    <header class="rev-top">
+      <button type="button" class="rev-back" data-action="go" data-to="${drillMode ? 'dojo' : 'home'}">‹</button>
+      <div class="rev-title">Review</div>
+    </header>
+
+    <section class="rev-explain">
+      <div style="flex-shrink:0">${MascotSVG(64)}</div>
+      <div class="rev-explain-body">
+        <div class="rev-explain-eyebrow">${esc(explainEyebrow)}</div>
+        <h1 class="rev-explain-h1">${esc(m.title)}</h1>
+        <p class="rev-explain-text">${esc(m.explanation)}</p>
+      </div>
+    </section>
+
+    <div class="rev-toggle" role="tablist">
+      ${['split','yours','sensei'].map(k => `
+        <button type="button"
+                class="${tab === k ? 'on' : ''}"
+                data-action="review-tab"
+                data-tab="${k}"
+                role="tab"
+                aria-selected="${tab === k}">
+          ${k === 'split' ? 'Side-by-side' : k === 'yours' ? 'Yours' : 'Sensei'}
+        </button>
+      `).join('')}
+    </div>
+
+    <div class="rev-diff-wrap">
+      ${DiffView({
+        userCode: m.userCode,
+        solution: m.solution,
+        lang: m.lang,
+        mode: tab,
+        userHighlight:   diff.aHighlight,
+        senseiHighlight: diff.bHighlight,
+      })}
+    </div>
+
+    <button type="button" class="tests-card" data-action="toggle-tests">
+      <span class="tests-card-icon ${drillMode ? 'pass' : 'fail'}">${drillMode ? '✓' : '!'}</span>
+      <span class="tests-card-label">${drillMode
+        ? '3 of 3 tests passing'
+        : '1 of 3 tests passing'}</span>
+      <span class="tests-card-toggle">${S.ui.testsOpen ? 'Hide' : 'Show'} ›</span>
+    </button>
+    ${S.ui.testsOpen ? `
+      <div class="tests-detail">
+        <div class="test-row"><span class="${drillMode ? 'pass' : 'pass'}">✓</span> <span>basic case</span></div>
+        <div class="test-row"><span class="${drillMode ? 'pass' : 'fail'}">${drillMode ? '✓' : '✗'}</span> <span>edge case</span></div>
+        <div class="test-row"><span class="${drillMode ? 'pass' : 'fail'}">${drillMode ? '✓' : '✗'}</span> <span>boundary</span></div>
+      </div>
+    ` : ''}
+
+    ${drillMode ? `
+      <div class="rev-cta-bar">
+        ${Btn('Still confusing', { action: 'drill-wrong' })}
+        <div style="flex:1">${Btn('Got it →', { primary: true, full: true, action: 'drill-correct' })}</div>
+      </div>
+    ` : `
+      <div class="rev-cta-bar">
+        ${Btn('Save', { action: 'review-save' })}
+        <div style="flex:1">${Btn('Try again →', { primary: true, full: true, action: 'try-again' })}</div>
+      </div>
+    `}
+  `;
+};
+
+SCREENS.dojo = function () {
+  const filter = S.ui.dojoFilter || 'all';
+  const all    = S.mistakes.filter(m => S.ui.dojoShowMastered || !m.mastered);
+  const due    = all.filter(isDue);
+
+  let visible = all;
+  if (filter === 'due') visible = due;
+  else if (['py','js','sql','css'].includes(filter)) {
+    visible = all.filter(m => m.lang === filter);
+  }
+
+  // Counts for chips
+  const counts = {
+    all: all.length,
+    due: due.length,
+    py:  all.filter(m => m.lang === 'py').length,
+    js:  all.filter(m => m.lang === 'js').length,
+    sql: all.filter(m => m.lang === 'sql').length,
+    css: all.filter(m => m.lang === 'css').length,
+  };
+  const chipDefs = [
+    { id: 'all', label: 'All · ' + counts.all },
+    { id: 'due', label: 'Due · ' + counts.due },
+    { id: 'py',  label: 'Python · ' + counts.py },
+    { id: 'sql', label: 'SQL · ' + counts.sql },
+    { id: 'js',  label: 'JS · ' + counts.js },
+  ].filter(c => c.id === 'all' || c.id === 'due' || counts[c.id] > 0);
+
+  const dueCount = counts.due;
+  const drillMins = Math.max(1, dueCount * 2);
+  const drillXp   = dueCount * 20;
+
+  return `
+    <header class="dojo-header">
+      <div class="dojo-eyebrow">Your Dojo</div>
+      <h1 class="dojo-h1">${all.length} mistake${all.length === 1 ? '' : 's'} to drill</h1>
+      <p class="dojo-sub">Spaced practice — hit every one until it sticks.</p>
+    </header>
+
+    ${dueCount > 0 ? `
+      <button type="button" class="drill-all" data-action="drill-all">
+        <div class="drill-all-icon">⚔</div>
+        <div style="flex:1">
+          <div class="drill-all-title">Drill all ${dueCount} due now</div>
+          <div class="drill-all-meta">~${drillMins} min · +${drillXp} XP</div>
+        </div>
+        <span class="drill-all-arrow">→</span>
+      </button>
+    ` : ''}
+
+    <div class="dojo-filters">
+      ${chipDefs.map(c => `
+        <button type="button"
+                class="filter-chip ${filter === c.id ? 'on' : ''}"
+                data-action="dojo-filter"
+                data-f="${c.id}">${esc(c.label)}</button>
+      `).join('')}
+    </div>
+
+    ${visible.length === 0 ? `
+      <div class="mistake-empty">
+        <div style="font-size:32px; margin-bottom:8px">⚔</div>
+        <div class="t-body">No mistakes match this filter.</div>
+      </div>
+    ` : `
+      <div class="mistake-list">
+        ${visible.map(m => `
+          <button type="button" class="mistake-card" data-action="drill" data-mid="${esc(m.id)}">
+            <div class="mistake-lang" style="background:${LANG_BG[m.lang] || '#888'}">${esc(LANG_LABEL[m.lang] || m.lang)}</div>
+            <div class="mistake-info">
+              <div class="mistake-title">${esc(m.title)}</div>
+              <div class="mistake-meta">${esc(m.topic)} · ${esc(timeAgo(m.createdAt))}</div>
+            </div>
+            ${Pill(dueLabel(m), { tone: dueTone(m) })}
+          </button>
+        `).join('')}
+      </div>
+    `}
+
+    <div style="height:var(--sp-4)"></div>
+  `;
+};
 const TABS = [
-  { id: 'home',     label: 'Learn',    icon: '◆', target: 'tokens' },
-  { id: 'practice', label: 'Practice', icon: '⚡', target: 'tokens' },
-  { id: 'dojo',     label: 'Dojo',     icon: '⚔', target: 'tokens' },
-  { id: 'profile',  label: 'Sensei',   icon: '◐', target: 'tokens' },
+  { id: 'home',     label: 'Learn',    icon: '◆', target: 'home'    },
+  { id: 'practice', label: 'Practice', icon: '⚡', target: 'practice' },
+  { id: 'dojo',     label: 'Dojo',     icon: '⚔', target: 'dojo'    },
+  { id: 'profile',  label: 'Sensei',   icon: '◐', target: 'home'    },  // Phase 4 wires Profile.
 ];
+
+// Screens that take over the viewport — hide the bottom tab bar.
+const NO_TABS = new Set([
+  'lesson', 'exercise', 'result-correct', 'result-wrong',
+]);
 
 function tabFor(screen) {
   // Maps screen id → which tab should highlight.
@@ -1491,6 +2916,10 @@ function tabFor(screen) {
 }
 
 function renderTabs() {
+  if (NO_TABS.has(S.screen)) {
+    document.getElementById('tabs').innerHTML = '';
+    return;
+  }
   const active = tabFor(S.screen);
   document.getElementById('tabs').innerHTML = TABS.map(t => `
     <button class="tab ${t.id === active ? 'on' : ''}"
@@ -1506,10 +2935,20 @@ function renderTabs() {
 /* ────────────────────────────────────────────────────────────
    Render
    ──────────────────────────────────────────────────────────── */
+let autoAdvanceTimer = null;
+
 function render() {
-  const fn = SCREENS[S.screen] || SCREENS.tokens;
+  const fn = SCREENS[S.screen] || SCREENS.home;
   document.getElementById('screen').innerHTML = fn(S);
   renderTabs();
+
+  // Result · Correct auto-advances after 1.5s (spec).
+  clearTimeout(autoAdvanceTimer);
+  if (S.screen === 'result-correct') {
+    autoAdvanceTimer = setTimeout(() => {
+      if (S.screen === 'result-correct') resultNext();
+    }, 1500);
+  }
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -1526,15 +2965,123 @@ function handle(action, data) {
   switch (action) {
     case 'go':
       return go(data.to);
+
     case 'go-tab': {
       const tab = TABS.find(t => t.id === data.tab);
-      if (tab) go(tab.target);
+      if (!tab) return;
+      if (tab.id === 'practice') return startPractice('py-loops-1');
+      return go(tab.target);
+    }
+
+    case 'continue':
+      return continueOrStart();
+
+    case 'exit':
+      return exitToHome();
+
+    case 'lesson-next':
+      return lessonNext();
+
+    case 'mcq-pick':
+      return pickMCQ(parseInt(data.idx, 10));
+
+    case 'tap-place':
+      return placeToken(parseInt(data.idx, 10));
+
+    case 'tap-clear':
+      return clearBlank(parseInt(data['blank-idx'], 10));
+
+    case 'kbd-insert': {
+      const ta = document.querySelector('textarea[data-input="type-code"]');
+      if (!ta || !S.session) return;
+      const start = ta.selectionStart;
+      const end   = ta.selectionEnd;
+      const ins   = data.key === 'Tab' ? '    ' : data.key;
+      const next  = ta.value.slice(0, start) + ins + ta.value.slice(end);
+      ta.value = next;
+      S.session.typedCode = next;
+      ta.focus();
+      ta.setSelectionRange(start + ins.length, start + ins.length);
+      save();
       return;
     }
+
+    case 'run-code':
+      // V1 stub. Real Pyodide hook lands later.
+      runCode().then(r => alert(r.stdout));
+      return;
+
+    case 'check-answer':
+      return checkAnswer();
+
+    case 'result-next':
+      return resultNext();
+
+    case 'result-skip':
+      // 'Skip' on result-wrong = move on without reviewing. Mistake is
+      // already saved; just advance the queue.
+      return resultNext();
+
+    case 'go-review':
+      return go('review');
+
+    case 'try-again':
+      return tryAgain();
+
+    case 'review-tab':
+      S.ui.reviewTab = data.tab;
+      save();
+      render();
+      return;
+
+    case 'toggle-tests':
+      S.ui.testsOpen = !S.ui.testsOpen;
+      save();
+      render();
+      return;
+
+    case 'review-save':
+      // Mistake is already in S.mistakes (saved on wrong). No-op until
+      // Phase 4 surfaces a "saved" toast.
+      return;
+
+    case 'dojo-filter':
+      S.ui.dojoFilter = data.f;
+      save();
+      render();
+      return;
+
+    case 'drill':
+      return startDrill(data.mid);
+
+    case 'drill-correct':
+      return drillResolve(true);
+
+    case 'drill-wrong':
+      return drillResolve(false);
+
+    case 'drill-all': {
+      // Phase 3 simplification: drill the first due mistake. Real "drill all"
+      // sequencing (queue through every due mistake) is a Phase 5 polish.
+      const due = dueMistakes();
+      if (due.length) startDrill(due[0].id);
+      return;
+    }
+
     default:
       console.warn('[codesensei] unhandled action:', action, data);
   }
 }
+
+// Input event delegation — for the type-it textarea.
+document.addEventListener('input', (e) => {
+  const el = e.target.closest('[data-input]');
+  if (!el) return;
+  if (el.dataset.input === 'type-code' && S.session) {
+    S.session.typedCode = el.value;
+    save();
+  }
+});
 
 /* ────────────────────────────────────────────────────────────
    Boot
