@@ -1574,31 +1574,68 @@ const S = {
    ──────────────────────────────────────────────────────────── */
 const STORAGE_KEY = 'codesensei.v1';
 
+// Frozen deep-copy of the default shape, captured at module load.
+// load() rehydrates S from this on every boot, then overlays saved
+// values — so fields added in future phases automatically get their
+// defaults for users whose stored state predates them. Additive
+// schema changes shouldn't crash returning users.
+const DEFAULT_S = JSON.parse(JSON.stringify(S));
+
+function deepClone(v) {
+  return v === null || typeof v !== 'object'
+    ? v
+    : JSON.parse(JSON.stringify(v));
+}
+
 function load() {
+  let saved = null;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const saved = JSON.parse(raw);
-      // Shallow merge — later phases may add slices; we don't want stale
-      // state to clobber new defaults. Skip 'screen' and 'params' so a
-      // returning user always lands on Home (predictable cold-start).
-      const skip = new Set(['screen', 'params']);
-      Object.keys(saved).forEach(k => {
-        if (k in S && !skip.has(k)) S[k] = saved[k];
-      });
-    }
+    if (raw) saved = JSON.parse(raw);
   } catch (e) {
-    console.warn('[codesensei] load failed:', e);
+    console.warn('[codesensei] load failed — starting fresh:', e);
+  }
+
+  // Reset every slice to a fresh copy of its default. This guarantees
+  // that any field NOT present in the saved blob keeps its current
+  // default (the bug Phase 4 hit: saved.user was null/old-shape, the
+  // assignment clobbered the new user default, and S.user.onboarded
+  // crashed on read).
+  Object.keys(DEFAULT_S).forEach(k => {
+    S[k] = deepClone(DEFAULT_S[k]);
+  });
+
+  // Overlay saved fields on top of defaults — defensively.
+  if (saved && typeof saved === 'object') {
+    const skip = new Set(['screen', 'params']);
+    for (const k of Object.keys(saved)) {
+      if (skip.has(k) || !(k in DEFAULT_S)) continue;
+      const def = DEFAULT_S[k];
+      const sv  = saved[k];
+      if (def && typeof def === 'object' && !Array.isArray(def) &&
+          sv  && typeof sv  === 'object' && !Array.isArray(sv)) {
+        // Object slice (user, ui, onboarding) — merge per-field so a
+        // saved subset doesn't drop default keys.
+        Object.keys(sv).forEach(sk => { S[k][sk] = sv[sk]; });
+      } else if (sv !== null) {
+        // Scalar / array — replace wholesale. Never let stored null
+        // drop a default object (the actual Phase 4 crash root cause).
+        S[k] = sv;
+      }
+    }
   }
 
   // First-run seed — populate the Dojo so the demo loop has content.
   if (!S.seeded) {
     S.mistakes = SAMPLE_MISTAKES.slice();
     S.seeded = true;
-  } else if (S.user && S.user.onboarded === undefined) {
-    // Migration: users seeded before Phase 4 lacked an `onboarded` flag.
-    // Treat them as already-onboarded so they don't get bounced to splash.
-    S.user.onboarded = true;
+  }
+
+  // Migration: anyone with saved state from a previous phase predates
+  // the `onboarded` flag — treat them as already-onboarded so they
+  // aren't bounced to splash on schema upgrade.
+  if (saved && saved.seeded) {
+    if (!S.user.onboarded) S.user.onboarded = true;
     if (!S.user.name) S.user.name = 'Sam';
   }
 
