@@ -1524,6 +1524,120 @@ input, textarea, select {
   font-size: 14px; margin-top: 8px;
   max-width: 260px; line-height: 1.5;
 }
+
+/* ────────────────────────────────────────────────────────────
+   Phase 6 polish — acceptance bullets
+   ──────────────────────────────────────────────────────────── */
+
+/* Hearts decrement shake on result-wrong (spec: hearts decrement animation). */
+.heart-loss-pill {
+  animation: heart-shake var(--t-cel) ease-out;
+}
+@keyframes heart-shake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-6px); }
+  30%  { transform: translateX(6px); }
+  45%  { transform: translateX(-4px); }
+  60%  { transform: translateX(4px); }
+  80%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+/* Type-it: real run-output panel below the editor. Replaces the
+   Phase 3 alert() stub. */
+.run-output {
+  margin: 10px var(--sp-4) 0;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-input);
+  font: 400 12px/1.55 var(--font-mono);
+  color: var(--ink);
+  padding: 10px 12px;
+  white-space: pre-wrap;
+  min-height: 36px;
+  overflow-x: auto;
+}
+.run-output[data-empty] { color: var(--muted); font-style: italic; }
+.run-output.error { color: var(--error); border-color: rgba(184, 65, 46, 0.3); }
+
+/* Dojo "Show mastered" toggle — surfaces the dojoShowMastered flag
+   only when there are mastered mistakes worth toggling. */
+.show-mastered-toggle {
+  margin-top: 8px;
+  font: 700 11px/1 var(--font-sans);
+  letter-spacing: 1px;
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  padding: 6px 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 4px;
+  min-height: 32px;
+}
+.show-mastered-toggle:hover { text-decoration: underline; }
+
+/* Track switcher row is now interactive (spec: tapping opens a sheet). */
+.tracks-row {
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  transition: background var(--t-fast);
+}
+.tracks-row:active { background: var(--surface-2); }
+
+/* Review diff: ellipsis row marker for collapsed unchanged sections. */
+.code-line.gap {
+  background: transparent;
+  color: var(--muted);
+  font-style: italic;
+  opacity: 0.6;
+  user-select: none;
+  justify-content: center;
+}
+.code-line.gap .line-content {
+  text-align: center;
+  letter-spacing: 4px;
+}
+
+/* Exit-confirm modal — small in-screen overlay replacing native confirm(). */
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  padding: 24px;
+  animation: modal-fade var(--t-base) ease-out;
+}
+.modal-card {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  padding: 22px 22px 18px;
+  max-width: 320px;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  animation: modal-pop var(--t-base) ease-out;
+}
+.modal-title {
+  font-size: 18px; font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 8px;
+}
+.modal-body {
+  font-size: 14px; color: var(--muted);
+  line-height: 1.5; margin-bottom: 16px;
+}
+.modal-actions {
+  display: flex; gap: 10px;
+  justify-content: flex-end;
+}
+@keyframes modal-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-pop {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -1835,6 +1949,11 @@ function CodeBlock(opts) {
   const body = lines.map((line, idx) => {
     const lineNo = idx + 1;
     const mark   = highlight[lineNo];
+    // '~' marks a collapsed-context gap row — render plainly, no number,
+    // no token highlighting.
+    if (mark === '~') {
+      return `<div class="code-line gap"><span class="line-content">${esc(line)}</span></div>`;
+    }
     const cls    = mark === '+' ? 'add'
                  : mark === '-' ? 'del'
                  : mark === '*' ? 'hl'
@@ -1951,7 +2070,8 @@ function TokenChip(text, opts) {
 }
 
 /* DiffView — wraps two CodeBlocks with optional per-line highlight maps.
-   The caller can compute diffs via computeLineDiff(a, b) below. */
+   The caller can compute diffs via computeLineDiff(a, b) below.
+   Phase 6: changed lines + 1 context, with ⋯ gap rows for elided sections. */
 function DiffView(opts) {
   const userCode  = opts.userCode  || '';
   const solution  = opts.solution  || '';
@@ -1960,13 +2080,16 @@ function DiffView(opts) {
   const userHi    = opts.userHighlight   || {};
   const senseiHi  = opts.senseiHighlight || {};
 
+  const u = collapseContext(userCode, userHi, 1);
+  const s = collapseContext(solution, senseiHi, 1);
+
   const yours = `<section class="diff-yours">
     <div class="t-caption error" style="margin-bottom:6px">Yours</div>
-    ${CodeBlock({ code: userCode, lang, highlight: userHi, showLineNumbers: false })}
+    ${CodeBlock({ code: u.code, lang, highlight: u.highlight, showLineNumbers: false })}
   </section>`;
   const sensei = `<section class="diff-sensei">
     <div class="t-caption success" style="margin-bottom:6px">Sensei</div>
-    ${CodeBlock({ code: solution, lang, highlight: senseiHi, showLineNumbers: false })}
+    ${CodeBlock({ code: s.code, lang, highlight: s.highlight, showLineNumbers: false })}
   </section>`;
 
   if (mode === 'yours')  return yours;
@@ -1989,6 +2112,51 @@ function computeLineDiff(a, b) {
     }
   }
   return { aHighlight, bHighlight };
+}
+
+/* collapseContext — Review acceptance: "show only the changed lines
+   + 1 context line; collapse the rest." Returns a reduced code +
+   remapped highlight, with '~' markers on gap rows where unchanged
+   sections were elided. For our short seeded mistakes (≤2 lines),
+   nothing to collapse — this is a no-op there. */
+function collapseContext(code, highlight, contextLines) {
+  highlight = highlight || {};
+  if (contextLines == null) contextLines = 1;
+  const lines = (code || '').split('\n');
+  const changed = Object.keys(highlight);
+  if (changed.length === 0) {
+    return { code, highlight, collapsed: false };
+  }
+
+  const keep = new Set();
+  for (const k of changed) {
+    const idx0 = parseInt(k, 10) - 1;
+    for (let d = -contextLines; d <= contextLines; d++) {
+      const i = idx0 + d;
+      if (i >= 0 && i < lines.length) keep.add(i);
+    }
+  }
+
+  const sorted = [...keep].sort((a, b) => a - b);
+  const newLines = [];
+  const newHighlight = {};
+  let prev = null;
+
+  for (const i of sorted) {
+    if (prev !== null && i > prev + 1) {
+      newLines.push('⋯');                               // gap row content
+      newHighlight[newLines.length] = '~';              // gap marker
+    }
+    newLines.push(lines[i]);
+    if (highlight[i + 1]) newHighlight[newLines.length] = highlight[i + 1];
+    prev = i;
+  }
+
+  return {
+    code: newLines.join('\n'),
+    highlight: newHighlight,
+    collapsed: newLines.length < lines.length,
+  };
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -2717,8 +2885,20 @@ function lessonNext() {
 }
 
 function exitToHome() {
-  // Spec says ✕ "confirms exit"; Phase 3 just bails to home — confirmation
-  // modal is a Phase 4 polish item.
+  // Spec: tapping ✕ confirms before bailing out of a lesson/exercise.
+  if (S.screen === 'lesson' || S.screen === 'exercise') {
+    openModal({
+      title: 'Exit lesson?',
+      body: 'Your progress on this exercise will be lost.',
+      confirmLabel: 'Exit',
+      cancelLabel: 'Stay',
+      onConfirm: () => {
+        S.session = null;
+        go('home');
+      },
+    });
+    return;
+  }
   go('home');
 }
 
@@ -3096,13 +3276,13 @@ SCREENS.home = function () {
       </button>
     </div>
 
-    <div class="tracks-row">
+    <button type="button" class="tracks-row" data-action="open-tracks">
       <div class="track-icons">
         ${TRACKS.map((t, i) => `<div class="track-icon ${i === 0 ? 'on' : ''}">${esc(t.icon)}</div>`).join('')}
       </div>
       <div style="flex:1; font-size:13px; font-weight:600">Switch track</div>
       <span style="font-size:13px; color:var(--muted)">›</span>
-    </div>
+    </button>
 
     <div style="height:var(--sp-4)"></div>
   `;
@@ -3306,6 +3486,8 @@ function typeScreen(ex, header, ctaBar) {
         </div>
       </div>
 
+      <div class="run-output" data-run-output data-empty>(no output yet — tap Run)</div>
+
       <div class="hint-card">
         <div style="flex-shrink:0">${MascotSVG(28)}</div>
         <span class="hint-text">Stuck? <span class="hint-action">Show hint</span></span>
@@ -3498,11 +3680,22 @@ SCREENS.dojo = function () {
   const drillMins = Math.max(1, dueCount * 2);
   const drillXp   = dueCount * 20;
 
+  const masteredCount = S.mistakes.filter(m => m.mastered).length;
+
   return `
     <header class="dojo-header">
       <div class="dojo-eyebrow">Your Dojo</div>
-      <h1 class="dojo-h1">${all.length} mistake${all.length === 1 ? '' : 's'} to drill</h1>
-      <p class="dojo-sub">Spaced practice — hit every one until it sticks.</p>
+      <h1 class="dojo-h1">${dueCount > 0
+        ? `${dueCount} due today`
+        : 'All caught up.'}</h1>
+      <p class="dojo-sub">${all.length} active in the bank — spaced practice keeps each one fresh.</p>
+      ${masteredCount > 0 ? `
+        <button type="button" class="show-mastered-toggle" data-action="toggle-mastered">
+          ${S.ui.dojoShowMastered
+            ? `Hide mastered (${masteredCount})`
+            : `Show ${masteredCount} mastered`}
+        </button>
+      ` : ''}
     </header>
 
     ${dueCount > 0 ? `
@@ -4011,6 +4204,31 @@ function renderTabs() {
 }
 
 /* ────────────────────────────────────────────────────────────
+   Modal — small in-screen overlay used for the exit-confirm prompt.
+   Transient module state — never persisted. Rendered as a sibling
+   of #screen / #tabs inside #app so it covers everything.
+   ──────────────────────────────────────────────────────────── */
+let pendingModal = null;       // { title, body, confirmLabel?, cancelLabel?, onConfirm? }
+
+function openModal(opts) { pendingModal = opts || null; render(); }
+function closeModal()    { pendingModal = null; render(); }
+
+function renderModal(m) {
+  return `
+    <div class="modal-overlay" data-action="modal-cancel">
+      <div class="modal-card" data-stop>
+        <div class="modal-title">${esc(m.title || '')}</div>
+        <div class="modal-body">${esc(m.body || '')}</div>
+        <div class="modal-actions">
+          ${Btn(m.cancelLabel || 'Cancel', { action: 'modal-cancel' })}
+          ${Btn(m.confirmLabel || 'Confirm', { primary: true, action: 'modal-confirm' })}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ────────────────────────────────────────────────────────────
    Render
    ──────────────────────────────────────────────────────────── */
 let autoAdvanceTimer = null;
@@ -4020,9 +4238,24 @@ function render() {
   document.getElementById('screen').innerHTML = fn(S);
   renderTabs();
 
+  // Modal overlay — append/remove in #app so it floats above #screen
+  // and #tabs without being inside the scrolling content.
+  const app = document.getElementById('app');
+  let mEl = document.getElementById('modal-slot');
+  if (pendingModal) {
+    if (!mEl) {
+      mEl = document.createElement('div');
+      mEl.id = 'modal-slot';
+      app.appendChild(mEl);
+    }
+    mEl.innerHTML = renderModal(pendingModal);
+  } else if (mEl) {
+    mEl.remove();
+  }
+
   // Result · Correct auto-advances after 1.5s (spec).
   clearTimeout(autoAdvanceTimer);
-  if (S.screen === 'result-correct') {
+  if (S.screen === 'result-correct' && !pendingModal) {
     autoAdvanceTimer = setTimeout(() => {
       if (S.screen === 'result-correct') resultNext();
     }, 1500);
@@ -4035,8 +4268,14 @@ function render() {
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-action]');
   if (!el) return;
-  const action = el.dataset.action;
-  handle(action, el.dataset, el, e);
+  // Modal backdrop closes on direct click only — not on bubbled clicks
+  // from inside the modal card (which carries data-stop).
+  if (el.dataset.action === 'modal-cancel' &&
+      el.classList.contains('modal-overlay') &&
+      e.target.closest('[data-stop]')) {
+    return;
+  }
+  handle(el.dataset.action, el.dataset, el, e);
 });
 
 function handle(action, data) {
@@ -4084,10 +4323,23 @@ function handle(action, data) {
       return;
     }
 
-    case 'run-code':
-      // V1 stub. Real Pyodide hook lands later.
-      runCode().then(r => alert(r.stdout));
+    case 'run-code': {
+      const ta  = document.querySelector('textarea[data-input="type-code"]');
+      const out = document.querySelector('[data-run-output]');
+      if (!ta || !out) return;
+      out.removeAttribute('data-empty');
+      out.classList.remove('error');
+      out.textContent = '⌛ running…';
+      runCode('py', ta.value).then(r => {
+        if (r.ok) {
+          out.textContent = r.stdout || '(no output)';
+        } else {
+          out.classList.add('error');
+          out.textContent = r.stderr || 'Error';
+        }
+      });
       return;
+    }
 
     case 'check-answer':
       return checkAnswer();
@@ -4164,10 +4416,85 @@ function handle(action, data) {
       // Stub — language/theme settings come post-V1.
       return;
 
+    /* === Modal === */
+    case 'modal-confirm': {
+      const cb = pendingModal && pendingModal.onConfirm;
+      closeModal();
+      if (cb) cb();
+      return;
+    }
+    case 'modal-cancel':
+      closeModal();
+      return;
+
+    /* === Phase 6 polish === */
+    case 'open-tracks':
+      // Track switcher sheet — V1 stub. Surfacing the action so the
+      // row reads as interactive (acceptance criterion: "tapping
+      // opens a sheet").
+      openModal({
+        title: 'Switch track',
+        body: 'Multi-track switching ships post-V1. Python is your active track.',
+        confirmLabel: 'OK',
+        cancelLabel: 'Close',
+      });
+      return;
+
+    case 'toggle-mastered':
+      S.ui.dojoShowMastered = !S.ui.dojoShowMastered;
+      save();
+      render();
+      return;
+
     default:
       console.warn('[codesensei] unhandled action:', action, data);
   }
 }
+
+// Keydown delegation — the type-it textarea handles Enter (auto-indent)
+// and Tab (insert 4 spaces) so editing feels native instead of fighting
+// the browser. State sync rides through the input listener already
+// wired below.
+document.addEventListener('keydown', (e) => {
+  const ta = e.target;
+  if (!ta || !ta.matches || !ta.matches('textarea[data-input="type-code"]')) return;
+
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const start = ta.selectionStart;
+    const end   = ta.selectionEnd;
+    const before = ta.value.slice(0, start);
+    const after  = ta.value.slice(end);
+    const lineStart   = before.lastIndexOf('\n') + 1;
+    const currentLine = before.slice(lineStart);
+    const indent = (currentLine.match(/^\s*/) || [''])[0];
+    // Auto-add 4 more spaces if line ends with `:` or `{` or `(` so
+    // Python/JS continuation indents naturally.
+    const extra = /[:({]\s*$/.test(currentLine) ? '    ' : '';
+    const ins = '\n' + indent + extra;
+    ta.value = before + ins + after;
+    const cursor = start + ins.length;
+    ta.setSelectionRange(cursor, cursor);
+    if (S.session) {
+      S.session.typedCode = ta.value;
+      save();
+    }
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const start = ta.selectionStart;
+    const end   = ta.selectionEnd;
+    const ins   = '    ';
+    ta.value = ta.value.slice(0, start) + ins + ta.value.slice(end);
+    ta.setSelectionRange(start + ins.length, start + ins.length);
+    if (S.session) {
+      S.session.typedCode = ta.value;
+      save();
+    }
+  }
+});
 
 // Input event delegation — for the type-it textarea.
 document.addEventListener('input', (e) => {
