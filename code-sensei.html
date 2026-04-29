@@ -1106,6 +1106,424 @@ input, textarea, select {
   padding: 40px 24px; text-align: center;
   color: var(--muted);
 }
+
+/* ────────────────────────────────────────────────────────────
+   Tier 1 — onboarding + edges (Phase 4)
+   ──────────────────────────────────────────────────────────── */
+
+/* === Splash === */
+.splash {
+  background: var(--accent);
+  color: var(--accent-ink);
+  min-height: 100%;
+  display: flex; flex-direction: column;
+}
+.splash-body {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+}
+.splash-mark {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.85; margin-top: 18px;
+}
+.splash-h1 {
+  font-size: 36px; font-weight: 800; letter-spacing: -1px;
+  margin-top: 12px; line-height: 1.05;
+}
+.splash-tagline {
+  font-size: 16px; opacity: 0.9;
+  margin-top: 14px; max-width: 280px; line-height: 1.5;
+}
+.splash-cta-bar {
+  padding: 0 var(--sp-4) 28px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.splash-btn {
+  background: var(--accent-ink); color: var(--accent);
+  border: none; border-radius: var(--r-pill);
+  padding: 14px 18px;
+  font-weight: 800; font-size: 15px;
+  font-family: inherit;
+  min-height: 48px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer;
+}
+.splash-btn.ghost {
+  background: transparent;
+  color: var(--accent-ink);
+  border: 1.5px solid rgba(253, 248, 236, 0.5);
+}
+
+/* === Onboarding shared === */
+.onb-top {
+  padding: 18px 20px 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.onb-progress {
+  flex: 1; display: flex; gap: 4px;
+}
+.onb-progress > div {
+  flex: 1; height: 4px; border-radius: 2px;
+  background: var(--surface-2);
+}
+.onb-progress > div.on { background: var(--accent); }
+.onb-step {
+  font-size: 12px; color: var(--muted);
+  font-variant-numeric: tabular-nums; font-weight: 700;
+}
+.onb-body { padding: var(--sp-5) var(--sp-5) 0; }
+.onb-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+}
+.onb-h1 {
+  font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
+  margin-top: 6px; line-height: 1.2;
+}
+.onb-sub {
+  font-size: 14px; color: var(--muted);
+  margin-top: 6px; line-height: 1.5;
+}
+.onb-cta-bar {
+  padding: var(--sp-4); border-top: 1px solid var(--hairline);
+  margin-top: auto;
+}
+.onb-screen {
+  display: flex; flex-direction: column; min-height: 100%;
+}
+
+/* === Track picker === */
+.track-grid {
+  padding: var(--sp-3) var(--sp-5) 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.track-tile {
+  background: var(--surface);
+  border: 1.5px solid var(--hairline);
+  border-radius: var(--r-card);
+  padding: 14px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit; color: inherit;
+  display: flex; flex-direction: column; gap: 8px;
+  min-height: 120px;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.track-tile.on {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+.track-tile-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 800;
+}
+.track-tile-name { font-size: 15px; font-weight: 700; }
+.track-tile-meta { font-size: 12px; color: var(--muted); margin-top: auto; }
+.track-tile-check {
+  position: absolute;
+}
+.track-tile { position: relative; }
+.track-tile.on::after {
+  content: '✓';
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 22px; height: 22px;
+  border-radius: 11px;
+  background: var(--accent); color: var(--accent-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800;
+}
+
+/* === Self-rate placement === */
+.skill-list {
+  padding: var(--sp-3) var(--sp-5) 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.skill-opt {
+  background: var(--surface);
+  border: 1.5px solid var(--hairline);
+  border-radius: var(--r-card);
+  padding: 14px;
+  cursor: pointer; text-align: left;
+  font-family: inherit; color: inherit;
+  width: 100%;
+  display: flex; align-items: flex-start; gap: 12px;
+  min-height: 64px;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.skill-opt.on {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+.skill-opt-emoji { font-size: 22px; flex-shrink: 0; line-height: 1.2; }
+.skill-opt-title { font-size: 14px; font-weight: 700; }
+.skill-opt-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* === Daily goal === */
+.goal-list {
+  padding: var(--sp-3) var(--sp-5) 0;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.goal-opt {
+  background: var(--surface);
+  border: 1.5px solid var(--hairline);
+  border-radius: var(--r-card);
+  padding: 14px 18px;
+  cursor: pointer; text-align: left;
+  font-family: inherit; color: inherit;
+  width: 100%;
+  display: flex; align-items: center; gap: 14px;
+  min-height: 56px;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.goal-opt.on {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+.goal-opt-mins {
+  font-family: var(--font-mono);
+  font-size: 18px; font-weight: 800;
+  color: var(--accent); min-width: 56px;
+}
+.goal-opt-label { font-size: 14px; font-weight: 700; }
+.goal-opt-recommended {
+  margin-left: auto;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  padding: 3px 8px; border-radius: var(--r-pill);
+}
+
+/* === Profile === */
+.profile-header { padding: 24px 20px 8px; text-align: center; }
+.profile-mascot { display: flex; justify-content: center; }
+.profile-name {
+  font-size: 22px; font-weight: 800;
+  margin-top: 10px; letter-spacing: -0.4px;
+}
+.profile-belt {
+  margin-top: 6px;
+  font-size: 13px; color: var(--muted); font-weight: 600;
+}
+
+.belt-path {
+  padding: 14px var(--sp-4) 8px;
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+}
+.belt-pip {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.belt-pip .belt-dot {
+  width: 24px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--hairline);
+  font-size: 11px; font-weight: 800; color: var(--muted);
+  background: var(--surface);
+}
+.belt-pip .belt-name {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.belt-pip.on .belt-dot { border-color: var(--ink); color: var(--ink); }
+.belt-pip.current .belt-dot {
+  border-color: var(--accent); color: var(--accent-ink);
+  background: var(--accent);
+}
+.belt-pip.current .belt-name { color: var(--accent); }
+
+.stats-grid {
+  margin: var(--sp-4) var(--sp-4) 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.stat-card {
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-card); padding: var(--sp-3) var(--sp-4);
+}
+.stat-num {
+  font-size: 22px; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-size: 11px; color: var(--muted);
+  font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; margin-top: 2px;
+}
+
+.achievement-grid {
+  margin: var(--sp-3) var(--sp-4) 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+}
+.achievement {
+  aspect-ratio: 1;
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--muted);
+}
+.achievement.locked { opacity: 0.4; }
+.achievement.earned {
+  background: var(--accent-bg); border-color: var(--accent);
+  color: var(--accent);
+}
+
+.profile-settings {
+  margin: var(--sp-5) var(--sp-4) var(--sp-4);
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  overflow: hidden;
+}
+.setting-row {
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit; color: inherit;
+  width: 100%; text-align: left;
+  background: transparent;
+  border-left: none; border-right: none; border-top: none;
+  min-height: 44px;
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-row .setting-icon { font-size: 16px; width: 24px; }
+.setting-row .setting-label { flex: 1; }
+.setting-row .setting-arrow { color: var(--muted); }
+
+/* === Lesson summary === */
+.summary-screen {
+  background: var(--bg); min-height: 100%;
+  display: flex; flex-direction: column;
+}
+.summary-body { flex: 1; padding: 24px 20px; }
+.summary-mascot {
+  display: flex; justify-content: center;
+  margin-bottom: var(--sp-3);
+}
+.summary-h1 {
+  font-size: 28px; font-weight: 800; letter-spacing: -0.5px;
+  text-align: center;
+}
+.summary-sub {
+  font-size: 14px; color: var(--muted);
+  text-align: center; margin-top: 6px;
+}
+.summary-stats {
+  margin-top: 24px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.summary-stat {
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  padding: var(--sp-3) var(--sp-2);
+  text-align: center;
+}
+.summary-stat .num {
+  font-size: 22px; font-weight: 800;
+  color: var(--accent);
+}
+.summary-stat .label {
+  font-size: 10px; color: var(--muted);
+  font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; margin-top: 2px;
+}
+.summary-learned {
+  margin-top: 20px;
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  padding: var(--sp-4);
+}
+.summary-learned-title {
+  font-size: 11px; color: var(--muted);
+  font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.summary-learned-body {
+  font-size: 14px; line-height: 1.6;
+}
+.summary-dojo-callout {
+  margin-top: 14px;
+  background: var(--accent-bg);
+  border-radius: var(--r-card);
+  padding: 12px 14px;
+  font-size: 13px; color: var(--ink);
+  display: flex; align-items: center; gap: 10px;
+}
+.summary-dojo-callout b { color: var(--accent); }
+.summary-cta-bar {
+  padding: var(--sp-4); border-top: 1px solid var(--hairline);
+}
+
+/* === Out of hearts === */
+.outofhearts-screen {
+  background: var(--bg); min-height: 100%;
+  display: flex; flex-direction: column;
+}
+.outofhearts-body {
+  flex: 1; padding: 40px 24px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+}
+.outofhearts-icon {
+  font-size: 56px; line-height: 1;
+  color: var(--surface-2);
+  margin-bottom: 12px;
+}
+.outofhearts-h1 {
+  font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
+}
+.outofhearts-sub {
+  font-size: 15px; color: var(--muted);
+  margin-top: 10px; max-width: 280px; line-height: 1.55;
+}
+.outofhearts-card {
+  margin-top: 24px;
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  padding: 16px;
+  width: 100%; max-width: 320px;
+  display: flex; align-items: center; gap: 12px;
+}
+.outofhearts-card .ic {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--accent-bg); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; flex-shrink: 0;
+}
+.outofhearts-card .title { font-size: 14px; font-weight: 800; text-align: left; }
+.outofhearts-card .meta  { font-size: 12px; color: var(--muted); text-align: left; margin-top: 2px; }
+.outofhearts-cta-bar {
+  padding: var(--sp-4) var(--sp-4) 20px;
+  display: flex; gap: 10px;
+}
+
+/* === Empty Dojo state === */
+.empty-dojo {
+  padding: 40px 24px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+  color: var(--muted);
+}
+.empty-dojo-illust {
+  font-size: 56px; line-height: 1;
+  margin-bottom: var(--sp-3);
+  color: var(--surface-2);
+}
+.empty-dojo-h1 {
+  font-size: 22px; font-weight: 800; letter-spacing: -0.4px;
+  color: var(--ink);
+}
+.empty-dojo-sub {
+  font-size: 14px; margin-top: 8px;
+  max-width: 260px; line-height: 1.5;
+}
 </style>
 </head>
 <body>
@@ -1121,16 +1539,26 @@ input, textarea, select {
    State
    ──────────────────────────────────────────────────────────── */
 const S = {
-  screen: 'home',            // Phase 3 default — real Home.
-  user: { name: 'Sam' },     // Phase 4 onboarding overwrites.
+  screen: 'home',            // load() rewrites based on onboarded state.
+  user: {
+    name: '',
+    onboarded: false,        // load() flips returning users via migration.
+  },
   hearts: 5,
   streak: 7,                 // demo seed; real streak logic lands in Phase 5.
   xp: 312,                   // demo seed.
   progress: {},              // { trackId → { unitIdx, lessonIdx, stepIdx } }
   mistakes: [],              // Mistake[] — see spec-sheet "Components & data".
   session: null,             // active exercise stack — see startLesson/startDrill.
+  pausedSession: null,       // a lesson/practice session paused for a Dojo
+                             // drill or out-of-hearts detour. Restored by
+                             // drillResolve() and continueOrStart().
   seeded: false,             // one-shot flag — see load().
-  onboarding: { trackIds: ['py'], skill: null, dailyGoalMin: 10 },
+  onboarding: {
+    trackIds: ['py'],        // Python preselected per HANDOFF.
+    skill: null,             // 'beginner' | 'some' | 'comfortable' | 'fluent'
+    dailyGoalMin: 10,        // 'Regular' default per HANDOFF.
+  },
   ui: {
     reviewTab: 'split',      // 'split' | 'yours' | 'sensei'
     dojoFilter: 'all',       // 'all' | 'due' | 'py' | 'js' | 'sql' | 'css'
@@ -1167,7 +1595,16 @@ function load() {
   if (!S.seeded) {
     S.mistakes = SAMPLE_MISTAKES.slice();
     S.seeded = true;
+  } else if (S.user && S.user.onboarded === undefined) {
+    // Migration: users seeded before Phase 4 lacked an `onboarded` flag.
+    // Treat them as already-onboarded so they don't get bounced to splash.
+    S.user.onboarded = true;
+    if (!S.user.name) S.user.name = 'Sam';
   }
+
+  // Onboarding gate — non-onboarded users always boot into splash, even
+  // if they were mid-something when they last quit.
+  S.screen = S.user.onboarded ? 'home' : 'splash';
 }
 
 function save() {
@@ -2053,9 +2490,9 @@ function exerciseQueueFor(lessonId) {
   return EXERCISES.filter(e => e.lessonId === lessonId).map(e => e.id);
 }
 
-function startLesson(lessonId) {
-  S.session = {
-    type: 'lesson',
+function newSession(type, lessonId) {
+  return {
+    type,
     lessonId,
     exerciseQueue: exerciseQueueFor(lessonId),
     exerciseIdx: 0,
@@ -2066,31 +2503,34 @@ function startLesson(lessonId) {
     lastWrongMistakeId: null,
     drillMistakeId: null,
     correctCount: 0,
+    xpEarned: 0,
+    startedAt: Date.now(),
+    endedAt: null,
+    newMistakeIds: [],
   };
+}
+
+function startLesson(lessonId) {
+  S.session = newSession('lesson', lessonId);
   S.ui.lessonStep = 0;
   go('lesson');
 }
 
 function startPractice(lessonId) {
   // Skip lesson micro-steps; jump straight to the exercise queue.
-  S.session = {
-    type: 'practice',
-    lessonId,
-    exerciseQueue: exerciseQueueFor(lessonId),
-    exerciseIdx: 0,
-    selectedOption: null,
-    placedTokens: {},
-    typedCode: '',
-    lastCorrect: null,
-    lastWrongMistakeId: null,
-    drillMistakeId: null,
-    correctCount: 0,
-  };
+  S.session = newSession('practice', lessonId);
   resetExerciseTransients();
   go('exercise');
 }
 
 function continueOrStart() {
+  // Pick up a paused session first (e.g. interrupted by a Dojo detour).
+  if (S.pausedSession && S.hearts > 0) {
+    S.session = S.pausedSession;
+    S.pausedSession = null;
+    go('exercise');
+    return;
+  }
   if (S.session && (S.session.type === 'lesson' || S.session.type === 'practice')) {
     const lesson = LESSONS[S.session.lessonId];
     if (S.session.type === 'lesson' &&
@@ -2177,6 +2617,7 @@ function checkAnswer() {
 
   if (correct) {
     S.xp += ex.xp;
+    S.session.xpEarned += ex.xp;
     S.session.correctCount++;
     go('result-correct');
   } else {
@@ -2185,6 +2626,7 @@ function checkAnswer() {
     const mistake = mistakeFromExercise(ex);
     S.mistakes.push(mistake);
     S.session.lastWrongMistakeId = mistake.id;
+    S.session.newMistakeIds.push(mistake.id);
     go('result-wrong');
   }
 }
@@ -2245,25 +2687,46 @@ function fillTapTemplate(ex, getter) {
 
 /* === Result transitions === */
 
-function resultNext() {
+function nextExercise() {
   if (!S.session) { go('home'); return; }
   const next = S.session.exerciseIdx + 1;
-  if (next < S.session.exerciseQueue.length) {
-    S.session.exerciseIdx = next;
-    resetExerciseTransients();
-    go('exercise');
-  } else {
-    // Lesson complete. Phase 4 hooks lesson-summary; Phase 3 just lands home.
-    S.session = null;
-    go('home');
+  if (next >= S.session.exerciseQueue.length) {
+    // Lesson complete — show summary; user dismisses to clear session.
+    S.session.endedAt = Date.now();
+    go('lesson-summary');
+    return;
   }
+  if (S.hearts === 0) {
+    // Save the in-flight session so drilling-to-refill can resume it.
+    S.pausedSession = S.session;
+    S.session = null;
+    go('out-of-hearts');
+    return;
+  }
+  S.session.exerciseIdx = next;
+  resetExerciseTransients();
+  go('exercise');
 }
+
+function resultNext() { return nextExercise(); }
 
 function tryAgain() {
   // From Review (post-wrong) — re-attempt same exercise.
   if (!S.session) { go('home'); return; }
+  if (S.hearts === 0) {
+    S.pausedSession = S.session;
+    S.session = null;
+    go('out-of-hearts');
+    return;
+  }
   resetExerciseTransients();
   go('exercise');
+}
+
+function endLessonSession() {
+  // Called by LessonSummary's "Continue" CTA.
+  S.session = null;
+  go('home');
 }
 
 /* === MCQ / Tap / Type input handlers === */
@@ -2304,6 +2767,10 @@ function clearBlank(blankIdx) {
 /* === Drill (Dojo focused re-attempt) === */
 
 function startDrill(mistakeId) {
+  // If we're mid-lesson, stash the session so we can resume after.
+  if (S.session && (S.session.type === 'lesson' || S.session.type === 'practice')) {
+    S.pausedSession = S.session;
+  }
   S.session = {
     type: 'drill',
     drillMistakeId: mistakeId,
@@ -2328,6 +2795,14 @@ function drillResolve(correct) {
     if (m.attempts >= 5) m.mastered = true;
     // Heart-refill loop (HANDOFF "easy to miss" #2).
     S.hearts = Math.min(5, S.hearts + 1);
+
+    // Resume the paused lesson if we have one and now have hearts to spend.
+    if (S.pausedSession && S.hearts > 0) {
+      S.session = S.pausedSession;
+      S.pausedSession = null;
+      go('exercise');
+      return;
+    }
   } else {
     m.attempts = 0;
     m.dueAt = new Date().toISOString();
@@ -2867,7 +3342,18 @@ SCREENS.dojo = function () {
       `).join('')}
     </div>
 
-    ${visible.length === 0 ? `
+    ${all.length === 0 ? `
+      <div class="empty-dojo">
+        <div class="empty-dojo-illust">⚔</div>
+        <div class="empty-dojo-h1">Your Dojo is empty</div>
+        <div class="empty-dojo-sub">
+          When you make a mistake in a lesson, it lands here so you can drill it later.
+        </div>
+        <div style="margin-top:var(--sp-4)">
+          ${Btn('Start a lesson →', { primary: true, action: 'continue' })}
+        </div>
+      </div>
+    ` : visible.length === 0 ? `
       <div class="mistake-empty">
         <div style="font-size:32px; margin-bottom:8px">⚔</div>
         <div class="t-body">No mistakes match this filter.</div>
@@ -2890,28 +3376,417 @@ SCREENS.dojo = function () {
     <div style="height:var(--sp-4)"></div>
   `;
 };
+
+/* ────────────────────────────────────────────────────────────
+   Onboarding helpers (Phase 4)
+   ──────────────────────────────────────────────────────────── */
+
+const ONB_STEPS = ['track-picker', 'placement', 'daily-goal'];
+
+function onboardingNext(fromScreen) {
+  if (fromScreen === 'splash')        return go('track-picker');
+  if (fromScreen === 'track-picker')  return go('placement');
+  if (fromScreen === 'placement')     return go('daily-goal');
+  if (fromScreen === 'daily-goal') {
+    S.user.onboarded = true;
+    if (!S.user.name) S.user.name = 'Sam';   // placeholder until profile edit lands.
+    save();
+    return go('home');
+  }
+}
+
+function onboardingBack(fromScreen) {
+  if (fromScreen === 'track-picker') return go('splash');
+  if (fromScreen === 'placement')    return go('track-picker');
+  if (fromScreen === 'daily-goal')   return go('placement');
+}
+
+function toggleTrack(id) {
+  const idx = S.onboarding.trackIds.indexOf(id);
+  if (idx === -1) S.onboarding.trackIds.push(id);
+  else S.onboarding.trackIds.splice(idx, 1);
+  save();
+  render();
+}
+
+function setSkill(level) {
+  S.onboarding.skill = level;
+  save();
+  render();
+}
+
+function setGoal(mins) {
+  S.onboarding.dailyGoalMin = mins;
+  save();
+  render();
+}
+
+function restartOnboarding() {
+  S.user.onboarded = false;
+  S.onboarding.skill = null;
+  save();
+  go('splash');
+}
+
+/* ────────────────────────────────────────────────────────────
+   Tier 1 screens (Phase 4)
+   ──────────────────────────────────────────────────────────── */
+
+function OnbTop(stepIdx, totalSteps) {
+  return `
+    <header class="onb-top">
+      <button type="button" class="onb-back icon-btn" data-action="onb-back" aria-label="Back">‹</button>
+      <div class="onb-progress">
+        ${Array.from({ length: totalSteps }, (_, i) =>
+          `<div class="${i <= stepIdx ? 'on' : ''}"></div>`
+        ).join('')}
+      </div>
+      <span class="onb-step">${stepIdx + 1}/${totalSteps}</span>
+    </header>
+  `;
+}
+
+SCREENS.splash = function () {
+  return `
+    <div class="splash">
+      <div class="splash-body">
+        <div>${MascotSVG(120)}</div>
+        <div class="splash-mark">Code Sensei</div>
+        <h1 class="splash-h1">Learn from<br/>your mistakes.</h1>
+        <p class="splash-tagline">
+          Bite-size coding lessons that drill the things you got wrong, until they stick.
+        </p>
+      </div>
+      <div class="splash-cta-bar">
+        <button type="button" class="splash-btn" data-action="onb-next">
+          <span style="font-weight:800">G</span> Continue with Google
+        </button>
+        <button type="button" class="splash-btn ghost" data-action="onb-next">
+          Sign up with email
+        </button>
+        <p style="text-align:center; font-size:11px; opacity:0.75; margin-top:6px">
+          Already have an account? Sign in.
+        </p>
+      </div>
+    </div>
+  `;
+};
+
+SCREENS['track-picker'] = function () {
+  const picked = S.onboarding.trackIds || [];
+  const canContinue = picked.length > 0;
+  return `
+    <div class="onb-screen">
+      ${OnbTop(0, 3)}
+      <div class="onb-body">
+        <div class="onb-eyebrow">Step 1</div>
+        <h1 class="onb-h1">Pick your tracks</h1>
+        <p class="onb-sub">Python is preselected — you can pick more if you want. You can change this any time.</p>
+      </div>
+      <div class="track-grid">
+        ${TRACKS.map(t => `
+          <button type="button"
+                  class="track-tile ${picked.includes(t.id) ? 'on' : ''}"
+                  data-action="track-toggle"
+                  data-id="${esc(t.id)}">
+            <div class="track-tile-icon" style="background:${esc(t.color)}">${esc(t.icon)}</div>
+            <div class="track-tile-name">${esc(t.name)}</div>
+            <div class="track-tile-meta">~5 lessons</div>
+          </button>
+        `).join('')}
+      </div>
+      <div style="flex:1"></div>
+      <div class="onb-cta-bar">
+        ${canContinue
+          ? Btn('Continue →', { primary: true, full: true, action: 'onb-next' })
+          : `<button type="button" class="btn btn-primary btn-full" disabled style="opacity:0.5">Continue →</button>`}
+      </div>
+    </div>
+  `;
+};
+
+SCREENS.placement = function () {
+  const skill = S.onboarding.skill;
+  const opts = [
+    { id: 'beginner',  emoji: '🌱', title: 'New to code',
+      sub: "I'm starting from zero." },
+    { id: 'some',      emoji: '🐣', title: 'Dabbled before',
+      sub: "I've copied some snippets and broken them." },
+    { id: 'comfortable', emoji: '⚙️', title: 'Comfortable with basics',
+      sub: 'Loops, functions, lists — I know the words.' },
+    { id: 'fluent',    emoji: '🥋', title: 'Fluent in another language',
+      sub: 'I just want to pick up new syntax fast.' },
+  ];
+  return `
+    <div class="onb-screen">
+      ${OnbTop(1, 3)}
+      <div class="onb-body">
+        <div class="onb-eyebrow">Step 2</div>
+        <h1 class="onb-h1">How much do you know?</h1>
+        <p class="onb-sub">We'll start you at the right depth. (You can also take a 5-question test instead.)</p>
+      </div>
+      <div class="skill-list">
+        ${opts.map(o => `
+          <button type="button"
+                  class="skill-opt ${skill === o.id ? 'on' : ''}"
+                  data-action="skill-pick"
+                  data-level="${esc(o.id)}">
+            <div class="skill-opt-emoji">${o.emoji}</div>
+            <div>
+              <div class="skill-opt-title">${esc(o.title)}</div>
+              <div class="skill-opt-sub">${esc(o.sub)}</div>
+            </div>
+          </button>
+        `).join('')}
+      </div>
+      <div style="flex:1"></div>
+      <div class="onb-cta-bar">
+        ${skill
+          ? Btn('Continue →', { primary: true, full: true, action: 'onb-next' })
+          : `<button type="button" class="btn btn-primary btn-full" disabled style="opacity:0.5">Continue →</button>`}
+      </div>
+    </div>
+  `;
+};
+
+SCREENS['daily-goal'] = function () {
+  const goal = S.onboarding.dailyGoalMin;
+  const opts = [
+    { mins: 5,  label: 'Casual'  },
+    { mins: 10, label: 'Regular',     recommended: true },
+    { mins: 20, label: 'Serious' },
+    { mins: 30, label: 'Intense' },
+  ];
+  return `
+    <div class="onb-screen">
+      ${OnbTop(2, 3)}
+      <div class="onb-body">
+        <div class="onb-eyebrow">Step 3</div>
+        <h1 class="onb-h1">Set your daily goal</h1>
+        <p class="onb-sub">A streak only counts if you hit your goal — pick something you'll actually do.</p>
+      </div>
+      <div class="goal-list">
+        ${opts.map(o => `
+          <button type="button"
+                  class="goal-opt ${goal === o.mins ? 'on' : ''}"
+                  data-action="goal-pick"
+                  data-mins="${o.mins}">
+            <div class="goal-opt-mins">${o.mins} min</div>
+            <div class="goal-opt-label">${esc(o.label)}</div>
+            ${o.recommended ? `<div class="goal-opt-recommended">Recommended</div>` : ''}
+          </button>
+        `).join('')}
+      </div>
+      <div style="flex:1"></div>
+      <div class="onb-cta-bar">
+        ${Btn("Start training →", { primary: true, full: true, action: 'onb-next' })}
+      </div>
+    </div>
+  `;
+};
+
+SCREENS.profile = function () {
+  const drilled = S.mistakes.filter(m => (m.attempts || 0) > 0).length;
+  const mastered = S.mistakes.filter(m => m.mastered).length;
+  const stats = [
+    { num: S.xp,        label: 'XP earned'        },
+    { num: S.streak + 'd', label: 'Streak'        },
+    { num: drilled,     label: 'Mistakes drilled' },
+    { num: mastered,    label: 'Mastered'         },
+  ];
+  const belts = [
+    { name: 'White',  bg: '#f7f1e3', earned: true  },
+    { name: 'Yellow', bg: '#e8c75a', earned: true, current: true },
+    { name: 'Green',  bg: '#5b8a3a', earned: false },
+    { name: 'Brown',  bg: '#7a5e1a', earned: false },
+    { name: 'Black',  bg: '#1f1a16', earned: false },
+  ];
+  const achievements = [
+    { icon: '★', earned: true,  label: 'First lesson' },
+    { icon: '⚔', earned: drilled > 0, label: 'First drill' },
+    { icon: '🔥', earned: S.streak >= 3, label: '3-day streak' },
+    { icon: '✦', earned: S.xp >= 500, label: '500 XP' },
+    { icon: '🥋', earned: false, label: 'Green belt' },
+    { icon: '🐍', earned: false, label: 'Python ace' },
+    { icon: '🗃', earned: false, label: 'SQL ace' },
+    { icon: '⚡', earned: false, label: '7-day streak' },
+  ];
+
+  return `
+    <div class="profile-header">
+      <div class="profile-mascot">${MascotSVG(96)}</div>
+      <div class="profile-name">${esc(S.user && S.user.name || 'Sam')}</div>
+      <div class="profile-belt">Yellow belt · Joined recently</div>
+    </div>
+
+    <div class="belt-path">
+      ${belts.map(b => `
+        <div class="belt-pip ${b.earned ? 'on' : ''} ${b.current ? 'current' : ''}">
+          <div class="belt-dot" style="background:${b.current ? 'var(--accent)' : b.earned ? esc(b.bg) : 'var(--surface)'}">${b.current ? '★' : ''}</div>
+          <div class="belt-name">${esc(b.name)}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="stats-grid">
+      ${stats.map(s => `
+        <div class="stat-card">
+          <div class="stat-num">${esc(String(s.num))}</div>
+          <div class="stat-label">${esc(s.label)}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="section-eyebrow">Achievements</div>
+    <div class="achievement-grid">
+      ${achievements.map(a => `
+        <div class="achievement ${a.earned ? 'earned' : 'locked'}" title="${esc(a.label)}">
+          ${a.icon}
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="section-eyebrow">Settings</div>
+    <div class="profile-settings">
+      <button type="button" class="setting-row" data-action="noop-setting">
+        <span class="setting-icon">🌐</span>
+        <span class="setting-label">Language</span>
+        <span class="setting-arrow">English ›</span>
+      </button>
+      <button type="button" class="setting-row" data-action="noop-setting">
+        <span class="setting-icon">🎨</span>
+        <span class="setting-label">Theme</span>
+        <span class="setting-arrow">Dojo Paper ›</span>
+      </button>
+      <button type="button" class="setting-row" data-action="restart-onboarding">
+        <span class="setting-icon">↺</span>
+        <span class="setting-label">Restart onboarding</span>
+        <span class="setting-arrow">›</span>
+      </button>
+    </div>
+
+    <div style="height:var(--sp-4)"></div>
+  `;
+};
+
+SCREENS['lesson-summary'] = function () {
+  // Pull stats from the just-finished session BEFORE it's cleared.
+  const sess = S.session || {};
+  const total = (sess.exerciseQueue && sess.exerciseQueue.length) || 0;
+  const correct = sess.correctCount || 0;
+  const xpEarned = sess.xpEarned || 0;
+  const minutes = sess.startedAt && sess.endedAt
+    ? Math.max(1, Math.round((sess.endedAt - sess.startedAt) / 60000))
+    : 1;
+  const lesson = sess.lessonId ? LESSONS[sess.lessonId] : null;
+  const newCount = (sess.newMistakeIds || []).length;
+
+  return `
+    <div class="summary-screen">
+      <div class="summary-body">
+        <div class="summary-mascot">${MascotSVG(96)}</div>
+        <h1 class="summary-h1">Lesson complete!</h1>
+        <p class="summary-sub">${lesson ? esc('Python · ' + lesson.title) : 'Nice work.'}</p>
+
+        <div class="summary-stats">
+          <div class="summary-stat">
+            <div class="num">+${xpEarned}</div>
+            <div class="label">XP</div>
+          </div>
+          <div class="summary-stat">
+            <div class="num">${correct}/${total}</div>
+            <div class="label">Correct</div>
+          </div>
+          <div class="summary-stat">
+            <div class="num">${minutes}m</div>
+            <div class="label">Time</div>
+          </div>
+        </div>
+
+        ${lesson ? `
+          <div class="summary-learned">
+            <div class="summary-learned-title">What you learned</div>
+            <div class="summary-learned-body">
+              How to write a <code class="t-code">for</code>-loop, what
+              <code class="t-code">range()</code> does, and why the loop
+              variable changes each pass.
+            </div>
+          </div>
+        ` : ''}
+
+        ${newCount > 0 ? `
+          <div class="summary-dojo-callout">
+            <span style="font-size:18px">⚔</span>
+            <span><b>${newCount}</b> new mistake${newCount === 1 ? '' : 's'} added to your Dojo for later drilling.</span>
+          </div>
+        ` : ''}
+      </div>
+      <div class="summary-cta-bar">
+        ${Btn('Continue →', { primary: true, full: true, action: 'summary-done' })}
+      </div>
+    </div>
+  `;
+};
+
+SCREENS['out-of-hearts'] = function () {
+  const dueCount = dueMistakes().length;
+  return `
+    <div class="outofhearts-screen">
+      <div class="outofhearts-body">
+        <div class="outofhearts-icon">♡♡♡♡♡</div>
+        <h1 class="outofhearts-h1">Out of hearts.</h1>
+        <p class="outofhearts-sub">
+          Drill a mistake from your Dojo to earn one back, or come back later.
+        </p>
+        ${dueCount > 0 ? `
+          <button type="button" class="outofhearts-card" data-action="go" data-to="dojo">
+            <div class="ic">⚔</div>
+            <div style="flex:1">
+              <div class="title">Drill a mistake</div>
+              <div class="meta">${dueCount} due now · earn back a heart</div>
+            </div>
+            <span style="font-size:18px">→</span>
+          </button>
+        ` : `
+          <div class="outofhearts-card">
+            <div class="ic">⏳</div>
+            <div style="flex:1">
+              <div class="title">No mistakes due yet</div>
+              <div class="meta">Hearts refill every 4 hours.</div>
+            </div>
+          </div>
+        `}
+      </div>
+      <div class="outofhearts-cta-bar">
+        ${Btn('Wait it out', { action: 'go', data: { to: 'home' } })}
+        <div style="flex:1">${Btn('Drill the Dojo →', { primary: true, full: true, action: 'go', data: { to: 'dojo' } })}</div>
+      </div>
+    </div>
+  `;
+};
+
 const TABS = [
-  { id: 'home',     label: 'Learn',    icon: '◆', target: 'home'    },
+  { id: 'home',     label: 'Learn',    icon: '◆', target: 'home'     },
   { id: 'practice', label: 'Practice', icon: '⚡', target: 'practice' },
-  { id: 'dojo',     label: 'Dojo',     icon: '⚔', target: 'dojo'    },
-  { id: 'profile',  label: 'Sensei',   icon: '◐', target: 'home'    },  // Phase 4 wires Profile.
+  { id: 'dojo',     label: 'Dojo',     icon: '⚔', target: 'dojo'     },
+  { id: 'profile',  label: 'Sensei',   icon: '◐', target: 'profile'  },
 ];
 
 // Screens that take over the viewport — hide the bottom tab bar.
 const NO_TABS = new Set([
   'lesson', 'exercise', 'result-correct', 'result-wrong',
+  'splash', 'track-picker', 'placement', 'daily-goal',
+  'lesson-summary', 'out-of-hearts',
 ]);
 
 function tabFor(screen) {
-  // Maps screen id → which tab should highlight.
-  // Expanded as more screens land in later phases.
-  if (screen === 'tokens') return null;
-  if (['home', 'lesson', 'lesson-summary'].includes(screen)) return 'home';
-  if (['exercise-mcq', 'exercise-tap', 'exercise-type',
-       'result-correct', 'result-wrong', 'review',
-       'out-of-hearts'].includes(screen)) return 'practice';
-  if (['dojo', 'empty-dojo'].includes(screen)) return 'dojo';
+  // Maps screen id → which tab should highlight. Onboarding/lesson/result
+  // screens hide the tab bar entirely (NO_TABS), so this only matters for
+  // tab-visible screens like home, dojo, review, profile.
+  if (screen === 'home')    return 'home';
+  if (screen === 'dojo')    return 'dojo';
   if (screen === 'profile') return 'profile';
+  if (screen === 'review')  return 'practice';
   return null;
 }
 
@@ -3067,6 +3942,29 @@ function handle(action, data) {
       if (due.length) startDrill(due[0].id);
       return;
     }
+
+    /* === Onboarding === */
+    case 'onb-next':
+      return onboardingNext(S.screen);
+    case 'onb-back':
+      return onboardingBack(S.screen);
+    case 'track-toggle':
+      return toggleTrack(data.id);
+    case 'skill-pick':
+      return setSkill(data.level);
+    case 'goal-pick':
+      return setGoal(parseInt(data.mins, 10));
+
+    /* === Lesson summary === */
+    case 'summary-done':
+      return endLessonSession();
+
+    /* === Profile === */
+    case 'restart-onboarding':
+      return restartOnboarding();
+    case 'noop-setting':
+      // Stub — language/theme settings come post-V1.
+      return;
 
     default:
       console.warn('[codesensei] unhandled action:', action, data);
