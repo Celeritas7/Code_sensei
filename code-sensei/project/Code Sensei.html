@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Code Sensei — Android</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="android-frame.jsx"></script>
+<script type="text/babel" src="themes.jsx"></script>
+<script type="text/babel" src="screens.jsx"></script>
+<script type="text/babel" src="screens-v2.jsx"></script>
+<script type="text/babel" src="spec-sheet.jsx"></script>
+
+<script type="text/babel">
+  // Phone wrapper — fixed-size Android-style device frame, themed status bar
+  // and tabs (we don't use the starter's app bar; each screen has its own header).
+  function Phone({ T, screen, tab = 'home' }) {
+    return (
+      <div data-screen-label={`${T.name} · ${screen.label}`} style={{
+        width: 360, height: 760, borderRadius: 28, overflow: 'hidden',
+        background: T.bg,
+        border: `7px solid ${T.dark ? '#0a0a0c' : '#2a2a2e'}`,
+        boxShadow: '0 20px 60px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.10)',
+        display: 'flex', flexDirection: 'column', boxSizing: 'border-box',
+        position: 'relative',
+      }}>
+        <StatusBar T={T} />
+        <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+          <div style={{ height: '100%', overflowY: 'auto' }}>
+            {screen.render(T)}
+          </div>
+        </div>
+        <BottomTabs T={T} active={tab} />
+        {/* gesture pill */}
+        <div style={{ height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', background: T.bg, flexShrink: 0 }}>
+          <div style={{ width: 100, height: 4, borderRadius: 2, background: T.ink, opacity: 0.25 }} />
+        </div>
+      </div>
+    );
+  }
+
+  const screens = [
+    { id: 'home',     label: 'Home',     tab: 'home',     render: (T) => <HomeScreen T={T} /> },
+    { id: 'lesson',   label: 'Lesson',   tab: 'home',     render: (T) => <LessonScreen T={T} /> },
+    { id: 'exercise', label: 'Exercise', tab: 'practice', render: (T) => <ExerciseScreen T={T} /> },
+    { id: 'review',   label: 'Code Review ★', tab: 'review', render: (T) => <ReviewScreen T={T} /> },
+  ];
+
+  const themes = [
+    { id: 'paper',    T: ThemePaper,
+      title: 'A · Dojo Paper',
+      subtitle: 'Warm washi background, sumi-ink mascot, vermillion accent — calm, traditional dojo feel.' },
+    { id: 'terminal', T: ThemeTerminal,
+      title: 'B · Terminal',
+      subtitle: 'Pure dev-tool. Mono everywhere, neon green on near-black, pixel mascot.' },
+    { id: 'playful',  T: ThemePlayful,
+      title: 'C · Playful',
+      subtitle: 'Bright Duolingo energy — purple/orange palette, friendly mascot, generous radii.' },
+  ];
+
+  function App() {
+    return (
+      <DesignCanvas>
+        {/* Hero section: the differentiator — Code Review across all 3 themes */}
+        <DCSection
+          id="review"
+          title="Code Review — the hero screen"
+          subtitle="Your mistake vs. Sensei's answer, side-by-side, with a one-line ‘why’. The whole product is built around this moment.">
+          {themes.map(t => (
+            <DCArtboard key={t.id} id={`review-${t.id}`} label={`${t.T.name} — Review`} width={360} height={780}>
+              <Phone T={t.T} screen={screens[3]} tab="review" />
+            </DCArtboard>
+          ))}
+        </DCSection>
+
+        {/* Each theme — the full 4-screen flow */}
+        {themes.map(t => (
+          <DCSection
+            key={t.id}
+            id={`theme-${t.id}`}
+            title={t.title}
+            subtitle={t.subtitle}>
+            {screens.map(s => (
+              <DCArtboard key={s.id} id={`${t.id}-${s.id}`} label={s.label} width={360} height={780}>
+                <Phone T={t.T} screen={s} tab={s.tab} />
+              </DCArtboard>
+            ))}
+          </DCSection>
+        ))}
+
+        {/* ─── V2 — refined flow for handoff ─── */}
+        <DCSection
+          id="v2-flow"
+          title="v2 · Refined flow (build this)"
+          subtitle="All using Theme A · Dojo Paper. Read left-to-right: this is the production flow Claude Code should implement. Notes pinned alongside each screen.">
+          <DCArtboard id="v2-home" label="01 · Home" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'Home v2', render:(T)=><HomeV2 T={T}/>}} tab="home" />
+          </DCArtboard>
+          <DCArtboard id="v2-lesson" label="02 · Lesson (micro-step)" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'Lesson v2', render:(T)=><LessonV2 T={T}/>}} tab="home" />
+          </DCArtboard>
+          <DCArtboard id="v2-mcq" label="03a · Exercise · MCQ" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'MCQ', render:(T)=><ExerciseMCQV2 T={T}/>}} tab="practice" />
+          </DCArtboard>
+          <DCArtboard id="v2-tap" label="03b · Exercise · Tap-fill" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'Tap-fill', render:(T)=><ExerciseTapV2 T={T}/>}} tab="practice" />
+          </DCArtboard>
+          <DCArtboard id="v2-type" label="03c · Exercise · Type-it" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'Type-it', render:(T)=><ExerciseTypeV2 T={T}/>}} tab="practice" />
+          </DCArtboard>
+          <DCArtboard id="v2-correct" label="04a · Result · Correct" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'Correct', render:(T)=><ResultCorrectV2 T={T}/>}} tab="practice" />
+          </DCArtboard>
+          <DCArtboard id="v2-wrong" label="04b · Result · Wrong" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'Wrong', render:(T)=><ResultWrongV2 T={T}/>}} tab="practice" />
+          </DCArtboard>
+          <DCArtboard id="v2-review" label="05 · Code Review ★" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'Review v2', render:(T)=><ReviewV2 T={T}/>}} tab="review" />
+          </DCArtboard>
+          <DCArtboard id="v2-dojo" label="06 · Dojo (mistake bank) ★" width={360} height={780}>
+            <Phone T={ThemePaper} screen={{label:'Dojo', render:(T)=><DojoV2 T={T}/>}} tab="review" />
+          </DCArtboard>
+        </DCSection>
+
+        {/* Handoff spec — engineering contract */}
+        <DCSection
+          id="handoff"
+          title="Engineering handoff — for Claude Code"
+          subtitle="Component contracts, state, and acceptance criteria. Read this before implementing v2.">
+          <DCArtboard id="spec-flow" label="Flow & state" width={520} height={780}>
+            <SpecSheet kind="flow" />
+          </DCArtboard>
+          <DCArtboard id="spec-tokens" label="Design tokens" width={520} height={780}>
+            <SpecSheet kind="tokens" />
+          </DCArtboard>
+          <DCArtboard id="spec-components" label="Components & data" width={520} height={780}>
+            <SpecSheet kind="components" />
+          </DCArtboard>
+          <DCArtboard id="spec-acceptance" label="Acceptance criteria" width={520} height={780}>
+            <SpecSheet kind="acceptance" />
+          </DCArtboard>
+        </DCSection>
+
+        {/* Notes for context */}
+        <DCPostIt top={20} left={20} rotate={-3} width={220}>
+          <b>Brief:</b> beginners + Android, learn-from-mistakes is the wedge. Diff-first review screen + Dojo mistake bank are the headline.
+        </DCPostIt>
+        <DCPostIt top={20} left={260} rotate={2} width={220}>
+          <b>v1 vs v2:</b> v1 is exploratory across 3 themes. <b>v2 is the build target</b> — single theme, refined flow, ready for handoff.
+        </DCPostIt>
+      </DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
