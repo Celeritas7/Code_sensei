@@ -328,6 +328,20 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .ex-btn-p:hover{opacity:.9}.ex-btn-p:disabled{opacity:.4;cursor:not-allowed}
 .ex-btn-s{background:transparent;color:var(--tm);padding:9px 14px;border:1px solid var(--bd);border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .12s}
 .ex-btn-s:hover{color:var(--tx);border-color:#2a2a50}
+/* ─── Phase 3: chunky CTA — v2 .btn-primary port (pill + raised shadow) ─── */
+.btn-cta,.btn-cta-sm{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border-radius:var(--dojo-r-pill);
+  font-family:var(--dojo-font-sans);
+  border:1px solid transparent;cursor:pointer;
+  white-space:nowrap;
+  --cta-shadow:#7a4f05;
+  transition:transform var(--dojo-t-fast),box-shadow var(--dojo-t-fast);
+}
+.btn-cta{padding:12px 18px;min-height:44px;font-size:14px;font-weight:700;box-shadow:0 4px 0 var(--cta-shadow)}
+.btn-cta-sm{padding:7px 14px;font-size:12px;font-weight:600;box-shadow:0 3px 0 var(--cta-shadow)}
+.btn-cta:active,.btn-cta-sm:active{transform:translateY(2px);box-shadow:0 1px 0 var(--cta-shadow)}
+.lab-btn-primary.btn-cta{--cta-shadow:#5b3da8}
 .ex-list-grid{display:flex;flex-direction:column;gap:8px}
 .ex-row{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:13px 14px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:8px}
 .ex-row:hover{border-color:rgba(245,158,11,.2);transform:translateY(-1px)}
@@ -692,7 +706,7 @@ function renderProjectDetail(){
           <option value="">Select newer commit</option>
           ${commits.map((c,i)=>`<option value="${c.sha}">#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
         </select>
-        <button onclick="loadDiff()" style="padding:8px 16px;background:var(--b);border:none;border-radius:7px;color:var(--bg);font-weight:600;font-size:12px;white-space:nowrap">Compare</button>
+        <button class="btn-cta-sm" onclick="loadDiff()" style="background:var(--b);color:var(--bg);--cta-shadow:#085a8c">Compare</button>
       </div>
     </div>
 
@@ -1711,7 +1725,7 @@ function goTree(){
           <div class="tree-mode-toggle"><button class="tree-mode-btn on" id="tmSingle" onclick="tSetMode('single')">📄</button><button class="tree-mode-btn" id="tmClass" onclick="tSetMode('class')">🏗️</button><button class="tree-mode-btn" id="tmCompare" onclick="tSetMode('compare')">📊</button></div>
           <button class="tree-mode-btn" id="tFlowBtn" onclick="tToggleFlow()" style="border:1px solid var(--bd);border-radius:4px" title="Logic Flow">⚡</button>
           <button class="xref-toggle" id="tXrefBtn" onclick="tToggleXref()" title="Show cross-file arrows">🔗</button>
-          <button style="padding:4px 12px;background:var(--a);color:var(--bg);border:none;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer" onclick="tParseAndRender()">▶ Parse</button>
+          <button class="ex-btn-p btn-cta-sm" onclick="tParseAndRender()">▶ Parse</button>
         </div>
       </div>
       <div class="tree-input-row"><label>project:</label><input class="tree-input-sm" id="tpname" value="My Project" style="color:var(--c-proj)" />
@@ -1789,7 +1803,7 @@ function renderLab(){
     <button class="back" onclick="goAIML()">← AI / ML</button>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
       <h2 style="color:var(--p)">📓 Kaggle Notebooks</h2>
-      <button class="lab-btn lab-btn-primary" onclick="labToggleForm()">+ Add Notebook</button>
+      <button class="lab-btn lab-btn-primary btn-cta" onclick="labToggleForm()">+ Add Notebook</button>
     </div>
     <p class="sub">Your AI/ML notebooks — tap to open and code</p>
 
@@ -1850,7 +1864,7 @@ function renderLabForm(){
     </div>
     <input class="lab-input" id="labDesc" placeholder="Short description (optional)" value="${editing?esc(editing.description||''):''}" />
     <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="lab-btn lab-btn-primary" onclick="labSaveNotebook()">${editing?'Update':'Save'}</button>
+      <button class="lab-btn lab-btn-primary btn-cta" onclick="labSaveNotebook()">${editing?'Update':'Save'}</button>
       <button class="lab-btn lab-btn-ghost" onclick="labCancelForm()">Cancel</button>
     </div>
   </div>`;
@@ -2052,7 +2066,7 @@ function exRenderListPage(){
     }
   }
 
-  return '<div class="ex-hd-row"><div class="ex-hd-row-text"><h1>Exercises</h1><div class="sub">Track problems, attempts, and what you learned.</div></div><button class="ex-btn-p" onclick="exOpenNewExercise()">+ New exercise</button></div>'+listBody;
+  return '<div class="ex-hd-row"><div class="ex-hd-row-text"><h1>Exercises</h1><div class="sub">Track problems, attempts, and what you learned.</div></div><button class="ex-btn-p btn-cta" onclick="exOpenNewExercise()">+ New exercise</button></div>'+listBody;
 }
 
 function exRenderDetail(){
@@ -2099,7 +2113,7 @@ function exRenderDetail(){
     '<textarea id="ex-import-ta" placeholder="Paste the structured response from Claude here, then click Parse...">'+esc(S.exImportText||'')+'</textarea>'+
     '<div class="ex-import-actions">'+
       '<button class="ex-btn-s" onclick="exHideImport()">Cancel</button>'+
-      '<button class="ex-btn-p" onclick="exParseImport()">Parse → review</button>'+
+      '<button class="ex-btn-p btn-cta" onclick="exParseImport()">Parse → review</button>'+
     '</div>'+
     '</div>':'';
 
@@ -2114,12 +2128,12 @@ function exRenderDetail(){
     (ex.tags&&ex.tags.length?exRenderTags(ex.tags):'')+
     '</div>'+
     (ex.problem_statement?'<div class="ex-section-label"><span>Problem</span></div><div class="ex-stmt-box">'+esc(ex.problem_statement)+'</div>':'')+
-    '<div class="ex-section-label"><span>Attempts ('+atts.length+')</span><button class="ex-btn-p" onclick="exOpenNewAttempt()">+ Log attempt</button></div>'+
+    '<div class="ex-section-label"><span>Attempts ('+atts.length+')</span><button class="ex-btn-p btn-cta" onclick="exOpenNewAttempt()">+ Log attempt</button></div>'+
     '<div class="ex-att-list">'+attsHtml+'</div>'+
     '<div class="ex-section-label"><span>Mistakes ('+mistakes.length+')</span>'+
       '<div style="display:flex;gap:6px">'+
         '<button class="ex-btn-s" onclick="exShowImportBox()">📋 Import from Claude</button>'+
-        '<button class="ex-btn-p" onclick="exOpenLogMistake(null)">+ Log mistake</button>'+
+        '<button class="ex-btn-p btn-cta" onclick="exOpenLogMistake(null)">+ Log mistake</button>'+
       '</div>'+
     '</div>'+
     importBox+
@@ -2144,7 +2158,7 @@ function exRenderNewExercise(){
     '<div class="ex-form-group"><label>Course day</label><select id="f-cd">'+cdOptions+'</select>'+(F.autoPrefilledCdId?'<div class="ex-autoprefill">↳ auto-detected from source — change if wrong</div>':'')+'</div>'+
     '<div class="ex-form-group"><label>Tags <span class="ex-hint">comma-separated</span></label><input type="text" id="f-tags" value="'+esc(F.tags||'')+'" placeholder="loops, conditionals, zeller"></div>'+
     '<div class="ex-form-group"><label>Initial status</label><select id="f-status">'+statusOptions+'</select></div>'+
-    '<div class="ex-form-actions"><button class="ex-btn-s" onclick="'+cancelTarget+'">Cancel</button><button class="ex-btn-p" onclick="exSaveNewExercise()" id="save-ex-btn">Create exercise</button></div>';
+    '<div class="ex-form-actions"><button class="ex-btn-s" onclick="'+cancelTarget+'">Cancel</button><button class="ex-btn-p btn-cta" onclick="exSaveNewExercise()" id="save-ex-btn">Create exercise</button></div>';
 }
 
 function exOnSourceChange(val){
@@ -2202,7 +2216,7 @@ function exRenderNewAttempt(){
     '</div><input type="hidden" id="a-result" value="'+esc(selRes)+'"></div>'+
     '<div class="ex-form-group"><label>What went wrong? <span class="ex-hint">optional, but valuable for later review</span></label><textarea id="a-mistake" rows="3" placeholder="Wrong output for Jan/Feb dates. Forgot the month-shift rule.">'+esc(F.mistake_log||'')+'</textarea></div>'+
     '<div class="ex-form-group"><label>Notes <span class="ex-hint">optional — any thoughts on what to try next</span></label><textarea id="a-notes" rows="2" placeholder="Next try: use // instead of / for integer math.">'+esc(F.notes||'')+'</textarea></div>'+
-    '<div class="ex-form-actions"><button class="ex-btn-s" onclick="exOpenDetail('+ex.id+')">Cancel</button><button class="ex-btn-p" onclick="exSaveNewAttempt()" id="save-att-btn">Save attempt</button></div>';
+    '<div class="ex-form-actions"><button class="ex-btn-s" onclick="exOpenDetail('+ex.id+')">Cancel</button><button class="ex-btn-p btn-cta" onclick="exSaveNewAttempt()" id="save-att-btn">Save attempt</button></div>';
 }
 
 function exSelectResult(val){
@@ -2378,7 +2392,7 @@ function exRenderLogMistake(){
     '<div class="ex-form-group"><label>Description <span class="ex-hint">what you assumed, what is actually true, why it felt right</span></label><textarea id="m-desc" rows="4">'+esc(F.description||'')+'</textarea></div>'+
     '<div class="ex-form-group"><label>What I wrote <span class="ex-hint">the buggy lines</span></label><textarea id="m-snip" class="ex-code-input" rows="5" spellcheck="false">'+esc(F.code_snippet||'')+'</textarea></div>'+
     '<div class="ex-form-group"><label>What it should be <span class="ex-hint">the corrected version</span></label><textarea id="m-fix" class="ex-code-input" rows="5" spellcheck="false">'+esc(F.correct_form||'')+'</textarea></div>'+
-    '<div class="ex-form-actions"><button class="ex-btn-s" onclick="exCancelMistake()">Cancel</button><button class="ex-btn-p" onclick="exSaveMistake()" id="save-m-btn">Save mistake</button></div>';
+    '<div class="ex-form-actions"><button class="ex-btn-s" onclick="exCancelMistake()">Cancel</button><button class="ex-btn-p btn-cta" onclick="exSaveMistake()" id="save-m-btn">Save mistake</button></div>';
 }
 
 function exCancelMistake(){
