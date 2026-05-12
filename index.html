@@ -448,12 +448,13 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 
 <script>
 const SB='https://wylxvmkcrexwfpjpbhyy.supabase.co/rest/v1';
+const SB_FN='https://wylxvmkcrexwfpjpbhyy.supabase.co/functions/v1';
 const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bHh2bWtjcmV4d2ZwanBiaHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2MzkxMDYsImV4cCI6MjA4NDIxNTEwNn0.6Bxo42hx4jwlJGWnfjiTpiDUsYfc1QLTN3YtrU1efak';
 const HDR={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json','Prefer':'return=representation'};
 const GH_API='https://api.github.com/repos/celeritas7/Ghost_tracker_simple';
 
 let cache={lessons:null,lines:null,challenges:null,commits:null,commitNotes:{},commitStatus:{}};
-let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false,diffA:null,diffB:null,diffResult:null,diffAnalysis:null,analyzing:false,exList:[],exAttempts:{},exCourseDays:[],exCourseDaysById:{},exUserId:null,exView:'list',exDetailId:null,exFilter:'all',exForm:{},exLoaded:false,exError:null,exReturn:null,exMistakes:{},exMistakeForm:null,exImportText:''};
+let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false,diffA:null,diffB:null,diffResult:null,diffAnalysis:null,diffGrouped:null,analyzing:false,exList:[],exAttempts:{},exCourseDays:[],exCourseDaysById:{},exUserId:null,exView:'list',exDetailId:null,exFilter:'all',exForm:{},exLoaded:false,exError:null,exReturn:null,exMistakes:{},exMistakeForm:null,exImportText:''};
 let promptContexts=[];
 
 async function sbq(table,query=''){try{const r=await fetch(`${SB}/${table}?${query}`,{headers:HDR});return await r.json();}catch(e){console.error(e);return[];}}
@@ -615,7 +616,7 @@ function renderLayer(les){
   else if(S.layer==='alt') lc.innerHTML=`<div class="lbox" style="border-color:rgba(167,139,250,.1)"><div style="font-size:10px;color:var(--p);font-weight:700;letter-spacing:1px;margin-bottom:10px">ALTERNATIVE EXPLANATION</div>${md(les.explanation_alt)}<div style="margin-top:14px;padding:9px 11px;background:rgba(167,139,250,.05);border-radius:6px;font-size:12px;color:var(--tm)">Try "Ask Freely" for personalized help.</div></div>`;
   else{lc.innerHTML=`<div class="ch-b"><div class="ch-h">Ask anything — powered by Claude API</div><div class="ch-m" id="cms">${S.chatMsgs.length===0?'<div class="ch-e">🤔 Ask any question about this topic</div>':''}${S.chatMsgs.map(m=>'<div style="display:flex;justify-content:'+(m.r==='a'?'flex-start':'flex-end')+';margin-bottom:8px"><div class="bub '+(m.r==='a'?'ai':'us')+'">'+md(m.t)+'</div></div>').join('')}</div><div class="ch-i"><input id="ci" placeholder="Ask..." onkeydown="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Send</button></div></div>`;const cms=document.getElementById('cms');if(cms)cms.scrollTop=cms.scrollHeight;}
 }
-async function sendMsg(){const i=document.getElementById('ci');const t=i.value.trim();if(!t)return;i.value='';S.chatMsgs.push({r:'u',t});renderLayer(cache.lessons[0]);try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are CodeSensei, a patient coding tutor for a beginner named Aniket in Japan. Under 150 words. Use **bold** and `backticks`. Encouraging.',messages:S.chatMsgs.map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}))})});const d=await r.json();S.chatMsgs.push({r:'a',t:d.content.map(c=>c.text||'').join('')});}catch(e){S.chatMsgs.push({r:'a',t:'Great question! Let me try a different angle.\n\nThink of code like a recipe — each line is one step. The computer follows them top to bottom.\n\nAsk something more specific and I can help!'});}renderLayer(cache.lessons[0]);}
+async function sendMsg(){const i=document.getElementById('ci');const t=i.value.trim();if(!t)return;i.value='';S.chatMsgs.push({r:'u',t});renderLayer(cache.lessons[0]);try{const r=await fetch(`${SB_FN}/claude-proxy`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+K},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are CodeSensei, a patient coding tutor for a beginner named Aniket in Japan. Under 150 words. Use **bold** and `backticks`. Encouraging.',messages:S.chatMsgs.map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}))})});const d=await r.json();S.chatMsgs.push({r:'a',t:d.content.map(c=>c.text||'').join('')});}catch(e){S.chatMsgs.push({r:'a',t:'Great question! Let me try a different angle.\n\nThink of code like a recipe — each line is one step. The computer follows them top to bottom.\n\nAsk something more specific and I can help!'});}renderLayer(cache.lessons[0]);}
 function renderFiles(files,fileOrder){const sf=document.getElementById('sf');if(!sf)return;promptContexts=[];const les=cache.lessons?cache.lessons[0]:null;const topicId=S.topic;const modNum=S.mod;const modTitle=les?les.module_title:'';sf.innerHTML=fileOrder.map(fn=>{const fn2=fn.trim();const exps=files[fn2];if(!exps||!exps.length)return'';return`<div style="margin-bottom:16px"><div class="sf-h">📄 ${fn2}</div><div class="sf-b">${exps.map(e=>{const k=fn2+'-'+e.line_number;const open=S.openLines[k];const code=e.code_text||e.concept_tag||'';const ctx={type:'line',topic:topicId,module:modNum,moduleTitle:modTitle,filename:fn2,lineNum:e.line_number,code:code,explanation:e.explanation||''};return`<div><div class="sl${open?' on':''}" onclick="togLine('${k}')"><span class="sl-n">${e.line_number}</span><span class="sl-c">${esc(code)}</span><span class="sl-h">${open?'▼':'💡'}</span></div>${open?'<div class="sl-e">'+md(e.explanation)+promptBtns(ctx)+'</div>':''}</div>`;}).join('')}</div></div>`;}).join('');}
 function togLine(k){S.openLines[k]=!S.openLines[k];const les=cache.lessons[0];const files={};cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});renderFiles(files,les.source_files||Object.keys(files));}
 function renderQs(sc,qs,label){if(!qs.length){sc.innerHTML='<div style="text-align:center;color:var(--td);padding:40px">No questions yet.</div>';return;}const isT=label==='TEST';sc.innerHTML=`<div style="font-size:11px;color:${isT?'var(--p)':'var(--a)'};font-weight:700;letter-spacing:1px;margin-bottom:14px">${label} — ${qs.length} QUESTIONS</div>${qs.map((q,qi)=>{const a=S.answers[qi]!==undefined;const rv=S.revealed[qi];let opts='';if(q.challenge_type==='multiple_choice'&&q.options){const os=typeof q.options==='string'?JSON.parse(q.options):q.options;opts=os.map((o,oi)=>{let c='qo';if(a&&S.answers[qi]===oi)c+=o===q.correct_answer?' ok':' no';if(a&&o===q.correct_answer)c+=' ok';return`<div class="${c}" onclick="ansQ(${qi},${oi})">${esc(o)}</div>`;}).join('');}return`<div class="qc"><div class="ql" style="color:${isT?'var(--p)':'var(--a)'}">Q${qi+1} · ${q.challenge_type.replace(/_/g,' ').toUpperCase()}</div><div class="qt">${md(q.question)}</div>${q.code_snippet?'<pre class="qcd">'+esc(q.code_snippet)+'</pre>':''}${opts}${q.challenge_type!=='multiple_choice'&&!rv?'<button style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--as);color:var(--a)" onclick="revQ('+qi+')">Show Answer</button>':''}${rv||a?'<div style="margin-top:10px"><div style="font-size:11px;color:var(--g);font-weight:600;margin-bottom:6px">ANSWER:</div><pre class="qcd">'+esc(q.correct_answer)+'</pre></div>':''}${(rv||a)&&q.explanation?'<div class="qx">'+md(q.explanation)+'</div>':''}</div>`;}).join('')}${isT?scoreHtml(qs):''}`;
@@ -655,7 +656,7 @@ function goWebApps(){
 // ═══════════════════════════════════════
 async function openProject(id){
   const proj=PROJECTS.find(p=>p.id===id);if(!proj)return;
-  S.view='project-detail';S.currentProject=proj;S.diffA=null;S.diffB=null;S.diffResult=null;S.diffAnalysis=null;
+  S.view='project-detail';S.currentProject=proj;S.diffA=null;S.diffB=null;S.diffResult=null;S.diffAnalysis=null;S.diffGrouped=null;
   const m=document.getElementById('main');
   m.innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading commits from GitHub...</div></div>';
 
@@ -697,12 +698,12 @@ function renderProjectDetail(){
     <div style="background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:20px">
       <div style="font-size:11px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">COMPARE TWO VERSIONS</div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <select id="sel-a" onchange="S.diffA=this.value;S.diffResult=null;S.diffAnalysis=null" style="flex:1;min-width:120px">
+        <select id="sel-a" onchange="S.diffA=this.value;S.diffResult=null;S.diffAnalysis=null;S.diffGrouped=null" style="flex:1;min-width:120px">
           <option value="">Select older commit</option>
           ${commits.map((c,i)=>`<option value="${c.sha}">#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
         </select>
         <span style="color:var(--b);font-size:14px">→</span>
-        <select id="sel-b" onchange="S.diffB=this.value;S.diffResult=null;S.diffAnalysis=null" style="flex:1;min-width:120px">
+        <select id="sel-b" onchange="S.diffB=this.value;S.diffResult=null;S.diffAnalysis=null;S.diffGrouped=null" style="flex:1;min-width:120px">
           <option value="">Select newer commit</option>
           ${commits.map((c,i)=>`<option value="${c.sha}">#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
         </select>
@@ -786,6 +787,7 @@ async function saveNote(sha,noteText){
 async function loadDiff(){
   if(!S.diffA||!S.diffB){alert('Select both commits');return;}
   if(S.diffA===S.diffB){alert('Select two different commits');return;}
+  S.diffAnalysis=null;S.diffGrouped=null;
   const area=document.getElementById('diff-area');
   area.innerHTML='<div class="ld"><div class="spin"></div>Loading diff from GitHub...</div>';
 
@@ -800,6 +802,13 @@ async function loadDiff(){
   }catch(e){
     area.innerHTML=`<div style="color:var(--r);padding:16px;background:var(--c);border-radius:10px;font-size:13px">Error: ${esc(e.message)}</div>`;
   }
+}
+
+function renderGroupedAnalysis({summary,groups}){
+  let h='';
+  if(summary)h+='<div class="diff-analysis"><div style="font-size:10px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">SUMMARY</div>'+md(summary)+'</div>';
+  h+=(groups||[]).map(g=>'<div class="diff-analysis"><div style="font-size:10px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:4px">'+esc(g.group_label||'')+'</div>'+(g.group_reason?'<div style="font-size:11px;color:var(--td);margin-bottom:10px">'+esc(g.group_reason)+'</div>':'')+md(g.explanation||'')+'</div>').join('');
+  return h;
 }
 
 function renderDiff(){
@@ -842,10 +851,10 @@ function renderDiff(){
 
     <!-- AI Analysis -->
     <div id="ai-analysis">
-      ${S.diffAnalysis?'<div class="diff-analysis">'+md(S.diffAnalysis)+'</div>':`
+      ${S.diffGrouped?renderGroupedAnalysis(S.diffGrouped):(S.diffAnalysis?'<div class="diff-analysis">'+md(S.diffAnalysis)+'</div>':`
         <button onclick="analyzeDiff()" style="width:100%;padding:12px;background:var(--c);border:1px solid var(--bd);border-radius:10px;color:var(--b);font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">
           ${S.analyzing?'<div class="spin" style="margin:0"></div> Analyzing...':'🤖 Analyze with AI — What changed and why?'}
-        </button>`}
+        </button>`)}
     </div>
 
     <!-- Ask about this diff -->
@@ -881,12 +890,21 @@ async function analyzeDiff(){
   const patch=(file.patch||'').slice(0,6000); // Limit to 6k chars for API
 
   try{
-    // Check Supabase cache first
-    const cached=await sbq('code_sensei_diff_explanations',`select=explanation&revision_from=eq.${S.diffA.slice(0,7)}&revision_to=eq.${S.diffB.slice(0,7)}&project_name=eq.ghost_tracker&limit=1`);
+    // Cache: try grouped (ecosystems + grouped rows) → flat row → live API
+    const shaA=S.diffA.slice(0,7);
+    const shaB=S.diffB.slice(0,7);
+    const ecoRows=await sbq('code_sensei_ecosystems',`select=summary,change_groups&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.ghost_tracker&limit=1`);
+    const groupRows=await sbq('code_sensei_diff_explanations',`select=group_id,group_label,group_reason,explanation,display_order&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.ghost_tracker&group_id=not.is.null&order=display_order.asc`);
+    if(ecoRows.length>0&&groupRows.length>0){
+      S.diffGrouped={summary:ecoRows[0].summary,change_groups:ecoRows[0].change_groups,groups:groupRows};
+      S.diffAnalysis=null;
+    }else{
+    const cached=await sbq('code_sensei_diff_explanations',`select=explanation&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.ghost_tracker&limit=1`);
     if(cached.length>0&&cached[0].explanation){
       S.diffAnalysis=cached[0].explanation;
+      S.diffGrouped=null;
     }else{
-      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+      const r=await fetch(`${SB_FN}/claude-proxy`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+K},
         body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
           system:`You are CodeSensei analyzing code changes for Aniket, a beginner developer learning full-stack. Analyze this diff of a single-file HTML app (Ghost Assembly Tracker — used at his company for tracking robot assembly).
 
@@ -902,8 +920,10 @@ Rules:
           messages:[{role:'user',content:`Analyze this diff:\n\nAdditions: ${file.additions}, Deletions: ${file.deletions}\n\nPatch:\n${patch}`}]})});
       const d=await r.json();
       S.diffAnalysis=d.content.map(c=>c.text||'').join('');
+      S.diffGrouped=null;
       // Cache in Supabase
       await sbPost('code_sensei_diff_explanations',{revision_from:S.diffA.slice(0,7),revision_to:S.diffB.slice(0,7),project_name:'ghost_tracker',filename:'index.html',explanation:S.diffAnalysis,change_type:file.additions>200&&file.deletions>200?'rewrite':'incremental'});
+    }
     }
   }catch(e){
     S.diffAnalysis='**Could not analyze this diff automatically.** The Claude API may not be available.\n\nHere is what I can tell from the numbers:\n- **'+file.additions+' lines added**, **'+file.deletions+' lines removed**\n- '+(file.additions>200&&file.deletions>200?'This looks like a **major rewrite** rather than a small fix. The entire structure may have changed.':'This looks like a **targeted change** — specific fixes to a few sections.')+'\n\nTry reading through the diff sections below to see what changed.';
