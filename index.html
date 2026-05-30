@@ -342,6 +342,9 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .btn-cta-sm{padding:7px 14px;font-size:12px;font-weight:600;box-shadow:0 3px 0 var(--cta-shadow)}
 .btn-cta:active,.btn-cta-sm:active{transform:translateY(2px);box-shadow:0 1px 0 var(--cta-shadow)}
 .lab-btn-primary.btn-cta{--cta-shadow:#5b3da8}
+/* ─── Phase 6: peer diff-action buttons — chunky shadow, blue accent ─── */
+.diff-cta{--cta-shadow:#085a8c;box-shadow:0 4px 0 var(--cta-shadow);transition:transform var(--dojo-t-fast),box-shadow var(--dojo-t-fast)}
+.diff-cta:active{transform:translateY(2px);box-shadow:0 1px 0 var(--cta-shadow)}
 .ex-list-grid{display:flex;flex-direction:column;gap:8px}
 .ex-row{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:13px 14px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:8px}
 .ex-row:hover{border-color:rgba(245,158,11,.2);transform:translateY(-1px)}
@@ -452,6 +455,107 @@ const SB_FN='https://wylxvmkcrexwfpjpbhyy.supabase.co/functions/v1';
 const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bHh2bWtjcmV4d2ZwanBiaHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2MzkxMDYsImV4cCI6MjA4NDIxNTEwNn0.6Bxo42hx4jwlJGWnfjiTpiDUsYfc1QLTN3YtrU1efak';
 const HDR={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json','Prefer':'return=representation'};
 const GH_API='https://api.github.com/repos/celeritas7/Ghost_tracker_simple';
+
+// ─── Phase 6: single-pair manual-explanation handoff template ───
+// {REVISION_FROM}/{REVISION_TO} are replaced at click time by requestManualExplanation().
+const PHASE6_SINGLE_PAIR_TEMPLATE = `You are processing a single Ghost Tracker commit pair to populate CodeSensei's grouped diff-explanation cache. Supabase MCP must be enabled in this chat.
+
+## Locked conventions (do not vary)
+- project_name: 'ghost_tracker'
+- revision_from / revision_to: 7-character lowercase SHAs
+- Tables: code_sensei_ecosystems (summary) + code_sensei_diff_explanations (per-group rows)
+- Repo: https://github.com/celeritas7/Ghost_tracker_simple
+- Granularity: grouped only
+- Idempotent replace: DELETE existing rows for this pair, then INSERT fresh. Same outcome whether the pair is empty (Request) or cached (Re-request). The user's click is the consent.
+
+## The commit pair
+revision_from: {REVISION_FROM}
+revision_to:   {REVISION_TO}
+
+## Workflow
+
+### Step 1 — Existence report (no halt)
+Query both code_sensei_ecosystems and code_sensei_diff_explanations for this pair. If any rows exist, report: "Found existing data for this pair — proceeding to overwrite." Then continue. This is a transparency note, not a guard — the idempotent DELETE + INSERT + ON CONFLICT DO UPDATE pattern in Step 5 handles both empty and cached cases cleanly. The user clicked Request (or Re-request) intending to (re)generate; halting here would defeat the purpose.
+
+### Step 2 — Fetch the diff
+web_fetch https://github.com/celeritas7/Ghost_tracker_simple/compare/{REVISION_FROM}...{REVISION_TO}.diff
+On failure: log the error and stop.
+
+### Step 3 — Ground the explanation
+Pull relevant prior context (small queries, only what's needed):
+- code_sensei_line_explanations — rows matching files in the diff
+- code_sensei_mistakes — for affected modules
+- code_sensei_attempts — for related exercises
+- code_sensei_exercises — for concepts touched
+Use these to connect explanations to prior learning where it helps. Skip if nothing relevant exists; don't manufacture connections.
+
+### Step 4 — Analyze and structure
+
+Produce:
+- summary: 2–4 sentences, plain text, what this pair accomplishes. Calibrated for a learner — lead with what changed in plain words before any jargon.
+- file_tree (jsonb): nested object of changed files by directory
+- change_groups (jsonb array): [{id, label, reason}, ...] — logical groupings
+- Per-group explanation (markdown, can be multiple paragraphs). Follows the six explanation-voice rules below.
+
+### Explanation voice — six rules (apply to summary AND every group explanation)
+
+The reader has no prior coding background and is studying their own code to learn. Write as a patient teacher, not a code reviewer.
+
+1. **Assume no prior coding background.** No "obviously" or "as you'd expect." If a technical term appears, it's because you're about to define it.
+2. **Define every technical term inline the first time it appears.** Examples: "querySelector (a built-in tool for finding elements on the page)", "FileReader (a browser tool that reads file contents)". Never assume jargon.
+3. **Use everyday analogies for abstract concepts.** Component splits as kitchen roles. Sorting bugs as "labeling by when vs. by what." Storage caps as a small box that overflows. Concrete beats abstract.
+4. **Show short Before:/After: code blocks where the change is meaningful to see.** Stacked vertically — never side-by-side, the renderer is mobile-first. Keep snippets to 1–8 lines. Strip irrelevant code; show only what changed plus enough context to read it. Use language-tagged fenced blocks.
+5. **After each code snippet, walk through it line by line in plain English.** Bullet list format. Explain what each piece does, simplest part first. Use \`inline code\` for tokens being explained.
+6. **End most groups with a "lesson to keep" line.** Connect this change to prior learning — what bug pattern was this? what design idea applies elsewhere? Pull from grounding context when it fits naturally; skip when there's nothing real to connect to.
+
+### Step 5 — Write (one transaction)
+
+BEGIN;
+
+DELETE FROM code_sensei_diff_explanations
+ WHERE project_name = 'ghost_tracker'
+   AND revision_from = '{REVISION_FROM}'
+   AND revision_to   = '{REVISION_TO}';
+
+INSERT INTO code_sensei_ecosystems
+  (revision_from, revision_to, project_name, summary, file_tree, change_groups)
+VALUES
+  ('{REVISION_FROM}', '{REVISION_TO}', 'ghost_tracker',
+   $S$<summary>$S$,
+   $F$<file_tree_json>$F$::jsonb,
+   $G$<change_groups_json>$G$::jsonb)
+ON CONFLICT (revision_from, revision_to, project_name)
+DO UPDATE SET
+  summary       = EXCLUDED.summary,
+  file_tree     = EXCLUDED.file_tree,
+  change_groups = EXCLUDED.change_groups;
+
+INSERT INTO code_sensei_diff_explanations
+  (revision_from, revision_to, project_name,
+   group_id, group_label, group_reason, display_order,
+   explanation, change_type)
+VALUES
+  ('{REVISION_FROM}', '{REVISION_TO}', 'ghost_tracker',
+   'g1', $L1$<label>$L1$, $R1$<reason>$R1$, 1,
+   $E1$<explanation>$E1$, 'incremental');
+   -- repeat per group, incrementing display_order
+
+COMMIT;
+
+### Step 6 — Confirm
+Run the verification SELECT and report row counts:
+
+SELECT (SELECT COUNT(*) FROM code_sensei_ecosystems
+         WHERE revision_from='{REVISION_FROM}' AND revision_to='{REVISION_TO}' AND project_name='ghost_tracker') AS eco,
+       (SELECT COUNT(*) FROM code_sensei_diff_explanations
+         WHERE revision_from='{REVISION_FROM}' AND revision_to='{REVISION_TO}' AND project_name='ghost_tracker') AS groups;
+
+Expect: eco = 1, groups = (number of change_groups you produced).
+
+## Done when
+- [ ] eco = 1, groups ≥ 1 in the verification query
+- [ ] If prior data existed, it was cleanly replaced (no orphan rows, no partial writes)
+- [ ] Refreshing CodeSensei's diff viewer for this pair renders the grouped cards from cache (no spinner, no live API call)`;
 
 let cache={lessons:null,lines:null,challenges:null,commits:null,commitNotes:{},commitStatus:{}};
 let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false,diffA:null,diffB:null,diffResult:null,diffAnalysis:null,diffGrouped:null,analyzing:false,exList:[],exAttempts:{},exCourseDays:[],exCourseDaysById:{},exUserId:null,exView:'list',exDetailId:null,exFilter:'all',exForm:{},exLoaded:false,exError:null,exReturn:null,exMistakes:{},exMistakeForm:null,exImportText:''};
@@ -806,6 +910,7 @@ async function loadDiff(){
 
 function renderGroupedAnalysis({summary,groups}){
   let h='';
+  h+='<div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button onclick="requestManualExplanation(\''+(S.diffA?S.diffA.slice(0,7):'')+'\',\''+(S.diffB?S.diffB.slice(0,7):'')+'\')" style="background:none;border:none;color:var(--td);font-size:11px;text-decoration:underline;padding:0;cursor:pointer">Re-request manual explanation</button></div>';
   if(summary)h+='<div class="diff-analysis"><div style="font-size:10px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:10px">SUMMARY</div>'+md(summary)+'</div>';
   h+=(groups||[]).map(g=>'<div class="diff-analysis"><div style="font-size:10px;color:var(--b);font-weight:700;letter-spacing:1px;margin-bottom:4px">'+esc(g.group_label||'')+'</div>'+(g.group_reason?'<div style="font-size:11px;color:var(--td);margin-bottom:10px">'+esc(g.group_reason)+'</div>':'')+md(g.explanation||'')+'</div>').join('');
   return h;
@@ -852,8 +957,12 @@ function renderDiff(){
     <!-- AI Analysis -->
     <div id="ai-analysis">
       ${S.diffGrouped?renderGroupedAnalysis(S.diffGrouped):(S.diffAnalysis?'<div class="diff-analysis">'+md(S.diffAnalysis)+'</div>':`
-        <button onclick="analyzeDiff()" style="width:100%;padding:12px;background:var(--c);border:1px solid var(--bd);border-radius:10px;color:var(--b);font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+        <button class="diff-cta" onclick="analyzeDiff()" style="width:100%;padding:12px;background:var(--c);border:1px solid var(--bd);border-radius:10px;color:var(--b);font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">
           ${S.analyzing?'<div class="spin" style="margin:0"></div> Analyzing...':'🤖 Analyze with AI — What changed and why?'}
+        </button>
+        <button class="diff-cta" onclick="requestManualExplanation('${S.diffA?S.diffA.slice(0,7):''}','${S.diffB?S.diffB.slice(0,7):''}')" style="width:100%;padding:12px;background:var(--c);border:1px solid var(--bd);border-radius:10px;color:var(--b);font-size:13px;font-weight:600;margin-bottom:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+          <span style="display:flex;align-items:center;gap:6px">📝 Request manual explanation <span style="font-size:12px">↗</span></span>
+          <span style="font-size:10px;color:var(--td);font-weight:500;text-align:center">Opens claude.ai with this commit pre-loaded. Slower, higher quality, grouped granularity.</span>
         </button>`)}
     </div>
 
@@ -930,6 +1039,21 @@ Rules:
   }
   S.analyzing=false;
   renderDiff();
+}
+
+// Phase 6: copy single-pair template (SHAs pre-filled) → open claude.ai/new
+async function requestManualExplanation(revisionFrom, revisionTo){
+  try{
+    const prompt=PHASE6_SINGLE_PAIR_TEMPLATE
+      .replaceAll('{REVISION_FROM}',revisionFrom)
+      .replaceAll('{REVISION_TO}',revisionTo);
+    await navigator.clipboard.writeText(prompt);
+    exToast('Template copied — opening claude.ai');
+    window.open('https://claude.ai/new','_blank','noopener');
+  }catch(err){
+    console.error('requestManualExplanation failed',err);
+    exToast('Copy failed — see console');
+  }
 }
 
 // ═══════════════════════════════════════
