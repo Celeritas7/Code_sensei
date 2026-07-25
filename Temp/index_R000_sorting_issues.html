@@ -291,9 +291,8 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .tree-node.diff-changed .tlabel{fill:#92400e!important}
 @media(max-width:700px){
   .tree-wrap{flex-direction:column}
-  .tree-code-panel{width:100%;height:38dvh;min-height:150px;border-right:none;border-bottom:1px solid var(--bd)}
-  .tree-panel{height:auto;flex:1;min-height:0}
-  .tree-code-top{padding-left:52px}
+  .tree-code-panel{width:100%;height:38vh;border-right:none;border-bottom:1px solid var(--bd)}
+  .tree-panel{height:62vh}
 }
 /* Python Lab */
 .lab-cards{display:grid;gap:10px}
@@ -558,19 +557,16 @@ Expect: eco = 1, groups = (number of change_groups you produced).
 - [ ] If prior data existed, it was cleanly replaced (no orphan rows, no partial writes)
 - [ ] Refreshing CodeSensei's diff viewer for this pair renders the grouped cards from cache (no spinner, no live API call)`;
 
-let cache={lessons:null,lines:null,challenges:null,commits:{},commitNotes:{},commitStatus:{}};
+let cache={lessons:null,lines:null,challenges:null,commits:null,commitNotes:{},commitStatus:{}};
 let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false,diffA:null,diffB:null,diffResult:null,diffAnalysis:null,diffGrouped:null,analyzing:false,exList:[],exAttempts:{},exCourseDays:[],exCourseDaysById:{},exUserId:null,exView:'list',exDetailId:null,exFilter:'all',exForm:{},exLoaded:false,exError:null,exReturn:null,exMistakes:{},exMistakeForm:null,exImportText:''};
 let promptContexts=[];
 
-async function sbq(table,query=''){try{const r=await fetch(`${SB}/${table}?${query}`,{headers:HDR});const d=await r.json();if(!r.ok){console.error('sbq',table,r.status,d);sbFail(table+' query failed ('+r.status+')');return[];}return d;}catch(e){console.error(e);sbFail(table+' unreachable');return[];}}
-async function sbPatch(table,id,data){try{const r=await fetch(`${SB}/${table}?id=eq.${id}`,{method:'PATCH',headers:HDR,body:JSON.stringify(data)});if(!r.ok){console.error('sbPatch',table,r.status,await r.text());sbFail(table+' update failed ('+r.status+')');}}catch(e){console.error(e);sbFail(table+' unreachable');}}
-async function sbPost(table,data){try{const r=await fetch(`${SB}/${table}`,{method:'POST',headers:HDR,body:JSON.stringify(data)});const d=await r.json();if(!r.ok){console.error('sbPost',table,r.status,d);sbFail(table+' insert failed ('+r.status+')');return null;}return d;}catch(e){console.error(e);sbFail(table+' unreachable');return null;}}
-function sbFail(msg){try{exToast('\u26a0 '+msg);}catch(e){}}
-let _uid;
-async function getUserId(){if(_uid!==undefined)return _uid;const u=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');if(Array.isArray(u)&&u[0]){_uid=u[0].id;return _uid;}return null;}
+async function sbq(table,query=''){try{const r=await fetch(`${SB}/${table}?${query}`,{headers:HDR});return await r.json();}catch(e){console.error(e);return[];}}
+async function sbPatch(table,id,data){try{await fetch(`${SB}/${table}?id=eq.${id}`,{method:'PATCH',headers:HDR,body:JSON.stringify(data)});}catch(e){console.error(e);}}
+async function sbPost(table,data){try{const r=await fetch(`${SB}/${table}`,{method:'POST',headers:HDR,body:JSON.stringify(data)});return await r.json();}catch(e){console.error(e);return null;}}
 
-function md(t){if(!t)return'';return t.split(/(```[^`]*```)/gs).map(b=>{if(b.startsWith('```')){const c=b.replace(/```\w*\n?/g,'').replace(/```$/,'');return'<pre class="md-code">'+esc(c)+'</pre>';}return b.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map(p=>{if(p.startsWith('**')&&p.endsWith('**'))return'<span class="md-b">'+esc(p.slice(2,-2))+'</span>';if(p.startsWith('`')&&p.endsWith('`'))return'<code class="md-ic">'+esc(p.slice(1,-1))+'</code>';return esc(p).replace(/\n/g,'<br>');}).join('');}).join('');}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function md(t){if(!t)return'';return t.replace(/\n/g,'<br>').split(/(```[^`]*```)/gs).map(b=>{if(b.startsWith('```')){const c=b.replace(/```\w*\n?/g,'').replace(/```$/,'').replace(/<br>/g,'\n');return'<pre class="md-code">'+esc(c)+'</pre>';}return b.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map(p=>{if(p.startsWith('**')&&p.endsWith('**'))return'<span class="md-b">'+esc(p.slice(2,-2))+'</span>';if(p.startsWith('`')&&p.endsWith('`'))return'<code class="md-ic">'+esc(p.slice(1,-1))+'</code>';return p;}).join('');}).join('');}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function setNav(id){document.querySelectorAll('.nv').forEach(n=>n.classList.remove('on'));document.getElementById(id)?.classList.add('on');closeMobileNav();}
 function toggleMobileNav(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
 function closeMobileNav(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
@@ -737,7 +733,7 @@ function scoreHtml(qs){const mc=qs.filter(q=>q.challenge_type==='multiple_choice
 // MY PROJECTS
 // ═══════════════════════════════════════
 const PROJECTS=[
-  {id:'ghost',topic:'ghost_tracker',name:'Ghost Tracker',cat:'HTML / CSS / JS',icon:'👻',color:'#38bdf8',repo:'celeritas7/Ghost_tracker_simple',file:'index.html'},
+  {id:'ghost',name:'Ghost Tracker',cat:'HTML / CSS / JS',icon:'👻',color:'#38bdf8',repo:'celeritas7/Ghost_tracker_simple',file:'index.html'},
 ];
 
 function goWebApps(){
@@ -768,30 +764,22 @@ async function openProject(id){
   const m=document.getElementById('main');
   m.innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Loading commits from GitHub...</div></div>';
 
-  // Fetch commits if not cached (paginated, per project)
-  if(!cache.commits[proj.id]){
+  // Fetch commits if not cached
+  if(!cache.commits){
     try{
-      let all=[],page=1;
-      while(page<=3){
-        const r=await fetch(`https://api.github.com/repos/${proj.repo}/commits?path=${proj.file}&per_page=100&page=${page}`);
-        if(!r.ok)throw new Error('GitHub API: '+r.status);
-        const batch=await r.json();
-        all=all.concat(batch);
-        if(batch.length<100)break;
-        page++;
-      }
-      cache.commits[proj.id]=all;
+      const r=await fetch(`${GH_API}/commits?path=${proj.file}&per_page=100`);
+      if(!r.ok)throw new Error('GitHub API: '+r.status);
+      cache.commits=await r.json();
     }catch(e){
       m.innerHTML=`<div class="pg"><button class="back" onclick="goWebApps()">← Web Apps</button><div style="color:var(--r);padding:20px;background:var(--c);border-radius:10px;font-size:13px">Failed to load commits: ${esc(e.message)}<br><br>GitHub API has a rate limit of 60 requests/hour for unauthenticated access. Try again in a few minutes.</div></div>`;
       return;
     }
   }
 
-  // Load saved notes/status from Supabase (per project)
-  cache.commitNotes={};cache.commitStatus={};
-  const savedNotes=await sbq('code_sensei_user_notes','select=*&topic_id=eq.'+proj.topic);
+  // Load saved notes/status from Supabase
+  const savedNotes=await sbq('code_sensei_user_notes','select=*&topic_id=eq.ghost_tracker');
   savedNotes.forEach(n=>{if(n.source_filename)cache.commitNotes[n.source_filename]=n;});
-  const savedStatus=await sbq('code_sensei_progress','select=*&topic_id=eq.'+proj.topic);
+  const savedStatus=await sbq('code_sensei_progress','select=*&topic_id=eq.ghost_tracker');
   savedStatus.forEach(s=>{if(s.roadmap_section)cache.commitStatus[s.roadmap_section]=s.status;});
 
   renderProjectDetail();
@@ -799,7 +787,7 @@ async function openProject(id){
 
 function renderProjectDetail(){
   const proj=S.currentProject;
-  const commits=cache.commits[proj.id]||[];
+  const commits=cache.commits||[];
   const m=document.getElementById('main');
 
   m.innerHTML=`<div class="pg">
@@ -816,12 +804,12 @@ function renderProjectDetail(){
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <select id="sel-a" onchange="S.diffA=this.value;S.diffResult=null;S.diffAnalysis=null;S.diffGrouped=null" style="flex:1;min-width:120px">
           <option value="">Select older commit</option>
-          ${commits.map((c,i)=>`<option value="${c.sha}"${c.sha===S.diffA?' selected':''}>#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
+          ${commits.map((c,i)=>`<option value="${c.sha}">#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
         </select>
         <span style="color:var(--b);font-size:14px">→</span>
         <select id="sel-b" onchange="S.diffB=this.value;S.diffResult=null;S.diffAnalysis=null;S.diffGrouped=null" style="flex:1;min-width:120px">
           <option value="">Select newer commit</option>
-          ${commits.map((c,i)=>`<option value="${c.sha}"${c.sha===S.diffB?' selected':''}>#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
+          ${commits.map((c,i)=>`<option value="${c.sha}">#${commits.length-i} — ${esc(c.commit.message.split('\n')[0].slice(0,50))}</option>`).join('')}
         </select>
         <button class="btn-cta-sm" onclick="loadDiff()" style="background:var(--b);color:var(--bg);--cta-shadow:#085a8c">Compare</button>
       </div>
@@ -866,13 +854,12 @@ function renderProjectDetail(){
 async function setCommitStatus(sha,status){
   cache.commitStatus[sha]=status;
   // Save to Supabase
-  const topic=S.currentProject.topic;
-  const existing=await sbq('code_sensei_progress',`select=*&topic_id=eq.${topic}&roadmap_section=eq.${sha}`);
+  const existing=await sbq('code_sensei_progress',`select=*&topic_id=eq.ghost_tracker&roadmap_section=eq.${sha}`);
   if(existing.length>0){
     await sbPatch('code_sensei_progress',existing[0].id,{status});
   }else{
-    const uid=await getUserId();
-    if(uid)await sbPost('code_sensei_progress',{user_id:uid,topic_id:topic,roadmap_section:sha,module_number:0,status});
+    const users=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');
+    if(users.length)await sbPost('code_sensei_progress',{user_id:users[0].id,topic_id:'ghost_tracker',roadmap_section:sha,module_number:0,status});
   }
   renderProjectDetail();
 }
@@ -885,14 +872,14 @@ function addNote(sha){
 }
 
 async function saveNote(sha,noteText){
-  const uid=await getUserId();
-  if(!uid)return;
+  const users=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');
+  if(!users.length)return;
   const existing=cache.commitNotes[sha];
   if(existing?.id){
     if(noteText)await sbPatch('code_sensei_user_notes',existing.id,{note_text:noteText});
     else{await fetch(`${SB}/code_sensei_user_notes?id=eq.${existing.id}`,{method:'DELETE',headers:HDR});delete cache.commitNotes[sha];}
   }else if(noteText){
-    const r=await sbPost('code_sensei_user_notes',{user_id:uid,topic_id:S.currentProject.topic,source_filename:sha,note_text:noteText,note_type:'note'});
+    const r=await sbPost('code_sensei_user_notes',{user_id:users[0].id,topic_id:'ghost_tracker',source_filename:sha,note_text:noteText,note_type:'note'});
     if(r&&r[0])cache.commitNotes[sha]=r[0];
   }
   renderProjectDetail();
@@ -909,11 +896,11 @@ async function loadDiff(){
   area.innerHTML='<div class="ld"><div class="spin"></div>Loading diff from GitHub...</div>';
 
   try{
-    const r=await fetch(`https://api.github.com/repos/${S.currentProject.repo}/compare/${S.diffA}...${S.diffB}`);
+    const r=await fetch(`${GH_API}/compare/${S.diffA}...${S.diffB}`);
     if(!r.ok)throw new Error('Compare failed: '+r.status);
     const data=await r.json();
-    const file=data.files?.find(f=>f.filename===S.currentProject.file);
-    if(!file){area.innerHTML='<div style="color:var(--td);padding:20px;text-align:center">No changes to '+esc(S.currentProject.file)+' between these commits.</div>';return;}
+    const file=data.files?.find(f=>f.filename==='index.html');
+    if(!file){area.innerHTML='<div style="color:var(--td);padding:20px;text-align:center">No changes to index.html between these commits.</div>';return;}
     S.diffResult={stats:data,file,aheadBy:data.ahead_by,totalCommits:data.total_commits};
     renderDiff();
   }catch(e){
@@ -959,7 +946,7 @@ function renderDiff(){
   area.innerHTML=`
     <div style="background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:12px">
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-        <div style="font-size:13px;font-weight:600">${esc(S.currentProject.file)}</div>
+        <div style="font-size:13px;font-weight:600">index.html</div>
         <span style="color:var(--g);font-size:12px">+${file.additions}</span>
         <span style="color:var(--r);font-size:12px">−${file.deletions}</span>
         <span style="font-size:11px;color:var(--td)">${totalCommits} commit${totalCommits>1?'s':''} between</span>
@@ -1015,14 +1002,13 @@ async function analyzeDiff(){
     // Cache: try grouped (ecosystems + grouped rows) → flat row → live API
     const shaA=S.diffA.slice(0,7);
     const shaB=S.diffB.slice(0,7);
-    const topic=S.currentProject.topic;
-    const ecoRows=await sbq('code_sensei_ecosystems',`select=summary,change_groups&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.${topic}&limit=1`);
-    const groupRows=await sbq('code_sensei_diff_explanations',`select=group_id,group_label,group_reason,explanation,display_order&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.${topic}&group_id=not.is.null&order=display_order.asc`);
+    const ecoRows=await sbq('code_sensei_ecosystems',`select=summary,change_groups&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.ghost_tracker&limit=1`);
+    const groupRows=await sbq('code_sensei_diff_explanations',`select=group_id,group_label,group_reason,explanation,display_order&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.ghost_tracker&group_id=not.is.null&order=display_order.asc`);
     if(ecoRows.length>0&&groupRows.length>0){
       S.diffGrouped={summary:ecoRows[0].summary,change_groups:ecoRows[0].change_groups,groups:groupRows};
       S.diffAnalysis=null;
     }else{
-    const cached=await sbq('code_sensei_diff_explanations',`select=explanation&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.${topic}&group_id=is.null&limit=1`);
+    const cached=await sbq('code_sensei_diff_explanations',`select=explanation&revision_from=eq.${shaA}&revision_to=eq.${shaB}&project_name=eq.ghost_tracker&limit=1`);
     if(cached.length>0&&cached[0].explanation){
       S.diffAnalysis=cached[0].explanation;
       S.diffGrouped=null;
@@ -1045,7 +1031,7 @@ Rules:
       S.diffAnalysis=d.content.map(c=>c.text||'').join('');
       S.diffGrouped=null;
       // Cache in Supabase
-      await sbPost('code_sensei_diff_explanations',{revision_from:S.diffA.slice(0,7),revision_to:S.diffB.slice(0,7),project_name:topic,filename:S.currentProject.file,explanation:S.diffAnalysis,change_type:file.additions>200&&file.deletions>200?'rewrite':'incremental'});
+      await sbPost('code_sensei_diff_explanations',{revision_from:S.diffA.slice(0,7),revision_to:S.diffB.slice(0,7),project_name:'ghost_tracker',filename:'index.html',explanation:S.diffAnalysis,change_type:file.additions>200&&file.deletions>200?'rewrite':'incremental'});
     }
     }
   }catch(e){
@@ -1315,7 +1301,7 @@ function tRenderTabs(){const c=document.getElementById('tftabs');if(!c)return;c.
 function tSave(){tFiles[tActiveIdx].code=document.getElementById('tcode')?.value||'';tFiles[tActiveIdx].name=document.getElementById('tfname')?.value||'untitled.py';}
 function tSwitchFile(i){tSave();tActiveIdx=i;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');if(ce)ce.value=tFiles[i].code;if(fe)fe.value=tFiles[i].name;tRenderTabs();}
 function tAddFile(){tSave();tFiles.push({name:`file${tFiles.length+1}.py`,code:''});tActiveIdx=tFiles.length-1;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');if(ce)ce.value='';if(fe)fe.value=tFiles[tActiveIdx].name;tRenderTabs();}
-function tRemoveFile(i){if(tFiles.length<=1)return;tFiles.splice(i,1);if(tActiveIdx>=tFiles.length)tActiveIdx=tFiles.length-1;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');if(ce)ce.value=tFiles[tActiveIdx].code;if(fe)fe.value=tFiles[tActiveIdx].name;tRenderTabs();tReRender();}
+function tRemoveFile(i){if(tFiles.length<=1)return;tFiles.splice(i,1);if(tActiveIdx>=tFiles.length)tActiveIdx=tFiles.length-1;const ce=document.getElementById('tcode');const fe=document.getElementById('tfname');if(ce)ce.value=tFiles[tActiveIdx].code;if(fe)fe.value=tFiles[tActiveIdx].name;tRenderTabs();}
 
 // Parser
 function tParse(code,pfx=''){tNodeIdCtr=0;const lines=code.split('\n');const root={name:'module',type:'module',children:[],detail:'',_line:0,_id:pfx+'m_'+tNodeIdCtr++};const stk=[{node:root,indent:-1}];const impG={name:'imports',type:'import',children:[],detail:'',_line:0,_id:pfx+'imp_'+tNodeIdCtr++};let hasImp=false;
@@ -1557,29 +1543,7 @@ function tfPrev(){if(tFlowIdx>0){tFlowIdx--;tVisited.clear();for(let i=0;i<=tFlo
 function tfReset(){tFlowIdx=-1;tVisited.clear();tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}tApplyFlow();const se=document.getElementById('tfStep');if(se)se.textContent='0';const sn=document.getElementById('tfName');if(sn)sn.textContent='Ready';tUpdateFlowBtns();}
 function tfTogglePlay(){if(tFlowPlaying){tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}return;}tFlowPlaying=true;const pb=document.getElementById('tfPlay');if(pb){pb.textContent='⏸';pb.classList.add('playing');}const spd=parseInt(document.getElementById('tfSpeed')?.value)||800;tFlowTimer=setInterval(()=>{if(tFlowIdx>=tFlowSteps.length-1){tFlowPlaying=false;clearInterval(tFlowTimer);const pb=document.getElementById('tfPlay');if(pb){pb.textContent='▶';pb.classList.remove('playing');}return;}tfNext();},spd);}
 function tToggleFlow(){tFlowMode=!tFlowMode;document.getElementById('tFlowBtn')?.classList.toggle('flow-on',tFlowMode);document.getElementById('tflowbar').style.display=tFlowMode?'flex':'none';if(tFlowMode){tCollapsed.clear();tVisited.clear();tfReset();}else{tFlowPlaying=false;clearInterval(tFlowTimer);}tReRender();}
-const T_PANEL_HTML=`
-      <div class="tree-flow-bar" id="tflowbar" style="display:none">
-        <button class="tree-flow-btn" onclick="tfReset()">⏮</button>
-        <button class="tree-flow-btn" id="tfPrev" onclick="tfPrev()">◀</button>
-        <button class="tree-flow-btn" id="tfPlay" onclick="tfTogglePlay()">▶</button>
-        <button class="tree-flow-btn" id="tfNext" onclick="tfNext()">▶▶</button>
-        <div class="tree-step-info">Step <span class="snum" id="tfStep">0</span> / <span id="tfTotal">0</span></div>
-        <div class="tree-step-name" id="tfName">—</div>
-        <div class="tree-speed"><span>Speed:</span><input type="range" min="300" max="2000" value="800" step="100" id="tfSpeed" /></div>
-      </div>
-      <svg id="tsvg"></svg>
-      <div class="xref-legend" id="txrefLeg" style="display:none">
-        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#8b5cf6"></span>import</div>
-        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#10b981"></span>instantiate</div>
-        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#f87171"></span>call</div>
-      </div>
-      <div class="tree-info" id="tinfo" style="display:none">
-        <div class="tstats"><span>Nodes: <span class="tval" id="tsN">0</span></span><span>Files: <span class="tval" id="tsF">0</span></span><span>Classes: <span class="tval" id="tsC">0</span></span><span>Funcs: <span class="tval" id="tsFn">0</span></span></div>
-        <div style="display:flex;gap:3px"><button class="tree-zbtn" onclick="tZoomIn()">+</button><button class="tree-zbtn" onclick="tZoomOut()">−</button><button class="tree-zbtn" onclick="tZoomReset()">⌂</button></div>
-      </div>
-    `;
-function tEnsurePanel(){const panel=document.getElementById('tpanel');if(panel&&!document.getElementById('tsvg')){panel.innerHTML=T_PANEL_HTML;const fb=document.getElementById('tflowbar');if(fb)fb.style.display=tFlowMode?'flex':'none';}}
-function tReRender(){if(tMode!=='compare')tEnsurePanel();if(tMode==='single')tRenderSingle();else if(tMode==='class')tRenderClass();else if(tMode==='compare')tRenderCompare();}
+function tReRender(){if(tMode==='single')tRenderSingle();else if(tMode==='class')tRenderClass();else if(tMode==='compare')tRenderCompare();}
 
 // ═══════════════════════════════════════
 // COMPARE MODE — side-by-side tree diff
@@ -1636,8 +1600,7 @@ function tRunCompare(){
 
   // Build signature maps for diffing: type+name → node
   function buildSigMap(node,map,path=''){
-    const base=path+'/'+node.type+':'+node.name;
-    let sig=base,n=2;while(map[sig])sig=base+'#'+(n++);
+    const sig=path+'/'+node.type+':'+node.name;
     map[sig]=node;
     if(node.children)node.children.forEach((ch,i)=>buildSigMap(ch,map,sig));
     return map;
@@ -1773,7 +1736,8 @@ async function tSaveProject(){
 
   try{
     // Get user
-    const uid=await getUserId();
+    const users=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');
+    const uid=users.length?users[0].id:null;
 
     // Check if project with this name already exists
     const existing=await sbq('code_sensei_py_projects',`select=id&project_name=eq.${encodeURIComponent(pn)}`);
@@ -1829,7 +1793,7 @@ async function tLoadProjectsList(){
           <div class="tsp-name">${esc(p.project_name)}</div>
           <div class="tsp-meta">${dateStr} · ${p.view_mode||'single'}</div>
         </div>
-        <button class="tsp-del" onclick="event.stopPropagation();tDeleteProject(${p.id})" title="Delete">🗑</button>
+        <button class="tsp-del" onclick="event.stopPropagation();tDeleteProject(${p.id},'${esc(p.project_name)}')" title="Delete">🗑</button>
       </div>`;
     }).join('');
   }catch(e){
@@ -1879,7 +1843,6 @@ async function tLoadProject(projId){
 }
 
 async function tDeleteProject(projId,name){
-  const sp=tSavedProjects.find(function(p){return p.id===projId;});name=sp?sp.project_name:'project';
   if(!confirm('Delete "'+name+'"? This cannot be undone.'))return;
   try{
     // Files cascade-delete via FK, but REST API needs manual delete
@@ -1927,7 +1890,26 @@ function goTree(){
         <button class="tree-sample-btn" onclick="tLoadSample('quiz')">Quiz Project</button>
       </div>
     </div>
-    <div class="tree-panel" id="tpanel">${T_PANEL_HTML}
+    <div class="tree-panel" id="tpanel">
+      <div class="tree-flow-bar" id="tflowbar" style="display:none">
+        <button class="tree-flow-btn" onclick="tfReset()">⏮</button>
+        <button class="tree-flow-btn" id="tfPrev" onclick="tfPrev()">◀</button>
+        <button class="tree-flow-btn" id="tfPlay" onclick="tfTogglePlay()">▶</button>
+        <button class="tree-flow-btn" id="tfNext" onclick="tfNext()">▶▶</button>
+        <div class="tree-step-info">Step <span class="snum" id="tfStep">0</span> / <span id="tfTotal">0</span></div>
+        <div class="tree-step-name" id="tfName">—</div>
+        <div class="tree-speed"><span>Speed:</span><input type="range" min="300" max="2000" value="800" step="100" id="tfSpeed" /></div>
+      </div>
+      <svg id="tsvg"></svg>
+      <div class="xref-legend" id="txrefLeg" style="display:none">
+        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#8b5cf6"></span>import</div>
+        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#10b981"></span>instantiate</div>
+        <div class="xref-legend-item"><span class="xref-legend-line" style="border-color:#f87171"></span>call</div>
+      </div>
+      <div class="tree-info" id="tinfo" style="display:none">
+        <div class="tstats"><span>Nodes: <span class="tval" id="tsN">0</span></span><span>Files: <span class="tval" id="tsF">0</span></span><span>Classes: <span class="tval" id="tsC">0</span></span><span>Funcs: <span class="tval" id="tsFn">0</span></span></div>
+        <div style="display:flex;gap:3px"><button class="tree-zbtn" onclick="tZoomIn()">+</button><button class="tree-zbtn" onclick="tZoomOut()">−</button><button class="tree-zbtn" onclick="tZoomReset()">⌂</button></div>
+      </div>
     </div>
   </div><div class="tree-ttip" id="ttooltip"></div>`;
   tRenderTabs();
@@ -1940,7 +1922,6 @@ function goTree(){
 // PYTHON LAB — Kaggle Notebook Manager
 // ═══════════════════════════════════════
 let labNotebooks=[];
-let labCatsCache=[];
 let labCategory='all';
 let labShowForm=false;
 let labEditId=null;
@@ -1959,7 +1940,7 @@ async function goLab(){
 
 function renderLab(){
   const m=document.getElementById('main');
-  const cats=['all',...new Set(labNotebooks.map(n=>n.category).filter(Boolean))];labCatsCache=cats;
+  const cats=['all',...new Set(labNotebooks.map(n=>n.category).filter(Boolean))];
   const filtered=labCategory==='all'?labNotebooks:labNotebooks.filter(n=>n.category===labCategory);
 
   m.innerHTML=`<div class="pg">
@@ -1973,7 +1954,7 @@ function renderLab(){
     ${labShowForm?renderLabForm():''}
 
     ${labNotebooks.length>0?`<div class="lab-categories">
-      ${cats.map((c,ci)=>`<button class="lab-cat${labCategory===c?' on':''}" onclick="labSetCat(labCatsCache[${ci}])">${c==='all'?'All':esc(c)}</button>`).join('')}
+      ${cats.map(c=>`<button class="lab-cat${labCategory===c?' on':''}" onclick="labSetCat('${esc(c)}')">${c==='all'?'All':esc(c)}</button>`).join('')}
     </div>`:''}
 
     <div class="lab-cards">
@@ -1993,7 +1974,7 @@ function renderLab(){
 
 function renderLabCard(n){
   const tagHtml=(n.tags||[]).map(t=>`<span class="lab-tag">${esc(t)}</span>`).join('');
-  return`<div class="lab-card" onclick="labOpenNotebook(${n.id})">
+  return`<div class="lab-card" onclick="window.open('${esc(n.url)}','_blank')">
     <div class="lab-card-icon" style="background:${n.pinned?'rgba(245,158,11,.1)':'rgba(167,139,250,.08)'}">
       ${n.pinned?'⭐':'📓'}
     </div>
@@ -2010,7 +1991,7 @@ function renderLabCard(n){
         <span${n.pinned?' class="lab-pin"':''}>★</span>
       </button>
       <button class="lab-act-btn" onclick="labEditNotebook(${n.id})" title="Edit">✎</button>
-      <button class="lab-act-btn del" onclick="labDeleteNotebook(${n.id})" title="Delete">✕</button>
+      <button class="lab-act-btn del" onclick="labDeleteNotebook(${n.id},'${esc(n.title)}')" title="Delete">✕</button>
     </div>
   </div>`;
 }
@@ -2033,7 +2014,6 @@ function renderLabForm(){
   </div>`;
 }
 
-function labOpenNotebook(id){const n=labNotebooks.find(function(x){return x.id===id;});if(n)window.open(n.url,'_blank');}
 function labToggleForm(){labShowForm=!labShowForm;labEditId=null;renderLab();}
 function labCancelForm(){labShowForm=false;labEditId=null;renderLab();}
 function labSetCat(c){labCategory=c;renderLab();}
@@ -2049,7 +2029,8 @@ async function labSaveNotebook(){
   if(!url){alert('Enter the Kaggle notebook URL');return;}
 
   try{
-    const uid=await getUserId();
+    const users=await sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1');
+    const uid=users.length?users[0].id:null;
 
     if(labEditId){
       await sbPatch('code_sensei_notebooks',labEditId,{title,url,category:cat,tags,description:desc,updated_at:new Date().toISOString()});
@@ -2075,7 +2056,6 @@ async function labTogglePin(id,pinned){
 }
 
 async function labDeleteNotebook(id,title){
-  const nb=labNotebooks.find(function(n){return n.id===id;});title=nb?nb.title:'notebook';
   if(!confirm('Delete "'+title+'"?'))return;
   try{
     await fetch(`${SB}/code_sensei_notebooks?id=eq.${id}`,{method:'DELETE',headers:HDR});
@@ -2141,11 +2121,11 @@ async function exEnsurePythonDay(dayNum,dayTitle){
 // ─── Data loader ───
 async function exLoad(){
   try{
-    const [exs,atts,cds,uid,mists]=await Promise.all([
+    const [exs,atts,cds,users,mists]=await Promise.all([
       sbq('code_sensei_exercises','select=*&order=id.desc'),
       sbq('code_sensei_attempts','select=*&order=exercise_id,attempt_number'),
       sbq('code_sensei_course_days','select=*&order=course_name,day_number'),
-      getUserId(),
+      sbq('code_sensei_users','select=id&name=eq.Aniket&limit=1'),
       sbq('code_sensei_mistakes','select=*&order=id.desc')
     ]);
     if(!Array.isArray(exs)||!Array.isArray(atts)||!Array.isArray(cds)){
@@ -2159,7 +2139,7 @@ async function exLoad(){
     S.exCourseDays=cds;
     S.exCourseDaysById={};
     cds.forEach(function(cd){S.exCourseDaysById[cd.id]=cd;});
-    S.exUserId=(uid!==undefined&&uid!==null)?uid:null;
+    S.exUserId=(Array.isArray(users)&&users[0])?users[0].id:null;
     // Mistakes are optional — table may not exist yet. Treat non-array as empty.
     S.exMistakes={};
     if(Array.isArray(mists)){
@@ -2615,7 +2595,6 @@ function exOpenNewAttempt(){S.exView='new_attempt';S.exForm={};window.scrollTo({
 
 // ─── Called from a Python day card (comes in with dayNum) ───
 async function exOpenFromDay(dayNum,dayTitle){
-  if(!dayTitle){const pd=PY100_DAYS.find(function(d){return d.d===dayNum;});dayTitle=pd?pd.t:('Day '+dayNum);}
   // Ensure data loaded
   if(!S.exLoaded){await exLoad();if(S.exError){alert(S.exError);return;}}
   const cdId=await exEnsurePythonDay(dayNum,dayTitle);
@@ -2635,8 +2614,8 @@ async function exOpenDetailFromDay(id){
 // ─── Embed inside a Python day card ───
 function exRenderDayEmbed(dayNum,dayTitle){
   if(!S.exLoaded){
-    if(S.exError)return '<div class="ex-embed"><div class="ex-embed-label">Your exercises on this day</div><div class="ex-embed-empty">\u26a0 '+esc(S.exError)+'</div></div>';
-    if(!S.exLoadPending){S.exLoadPending=true;exLoad().then(function(){S.exLoadPending=false;if(py100Expanded===dayNum)goPython();});}
+    // Not yet loaded — kick off a background load, the user can re-expand to see it
+    exLoad().then(function(){if(py100Expanded===dayNum)goPython();});
     return '<div class="ex-embed"><div class="ex-embed-label">Your exercises on this day</div><div class="ex-embed-empty">Loading…</div></div>';
   }
   // Find course_day row for this day (if it exists)
@@ -2658,7 +2637,7 @@ function exRenderDayEmbed(dayNum,dayTitle){
     }).join('');
   }
   return '<div class="ex-embed"><div class="ex-embed-label">Your exercises on this day</div>'+rows+
-    '<button class="ex-embed-add" onclick="event.stopPropagation();exOpenFromDay('+dayNum+')">+ Log exercise on Day '+dayNum+'</button>'+
+    '<button class="ex-embed-add" onclick="event.stopPropagation();exOpenFromDay('+dayNum+',\''+esc(dayTitle).replace(/'/g,"\\'")+'\')">+ Log exercise on Day '+dayNum+'</button>'+
     '</div>';
 }
 
