@@ -1,0 +1,42 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-cs-secret",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+const json = (obj: unknown, status: number) =>
+  new Response(JSON.stringify(obj), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+
+  // Shared-secret gate: refuse anyone without the app's header.
+  const secret = Deno.env.get("CS_SHARED_SECRET");
+  if (!secret) return json({ error: "CS_SHARED_SECRET not configured on the server" }, 500);
+  if (req.headers.get("x-cs-secret") !== secret) return json({ error: "Forbidden" }, 403);
+
+  try {
+    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!apiKey) return json({ error: "ANTHROPIC_API_KEY not configured on the server" }, 500);
+
+    const body = await req.json();
+    // Server-side caps so a leaked secret can't run up big bills.
+    if (typeof body?.max_tokens !== "number" || body.max_tokens > 2000) body.max_tokens = 2000;
+
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify(body),
+    });
+    const text = await r.text();
+    return new Response(text, { status: r.status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  } catch (e) {
+    return json({ error: String((e as Error)?.message ?? e) }, 500);
+  }
+});

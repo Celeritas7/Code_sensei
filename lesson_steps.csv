@@ -1,0 +1,15 @@
+topic_id,module_number,step_number,title,body_md,code_snippet
+bat,1,1,Your First Batch File Line,Every batch file starts with **`@ECHO OFF`**. This hides the commands themselves from printing on screen—you only see the *output*. The **`@`** symbol hides even this line itself.,@ECHO OFF
+bat,1,2,Printing and Comments,**`ECHO`** prints text to the screen—anything you write after it appears exactly as typed. **`REM`** creates a comment; the computer ignores everything after it. Use comments to explain your code.,"ECHO HELLO WORLD!!
+REM This is a comment - totally ignored"
+bat,1,3,Navigation and Control,"**`CD`** changes your current directory (folder). Used alone, it shows *where you are*. **`cls`** clears the screen. **`PAUSE`** stops and waits for a keypress—keeps the window open so you can read output.","CD C:\Users\VaishM\Desktop\ac
+CD
+cls
+PAUSE"
+bat,1,4,Copying Files,"**`COPY source destination`** copies files. Use **`*`** as a wildcard (e.g., `*.txt` = all text files). When paths have **spaces**, wrap them in `""quotes""` or Windows breaks the command.","COPY ""path\*.txt"" destination"
+bat,1,5,Deleting Files Safely,**`DEL`** removes files. The **`/s`** flag searches subfolders. The **`/p`** flag asks for confirmation *before each delete*—combine them for safe bulk deletion.,"DEL /p /s ""path\*.txt"""
+bat,1,6,Moving and Renaming,"**`MOVE source destination`** moves files (originals disappear, unlike COPY). Without a destination, it *renames* in place. You can move entire folders—if the destination doesn't exist, Windows creates it.",MOVE B CDE
+bat,1,7,File Attributes,"**`ATTRIB`** changes file properties. **`+r`** makes read-only, **`+h`** hides the file, **`-r`** or **`-h`** removes them. Combine multiple: `ATTRIB -h +r ""file""` unhides *and* protects in one command.","ATTRIB +r ""filepath""
+ATTRIB -h +r ""filepath"""
+bat,1,8,Searching and Renaming,"**`FIND ""text"" ""filepath""`** searches inside a file and prints matching lines—both arguments need quotes. **`REN ""full\path\old.txt"" ""new.txt""`** renames: first argument is the *full path*, second is *only the new name* (no path).","FIND ""MAYANK"" ""filepath""
+REN ""full\path\oldname.txt"" ""newname.txt"""
