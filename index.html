@@ -427,6 +427,19 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .ex-snippet-label{font-size:9.5px;font-weight:700;letter-spacing:1px;color:var(--td);text-transform:uppercase;margin-bottom:3px}
 .ex-snippet-bad{background:color-mix(in srgb,var(--r) 5%,transparent);border-left:2px solid color-mix(in srgb,var(--r) 30%,transparent);padding:8px 10px;border-radius:0 6px 6px 0;font-family:var(--dojo-font-mono);font-size:11px;color:var(--code-ink);white-space:pre;overflow-x:auto;line-height:1.55}
 .ex-snippet-good{background:color-mix(in srgb,var(--g) 4%,transparent);border-left:2px solid color-mix(in srgb,var(--g) 30%,transparent);padding:8px 10px;border-radius:0 6px 6px 0;font-family:var(--dojo-font-mono);font-size:11px;color:var(--code-ink);white-space:pre;overflow-x:auto;line-height:1.55}
+/* ─── Phase 9: Dojo mistake bank (card grid like v2) ─── */
+.dojo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px;align-items:start}
+.dojo-card{background:var(--c);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color .12s}
+.dojo-card:hover{border-color:color-mix(in srgb,var(--a) 30%,transparent)}
+.dojo-card-row{display:flex;align-items:center;gap:12px}
+.dojo-tile{width:36px;height:36px;border-radius:8px;color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--dojo-font-mono);font-size:10px;font-weight:800;flex-shrink:0}
+.dojo-card-title{font-size:13.5px;font-weight:600;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.dojo-card-meta{font-size:11px;color:var(--td);margin-top:2px}
+.dojo-src{font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:999px;flex-shrink:0;white-space:nowrap}
+.dojo-src-quiz{background:color-mix(in srgb,var(--a) 10%,transparent);color:var(--a);border:1px solid color-mix(in srgb,var(--a) 25%,transparent)}
+.dojo-src-log{background:color-mix(in srgb,var(--b) 8%,transparent);color:var(--b);border:1px solid color-mix(in srgb,var(--b) 22%,transparent)}
+.dojo-detail{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);cursor:auto}
+.dojo-empty{text-align:center;padding:56px 20px;color:var(--td)}
 .ex-att-toolbar{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
 .ex-att-toolbar button{font-size:10.5px;padding:5px 10px;border-radius:6px;background:transparent;border:1px solid var(--bd);color:var(--tm);cursor:pointer}
 .ex-att-toolbar button:hover{color:var(--a);border-color:color-mix(in srgb,var(--a) 30%,transparent)}
@@ -489,6 +502,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
     <div class="nv" id="nav-web" onclick="goWebApps()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">🌐</span>Web Apps</div>
     <div class="nv" id="nav-aiml" onclick="goAIML()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">🤖</span>AI / ML</div>
     <div class="nv" id="nav-ex" onclick="goExercises()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">✎</span>Exercises</div>
+    <div class="nv" id="nav-dojo" onclick="goDojo()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">⚔</span>Dojo</div>
   </div>
   <div class="sb-ft" style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><button id="theme-btn" onclick="toggleTheme()" style="background:var(--c);border:1px solid var(--bd);color:var(--tm);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit">◑ Dark</button><span>Learning from your own code</span></div>
 </div>
@@ -604,7 +618,7 @@ Expect: eco = 1, groups = (number of change_groups you produced).
 - [ ] Refreshing CodeSensei's diff viewer for this pair renders the grouped cards from cache (no spinner, no live API call)`;
 
 let cache={lessons:null,lines:null,challenges:null,commits:{},commitNotes:{},commitStatus:{}};
-let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false,diffA:null,diffB:null,diffResult:null,diffAnalysis:null,diffGrouped:null,analyzing:false,exList:[],exAttempts:{},exCourseDays:[],exCourseDaysById:{},exUserId:null,exView:'list',exDetailId:null,exFilter:'all',exForm:{},exLoaded:false,exError:null,exReturn:null,exMistakes:{},exMistakeForm:null,exImportText:''};
+let S={view:'dash',topic:'bat',mod:null,stage:'learn',layer:'main',chatMsgs:[],openLines:{},answers:{},revealed:{},notesOpen:false,diffA:null,diffB:null,diffResult:null,diffAnalysis:null,diffGrouped:null,analyzing:false,exList:[],exAttempts:{},exCourseDays:[],exCourseDaysById:{},exUserId:null,exView:'list',exDetailId:null,exFilter:'all',exForm:{},exLoaded:false,exError:null,exReturn:null,exMistakes:{},exMistakeForm:null,exImportText:'',dojoList:[],dojoMistakes:[],dojoLoaded:false,dojoFilter:'all',dojoOpen:{}};
 let promptContexts=[];
 
 async function sbq(table,query=''){try{const r=await fetch(`${SB}/${table}?${query}`,{headers:HDR});const d=await r.json();if(!r.ok){console.error('sbq',table,r.status,d);sbFail(table+' query failed ('+r.status+')');return[];}return d;}catch(e){console.error(e);sbFail(table+' unreachable');return[];}}
@@ -843,7 +857,7 @@ function renderLayer(les){
 async function sendMsg(){const i=document.getElementById('ci');const t=i.value.trim();if(!t)return;i.value='';S.chatMsgs.push({r:'u',t});renderLayer(cache.lessons[0]);try{const r=await fetch(`${SB_FN}/claude-proxy`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+K,'x-cs-secret':CS_SECRET},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:'You are CodeSensei, a patient coding tutor for a beginner named Aniket in Japan. Under 150 words. Use **bold** and `backticks`. Encouraging.',messages:S.chatMsgs.map(m=>({role:m.r==='u'?'user':'assistant',content:m.t}))})});const d=await r.json();S.chatMsgs.push({r:'a',t:d.content.map(c=>c.text||'').join('')});}catch(e){S.chatMsgs.push({r:'a',t:'Great question! Let me try a different angle.\n\nThink of code like a recipe — each line is one step. The computer follows them top to bottom.\n\nAsk something more specific and I can help!'});}renderLayer(cache.lessons[0]);}
 function renderFiles(files,fileOrder){const sf=document.getElementById('sf');if(!sf)return;promptContexts=[];const les=cache.lessons?cache.lessons[0]:null;const topicId=S.topic;const modNum=S.mod;const modTitle=les?les.module_title:'';sf.innerHTML=fileOrder.map(fn=>{const fn2=fn.trim();const exps=files[fn2];if(!exps||!exps.length)return'';return`<div style="margin-bottom:16px"><div class="sf-h">📄 ${fn2}</div><div class="sf-b">${exps.map(e=>{const k=fn2+'-'+e.line_number;const open=S.openLines[k];const code=e.code_text||e.concept_tag||'';const ctx={type:'line',topic:topicId,module:modNum,moduleTitle:modTitle,filename:fn2,lineNum:e.line_number,code:code,explanation:e.explanation||''};return`<div><div class="sl${open?' on':''}" onclick="togLine('${k}')"><span class="sl-n">${e.line_number}</span><span class="sl-c">${esc(code)}</span><span class="sl-h">${open?'▼':'💡'}</span></div>${open?'<div class="sl-e">'+md(e.explanation)+promptBtns(ctx)+'</div>':''}</div>`;}).join('')}</div></div>`;}).join('');}
 function togLine(k){S.openLines[k]=!S.openLines[k];const les=cache.lessons[0];const files={};cache.lines.forEach(l=>{if(!files[l.source_filename])files[l.source_filename]=[];files[l.source_filename].push(l);});renderFiles(files,les.source_files||Object.keys(files));}
-function renderQs(sc,qs,label){S.qs=qs;if(!qs.length){sc.innerHTML='<div style="text-align:center;color:var(--td);padding:40px">No questions yet.</div>';return;}const isT=label==='TEST';sc.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-size:11px;color:${isT?'var(--p)':'var(--a)'};font-weight:700;letter-spacing:1px">${label} — ${qs.length} QUESTIONS</div>${heartsRowHtml()}</div>${qs.map((q,qi)=>{const a=S.answers[qi]!==undefined;const rv=S.revealed[qi];let opts='';if(q.challenge_type==='multiple_choice'&&q.options){const os=typeof q.options==='string'?JSON.parse(q.options):q.options;if(!a&&typeEligible(q,qi)){opts=renderTypeQuiz(q,qi);}else if(!a&&tapEligible(os,qi)){opts=renderTapQuiz(q,os,qi);}else opts=os.map((o,oi)=>{let c='qo';if(a&&S.answers[qi]===oi)c+=o===q.correct_answer?' ok':' no';if(a&&o===q.correct_answer)c+=' ok';return`<div class="${c}" onclick="ansQ(${qi},${oi})">${esc(o)}</div>`;}).join('');}return`<div class="qc"><div class="ql" style="color:${isT?'var(--p)':'var(--a)'}">Q${qi+1} · ${(!a&&q.challenge_type==='multiple_choice'&&q.options&&typeEligible(q,qi))?'TYPE IT':(!a&&q.challenge_type==='multiple_choice'&&q.options&&tapEligible(typeof q.options==='string'?JSON.parse(q.options):q.options,qi))?'TAP TO FILL':q.challenge_type.replace(/_/g,' ').toUpperCase()}</div><div class="qt">${md(q.question)}</div>${q.code_snippet?'<pre class="qcd">'+esc(q.code_snippet)+'</pre>':''}${opts}${q.challenge_type!=='multiple_choice'&&!rv?'<button style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--as);color:var(--a)" onclick="revQ('+qi+')">Show Answer</button>':''}${a&&S.typed&&S.typed[qi]!==undefined?'<div style="margin-top:10px;font-size:12px;color:var(--tm)">You typed: <span style="font-family:var(--dojo-font-mono,monospace);color:'+(S.answers[qi]===-1?'var(--r)':'var(--g)')+'">'+esc(S.typed[qi])+'</span></div>':''}${rv||a?'<div style="margin-top:10px"><div style="font-size:11px;color:var(--g);font-weight:600;margin-bottom:6px">ANSWER:</div><pre class="qcd">'+esc(q.correct_answer)+'</pre></div>':''}${(rv||a)&&q.explanation?'<div class="qx">'+md(q.explanation)+'</div>':''}</div>`;}).join('')}${isT?scoreHtml(qs):''}`;
+function renderQs(sc,qs,label){S.qs=qs;S.qsLabel=label;if(!qs.length){sc.innerHTML='<div style="text-align:center;color:var(--td);padding:40px">No questions yet.</div>';return;}const isT=label==='TEST';sc.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-size:11px;color:${isT?'var(--p)':'var(--a)'};font-weight:700;letter-spacing:1px">${label} — ${qs.length} QUESTIONS</div>${heartsRowHtml()}</div>${qs.map((q,qi)=>{const a=S.answers[qi]!==undefined;const rv=S.revealed[qi];let opts='';if(q.challenge_type==='multiple_choice'&&q.options){const os=typeof q.options==='string'?JSON.parse(q.options):q.options;if(!a&&typeEligible(q,qi)){opts=renderTypeQuiz(q,qi);}else if(!a&&tapEligible(os,qi)){opts=renderTapQuiz(q,os,qi);}else opts=os.map((o,oi)=>{let c='qo';if(a&&S.answers[qi]===oi)c+=o===q.correct_answer?' ok':' no';if(a&&o===q.correct_answer)c+=' ok';return`<div class="${c}" onclick="ansQ(${qi},${oi})">${esc(o)}</div>`;}).join('');}return`<div class="qc"><div class="ql" style="color:${isT?'var(--p)':'var(--a)'}">Q${qi+1} · ${(!a&&q.challenge_type==='multiple_choice'&&q.options&&typeEligible(q,qi))?'TYPE IT':(!a&&q.challenge_type==='multiple_choice'&&q.options&&tapEligible(typeof q.options==='string'?JSON.parse(q.options):q.options,qi))?'TAP TO FILL':q.challenge_type.replace(/_/g,' ').toUpperCase()}</div><div class="qt">${md(q.question)}</div>${q.code_snippet?'<pre class="qcd">'+esc(q.code_snippet)+'</pre>':''}${opts}${q.challenge_type!=='multiple_choice'&&!rv?'<button style="padding:8px 16px;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--as);color:var(--a)" onclick="revQ('+qi+')">Show Answer</button>':''}${a&&S.typed&&S.typed[qi]!==undefined?'<div style="margin-top:10px;font-size:12px;color:var(--tm)">You typed: <span style="font-family:var(--dojo-font-mono,monospace);color:'+(S.answers[qi]===-1?'var(--r)':'var(--g)')+'">'+esc(S.typed[qi])+'</span></div>':''}${rv||a?'<div style="margin-top:10px"><div style="font-size:11px;color:var(--g);font-weight:600;margin-bottom:6px">ANSWER:</div><pre class="qcd">'+esc(q.correct_answer)+'</pre></div>':''}${(rv||a)&&q.explanation?'<div class="qx">'+md(q.explanation)+'</div>':''}</div>`;}).join('')}${isT?scoreHtml(qs):''}`;
 }
 // Phase 6: tap-fill variant — derived from MCQ content (correct option = required token, distractors = decoys)
 function tapEligible(os,qi){return Array.isArray(os)&&os.length>=3&&os.length<=6&&os.every(o=>String(o).length<=28)&&qi%2===1;}
@@ -871,10 +885,107 @@ function ansQ(qi,oi){if(S.answers[qi]!==undefined)return;
   S.answers[qi]=oi;const q=S.qs&&S.qs[qi];let correct=false;
   if(q){const os=typeof q.options==='string'?JSON.parse(q.options):q.options;correct=!!(os&&os[oi]===q.correct_answer);}
   if(correct){streakTick();renderModule();}
-  else{const left=heartsSpend();setTimeout(renderModule,left===0?250:300);}
+  else{const left=heartsSpend();dojoRecordMiss(qi,oi);setTimeout(renderModule,left===0?250:300);}
 }
 function revQ(qi){S.revealed[qi]=true;renderModule();}
 function scoreHtml(qs){const mc=qs.filter(q=>q.challenge_type==='multiple_choice');const tot=Object.keys(S.answers).length;if(tot<mc.length)return'';let ok=0;mc.forEach((q,qi)=>{const os=typeof q.options==='string'?JSON.parse(q.options):q.options;if(os[S.answers[qi]]===q.correct_answer)ok++;});const pass=ok>=Math.ceil(mc.length*0.6);return`<div class="sc" style="border-color:${pass?'color-mix(in srgb,var(--g) 20%,transparent)':'color-mix(in srgb,var(--r) 20%,transparent)'}"><div style="font-size:36px;font-weight:700;color:${pass?'var(--g)':'var(--r)'};margin-bottom:4px">${ok}/${mc.length}</div><div style="font-size:13px;color:var(--td)">${pass?'🎉 Passed!':'Need '+Math.ceil(mc.length*0.6)+' to pass.'}</div></div>`;}
+
+// ═══════════════════════════════════════
+// DOJO — mistake bank (Phase 9: quiz misses auto-feed via code_sensei_wrong_answers)
+// ═══════════════════════════════════════
+const DOJO_LANG={bat:{l:'BAT',c:'#b8412e'},sql:{l:'SQL',c:'#10B981'},python:{l:'PY',c:'#4b8bbe'},py:{l:'PY',c:'#4b8bbe'},javascript:{l:'JS',c:'#b58900'},js:{l:'JS',c:'#b58900'},html:{l:'HTML',c:'#e34c26'},css:{l:'CSS',c:'#8a5cf6'},web:{l:'WEB',c:'#38bdf8'}};
+function dojoLang(key){const k=String(key||'').toLowerCase();return DOJO_LANG[k]||{l:(k||'?').slice(0,4).toUpperCase(),c:'#8a7d68'};}
+function dojoStrip(t){return String(t||'').replace(/```[^`]*```/gs,' [code] ').replace(/[*`]/g,'').trim();}
+function dojoAgo(iso){if(!iso)return'';const s=(Date.now()-new Date(iso).getTime())/1e3;if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}
+
+async function dojoRecordMiss(qi,oi){try{
+  const q=S.qs&&S.qs[qi];if(!q||!q.id)return;
+  const os=typeof q.options==='string'?JSON.parse(q.options):q.options;
+  const typed=S.typed&&S.typed[qi]!==undefined;
+  const yourAnswer=typed?S.typed[qi]:(Array.isArray(os)&&os[oi]!==undefined?String(os[oi]):'');
+  const variant=typed?'type-it':((S.tapSel&&S.tapSel[qi]!==undefined)?'tap-fill':'mcq');
+  const now=new Date().toISOString();
+  const ex=await sbq('code_sensei_wrong_answers','select=id,miss_count&challenge_id=eq.'+encodeURIComponent(String(q.id))+'&limit=1');
+  if(Array.isArray(ex)&&ex[0]){
+    await sbPatch('code_sensei_wrong_answers',ex[0].id,{miss_count:(ex[0].miss_count||1)+1,your_answer:yourAnswer,source:variant,last_missed_at:now,due_at:now,mastered:false});
+  }else{
+    const uid=await getUserId();
+    const r=await sbPost('code_sensei_wrong_answers',{user_id:uid==null?null:String(uid),challenge_id:String(q.id),topic_id:q.topic_id||S.topic,module_number:(q.module_number!=null?q.module_number:S.mod)==null?null:String(q.module_number!=null?q.module_number:S.mod),question:q.question,code_snippet:q.code_snippet||null,your_answer:yourAnswer,correct_answer:q.correct_answer,source:variant});
+    if(r)exToast('\u2694 Added to your Dojo for a re-match later');
+  }
+  S.dojoLoaded=false;
+}catch(e){console.error('dojoRecordMiss',e);}}
+
+async function goDojo(){
+  S.view='dojo';setNav('nav-dojo');
+  document.getElementById('main').innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Opening the Dojo\u2026</div></div>';
+  if(!S.dojoLoaded){
+    const [wrongs,mists]=await Promise.all([
+      sbq('code_sensei_wrong_answers','select=*&order=last_missed_at.desc'),
+      sbq('code_sensei_mistakes','select=*&order=id.desc')
+    ]);
+    S.dojoList=Array.isArray(wrongs)?wrongs:[];
+    S.dojoMistakes=Array.isArray(mists)?mists:[];
+    S.dojoLoaded=true;
+  }
+  if(S.view==='dojo')dojoRender();
+}
+function dojoItems(){
+  const quiz=S.dojoList.map(w=>({kind:'quiz',id:'q'+w.id,lang:w.topic_id,title:dojoStrip(w.question),ts:w.last_missed_at||w.created_at,w:w}));
+  const logs=S.dojoMistakes.map(m=>({kind:'log',id:'m'+m.id,lang:m.language||m.category,title:m.title,ts:m.created_at,m:m}));
+  return quiz.concat(logs).sort((a,b)=>new Date(b.ts||0)-new Date(a.ts||0));
+}
+function dojoSetFilter(f){S.dojoFilter=f;dojoRender();}
+function dojoToggle(id){S.dojoOpen[id]=!S.dojoOpen[id];dojoRender();}
+async function dojoOpenExercise(id){if(!S.exLoaded){await exLoad();if(S.exError){alert(S.exError);return;}}exOpenDetail(id);}
+function dojoCardHtml(it){
+  const lg=dojoLang(it.lang);const open=S.dojoOpen[it.id];
+  let meta='',detail='';
+  if(it.kind==='quiz'){const w=it.w;
+    meta=esc(String(w.topic_id||'').toUpperCase())+(w.module_number?' \u00b7 Module '+w.module_number:'')+' \u00b7 missed \u00d7'+(w.miss_count||1)+(w.last_missed_at?' \u00b7 '+dojoAgo(w.last_missed_at):'');
+    if(open)detail='<div class="dojo-detail" onclick="event.stopPropagation()">'+
+      '<div class="qt">'+md(w.question)+'</div>'+
+      (w.code_snippet?'<pre class="qcd">'+esc(w.code_snippet)+'</pre>':'')+
+      '<div class="ex-mistake-pair">'+
+      '<div><div class="ex-snippet-label" style="color:var(--r)">your answer</div><div class="ex-snippet-bad">'+esc(w.your_answer||'\u2014')+'</div></div>'+
+      '<div><div class="ex-snippet-label" style="color:var(--g)">correct answer</div><div class="ex-snippet-good">'+esc(w.correct_answer)+'</div></div>'+
+      '</div></div>';
+  }else{const m=it.m;
+    meta=[m.category,m.language,it.ts?dojoAgo(it.ts):''].filter(Boolean).map(esc).join(' \u00b7 ');
+    if(open)detail='<div class="dojo-detail" onclick="event.stopPropagation()">'+
+      (m.description?'<div class="ex-mistake-desc">'+esc(m.description)+'</div>':'')+
+      ((m.code_snippet||m.correct_form)?'<div class="ex-mistake-pair">'+
+        (m.code_snippet?'<div><div class="ex-snippet-label" style="color:var(--r)">what I wrote</div><div class="ex-snippet-bad">'+esc(m.code_snippet)+'</div></div>':'')+
+        (m.correct_form?'<div><div class="ex-snippet-label" style="color:var(--g)">what it should be</div><div class="ex-snippet-good">'+esc(m.correct_form)+'</div></div>':'')+
+      '</div>':'')+
+      (m.exercise_id?'<button class="ex-btn-s" style="margin-top:10px" onclick="dojoOpenExercise('+m.exercise_id+')">Open exercise \u2192</button>':'')+
+      '</div>';
+  }
+  return '<div class="dojo-card" onclick="dojoToggle(\''+it.id+'\')">'+
+    '<div class="dojo-card-row">'+
+    '<div class="dojo-tile" style="background:'+lg.c+'">'+esc(lg.l)+'</div>'+
+    '<div style="flex:1;min-width:0"><div class="dojo-card-title">'+esc(it.title||'Untitled')+'</div><div class="dojo-card-meta">'+meta+'</div></div>'+
+    '<span class="dojo-src '+(it.kind==='quiz'?'dojo-src-quiz':'dojo-src-log')+'">'+(it.kind==='quiz'?'quiz miss':'logged')+'</span>'+
+    '</div>'+detail+'</div>';
+}
+function dojoRender(){
+  const items=dojoItems();
+  const langs=[...new Set(items.map(i=>dojoLang(i.lang).l))];
+  const f=S.dojoFilter;
+  const shown=items.filter(i=>f==='all'||(f==='quiz'&&i.kind==='quiz')||(f==='log'&&i.kind==='log')||dojoLang(i.lang).l===f);
+  const chip=(id,label,n)=>'<button class="tb '+(f===id?'on':'')+'" onclick="dojoSetFilter(\''+id+'\')">'+label+(n!=null?' <span class="ct">'+n+'</span>':'')+'</button>';
+  const filters='<div class="tabs">'+chip('all','All',items.length)+chip('quiz','Quiz misses',items.filter(i=>i.kind==='quiz').length)+chip('log','Logged',items.filter(i=>i.kind==='log').length)+langs.map(l=>chip(l,l)).join('')+'</div>';
+  const n=items.length;
+  const h1=n?n+' mistake'+(n>1?'s':'')+' in the bank':'A clean slate.';
+  const body=!n
+    ?'<div class="dojo-empty"><div style="font-size:40px;margin-bottom:12px">\u2694</div><div style="font-size:16px;font-weight:700;color:var(--tx);margin-bottom:6px">Your Dojo is empty</div><div style="font-size:13px;line-height:1.6">Miss a quiz question and it lands here automatically for a re-match later.</div></div>'
+    :(!shown.length?'<div class="ex-empty">No mistakes match this filter.</div>':'<div class="dojo-grid">'+shown.map(dojoCardHtml).join('')+'</div>');
+  document.getElementById('main').innerHTML='<div class="pg">'+
+    '<div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1.5px;margin-bottom:4px">YOUR DOJO</div>'+
+    '<h1 style="margin-bottom:4px">'+h1+'</h1>'+
+    '<p class="sub">Every miss is a future win \u2014 quiz misses land here automatically.</p>'+
+    (n?filters:'')+body+'</div>';
+}
 
 // ═══════════════════════════════════════
 // MY PROJECTS
