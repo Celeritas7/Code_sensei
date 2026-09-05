@@ -1178,7 +1178,7 @@ function drillRender(){
     '<h1 style="margin-bottom:14px">Beat your old mistake</h1>'+
     '<div class="drill-bar"><div class="drill-bar-fill" style="width:'+Math.round(d.i/d.queue.length*100)+'%"></div></div>'+
     '<div class="qc"><div class="ql" style="color:var(--a)">'+esc(lg.l)+(w.module_number?' \u00b7 MODULE '+esc(w.module_number):'')+' \u00b7 MISSED \u00d7'+(w.miss_count||1)+'</div>'+
-    '<div class="qt">'+md(w.question)+'</div>'+
+    '<div class="qt" style="white-space:pre-wrap">'+qtext(w.question)+'</div>'+
     (w.code_snippet?'<pre class="qcd">'+esc(w.code_snippet)+'</pre>':'')+rows+
     (picked!==null?'<div style="margin-top:14px">'+
       (opts[picked]===w.correct_answer
@@ -1202,8 +1202,10 @@ async function goDojo(){
   }
   if(S.view==='dojo')dojoRender();
 }
+// Stored questions can carry literal \n as two characters — render them as real breaks
+function qtext(s){return md(String(s==null?'':s).replace(/\\r\\n/g,'\n').replace(/\\n/g,'\n'));}
 function dojoItems(){
-  const quiz=S.dojoList.map(w=>({kind:'quiz',id:'q'+w.id,lang:w.topic_id,title:dojoStrip(w.question),ts:w.last_missed_at||w.created_at,w:w}));
+  const quiz=S.dojoList.map(w=>({kind:'quiz',id:'q'+w.id,lang:w.topic_id,title:dojoStrip(String(w.question==null?'':w.question).replace(/\\r\\n|\\n/g,' ')),ts:w.last_missed_at||w.created_at,w:w}));
   const logs=S.dojoMistakes.map(m=>({kind:'log',id:'m'+m.id,lang:m.language||m.category,title:m.title,ts:m.created_at,m:m}));
   return quiz.concat(logs).sort((a,b)=>new Date(b.ts||0)-new Date(a.ts||0));
 }
@@ -1216,7 +1218,7 @@ function dojoCardHtml(it){
   if(it.kind==='quiz'){const w=it.w;
     meta=esc(String(w.topic_id||'').toUpperCase())+(w.module_number?' \u00b7 Module '+esc(w.module_number):'')+' \u00b7 missed \u00d7'+(w.miss_count||1)+(w.last_missed_at?' \u00b7 '+dojoAgo(w.last_missed_at):'');
     if(open)detail='<div class="dojo-detail" onclick="event.stopPropagation()">'+
-      '<div class="qt">'+md(w.question)+'</div>'+
+      '<div class="qt" style="white-space:pre-wrap">'+qtext(w.question)+'</div>'+
       (w.code_snippet?'<pre class="qcd">'+esc(w.code_snippet)+'</pre>':'')+
       '<div class="ex-mistake-pair">'+
       '<div><div class="ex-snippet-label" style="color:var(--r)">your answer</div><div class="ex-snippet-bad">'+esc(w.your_answer||'\u2014')+'</div></div>'+

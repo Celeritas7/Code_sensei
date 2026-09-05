@@ -36,7 +36,7 @@ if not defined PY (
   echo.
   echo Could not find Python automatically.
   echo Open "Anaconda Prompt", cd to this folder, and run:
-  echo     python -m http.server 5171 --directory "%ROOT%"
+  echo     python -m http.server 5141 --directory "%ROOT%"
   echo.
   pause & goto :eof
 )
@@ -44,12 +44,12 @@ if not defined PY (
 echo.
 echo   Code Sensei - local server
 echo   Python:  %PY%
-echo   Serving: %CD%    Open: http://localhost:5171/
+echo   Serving: %CD%    Open: http://localhost:5141/
 echo   (Close this window to stop. Supabase data loads over the network as usual.)
 echo.
 
-start "" "http://localhost:5171/"
-"%PY%" -m http.server 5171 --directory "%ROOT%"
+start "" "http://localhost:5141/"
+"%PY%" -m http.server 5141 --directory "%ROOT%"
 
 echo.
 echo Server stopped.
