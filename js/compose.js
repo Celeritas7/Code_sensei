@@ -4,8 +4,8 @@
 // Render scopes: clRender() = whole page (problem load / theme) · clRenderTop() = header+strip+problem card
 // · clRenderStack() = block cards · clSetActive() = class toggles only · clRenderPal/Out/Attempts/Sensei/Ovl = own container.
 // ═══════════════════════════════════════
-const CL={list:null,pid:null,lang:'python',group:'All',blocks:[],active:-1,attempts:[],ran:null,keysOpen:true,chat:[],live:false,pending:null,reveal:false,solved:{},hintIdx:0};
-const CL_KEYS={python:[['def','for','while','if','elif','else:','in','range(','return','import','not','and','or','True'],['print(','input(','len(','int(','str(','sum(','sorted(','enumerate(','open(','.get(','.split(','.upper('],['":"',')','[]','{}','" "','+=','==','%','self']]};
+const CL={list:null,pid:null,lang:'python',group:'All',blocks:[],active:-1,attempts:[],ran:null,keysOpen:true,chat:[],live:false,pending:null,reveal:false,solved:{},hintIdx:0,asm:null,errLine:-1,errIdx:-1,errStamp:'',full:false};
+const CL_KEYS={python:[['def','for','while','if','elif','else:','in','range(','return','import','not','and','or','True'],['print(','input(','len(','int(','str(','sum(','sorted(','enumerate(','open(','.get(','.split(','.upper('],[':','[]','{}','" "','()','+=','==','!=','%','self']]};
 const CL_XP=20;
 const clJ=v=>{if(typeof v==='string'){try{return JSON.parse(v);}catch(e){return null;}}return v;};
 const clNorm=s=>String(s==null?'':s).replace(/\r/g,'').replace(/[ \t]+$/gm,'').replace(/\n+$/,'');
@@ -32,22 +32,31 @@ async function goCompose(lang){
   clPyReady().catch(()=>{});
 }
 function clLoad(id,silent){const p=CL.list.find(x=>x.id===id);if(!p)return;CL.pid=id;
-  CL.blocks=p.blocks.map(b=>({name:b.name,code:b.code||'',collapsed:false,auto:true}));CL.active=-1;CL.attempts=[];CL.ran=null;CL.pending=null;CL.reveal=false;CL.hintIdx=0;
+  let saved=null;try{saved=JSON.parse(localStorage.getItem('cs_cb_'+id)||'null');}catch(e){saved=null;}
+  const starter=p.blocks.some(b=>(b.code||'').trim());
+  const blank=saved&&saved.length===1&&!(saved[0].c||'').trim();
+  CL.blocks=(saved&&saved.length&&!(blank&&starter))
+    ?saved.map(b=>({name:b.n,code:b.c||'',collapsed:!!b.col,auto:!!b.auto}))
+    :p.blocks.map(b=>({name:b.name,code:b.code||'',collapsed:false,auto:true}));
+  CL.active=-1;CL.attempts=[];CL.ran=null;CL.pending=null;CL.reveal=false;CL.hintIdx=0;CL.asm=null;CL.errIdx=-1;CL.errLine=-1;CL.errStamp='';CL.showExp=false;
   CL.chat=[{r:'s',t:'Stuck on <b>'+esc(p.title)+'</b>? Ask me anything \u2014 I nudge, I don\u2019t hand over the answer.'}];
   if(!silent)clRender();}
-function clReset(){clLoad(CL.pid);}
+function clReset(){try{localStorage.removeItem('cs_cb_'+CL.pid);}catch(e){}const p=clProb();
+  CL.blocks=p.blocks.map(b=>({name:b.name,code:b.code||'',collapsed:false,auto:true}));
+  CL.active=-1;CL.ran=null;clSync();clRenderStack();clRenderPal();clRenderOut();}
 
 // ─── Scope 0: whole page shell (only on load / theme) ───
 function clRender(){const m=clEl('main');if(!m||S.view!=='compose')return;
   m.innerHTML='<div class="pg"><div id="cl-top"></div>'+
   '<div class="cl-composer"><div class="cl-composer-hd"><span>Compose \u00b7 '+esc(CL.lang)+'</span><span id="cl-count"></span></div><div id="cl-stack"></div>'+
   '<button class="cl-addblk" id="cl-add">+ Add block</button><div id="cl-pal"></div></div>'+
-  '<div class="cl-actions"><button class="cl-run" id="cl-run">\u25b6 Assemble &amp; run</button><button class="cl-gbtn" id="cl-reveal">Reveal solution</button><button class="cl-gbtn" id="cl-resetbtn">Reset</button></div>'+
+  '<div class="cl-actions"><button class="cl-run" id="cl-run">\u25b6 Assemble &amp; run</button><button class="cl-gbtn" id="cl-fs">\u2922 Fullscreen</button><button class="cl-gbtn" id="cl-reveal">Reveal solution</button><button class="cl-gbtn" id="cl-resetbtn">Reset</button></div>'+
   '<div id="cl-out"></div><div id="cl-attempts"></div><div id="cl-sensei"></div><div id="cl-ovl"></div></div>';
   clEl('cl-add').addEventListener('click',clAddBlk);
   clEl('cl-run').addEventListener('click',clRun);
   clEl('cl-reveal').addEventListener('click',clReveal);
   clEl('cl-resetbtn').addEventListener('click',clReset);
+  clEl('cl-fs').addEventListener('click',clToggleFull);
   clRenderTop();clRenderStack();clRenderPal();clRenderOut();clRenderAttempts();clRenderSensei();clRenderOvl();}
 
 // ─── Scope 1: header · chips · strip · problem card ───
@@ -60,14 +69,16 @@ function clRenderTop(){const el=clEl('cl-top');if(!el)return;const p=clProb();co
   '<div class="cl-striprow"><span class="lbl">Problems</span><div class="cl-strip">'+clStrip(mine)+'</div></div>'+
   '<div class="cl-exhead"><span class="cl-exid">#'+p.id+'</span><h3>'+esc(p.title)+'</h3><span class="grp">'+esc(p.group)+'</span></div>'+
   '<div class="cl-stmt">'+esc(p.statement)+'</div>'+
-  '<div class="cl-expect"><span class="k">Expected</span><pre>'+esc(p.expected)+'</pre></div>';}
+  clExpectHtml(p);}
+function clExpectHtml(p){const given=p.statement.includes(p.expected);
+  if(given&&!CL.showExp)return '<button class="cl-expbtn" onclick="CL.showExp=true;clRenderTop()">Show expected \u2304</button>';
+  return '<div class="cl-expect"><span class="k">Expected</span><pre>'+esc(p.expected)+'</pre>'+(given?'<button class="cl-exphide" onclick="CL.showExp=false;clRenderTop()">\u2303</button>':'')+'</div>';}
 function clGroupBar(mine){const groups=[];mine.forEach(p=>{if(!groups.includes(p.group))groups.push(p.group);});
   let h='<button class="cl-gchip'+(CL.group==='All'?' on':'')+'" onclick="clGroup(\'All\')">All<span class="n">'+mine.length+'</span></button>';
   groups.forEach(g=>{const all=mine.filter(p=>p.group===g),done=all.filter(p=>CL.solved[p.id]).length;
     h+='<button class="cl-gchip'+(CL.group===g?' on':'')+'" onclick="clGroup('+JSON.stringify(g).replace(/"/g,'&quot;')+')">'+esc(g)+'<span class="n">'+done+'/'+all.length+'</span></button>';});return h;}
-function clStrip(mine){const groups=[];mine.forEach(p=>{if(!groups.includes(p.group))groups.push(p.group);});let h='';
-  groups.forEach(g=>{if(CL.group!=='All'&&CL.group!==g)return;h+='<span class="glab">'+esc(g)+'</span>';
-    mine.filter(p=>p.group===g).forEach(p=>{h+='<button class="cl-pchip'+(p.id===CL.pid?' on':'')+(CL.solved[p.id]?' solved':'')+'" onclick="clLoad('+p.id+')"><b>#'+p.id+'</b>'+esc(p.title)+'</button>';});});return h;}
+function clStrip(mine){return mine.filter(p=>CL.group==='All'||CL.group===p.group)
+  .map(p=>'<button class="cl-pchip'+(p.id===CL.pid?' on':'')+(CL.solved[p.id]?' solved':'')+'" title="#'+p.id+' \u00b7 '+esc(p.group)+'" onclick="clLoad('+p.id+')">'+esc(p.title)+'</button>').join('');}
 function clGroup(g){CL.group=g;clRenderTop();}
 
 // ─── Scope 2: block stack (createElement + listeners; rebuilt only on structural change) ───
@@ -79,29 +90,37 @@ function clCard(b,i){
   const hd=document.createElement('div');hd.className='cl-blk-hd';
   const grip=document.createElement('span');grip.className='cl-grip';grip.textContent='\u283f';
   const name=document.createElement('input');name.className='cl-blk-name';name.value=b.name;name.spellcheck=false;
-  name.addEventListener('input',()=>{b.name=name.value;b.auto=false;clRenderPalHead();});
+  name.addEventListener('input',()=>{b.name=name.value;b.auto=false;clRenderPalHead();clSync();});
   name.addEventListener('focus',()=>clSetActive(i));
   const badge=document.createElement('span');badge.className='cl-ins';badge.textContent='keys insert here';badge.style.display=i===CL.active?'':'none';
+  if(i===CL.errIdx)card.classList.add('cl-err');
   const tools=document.createElement('span');tools.className='cl-blk-tools';
-  const col=clIbtn(b.collapsed?'\u2304':'\u2303','Collapse',()=>{b.collapsed=!b.collapsed;card.classList.toggle('collapsed',b.collapsed);col.textContent=b.collapsed?'\u2304':'\u2303';if(b.collapsed&&CL.active===i)clSetActive(-1);});
-  const dup=clIbtn('\u29c9','Duplicate',()=>{CL.blocks.splice(i+1,0,{name:b.name+'_copy',code:b.code,collapsed:false,auto:false});CL.active=i+1;clRenderStack();clRenderPalHead();});
-  const del=clIbtn('\u00d7','Delete',()=>{if(CL.blocks.length<2)return;CL.blocks.splice(i,1);CL.active=CL.active===i?-1:CL.active>i?CL.active-1:CL.active;clRenderStack();clRenderPalHead();});del.classList.add('x');
+  const col=clIbtn(b.collapsed?'\u2304':'\u2303','Collapse',()=>{b.collapsed=!b.collapsed;card.classList.toggle('collapsed',b.collapsed);col.textContent=b.collapsed?'\u2304':'\u2303';if(b.collapsed&&CL.active===i)clSetActive(-1);clSync();});
+  const dup=clIbtn('\u29c9','Duplicate',()=>{CL.blocks.splice(i+1,0,{name:b.name+'_copy',code:b.code,collapsed:false,auto:false});CL.active=i+1;clRenderStack();clRenderPalHead();clSync();});
+  const del=clIbtn('\u00d7','Delete',()=>{if(CL.blocks.length<2)return;CL.blocks.splice(i,1);CL.active=CL.active===i?-1:CL.active>i?CL.active-1:CL.active;clRenderStack();clRenderPalHead();clSync();});del.classList.add('x');
   tools.append(col,dup,del);
   hd.append(grip,name,badge,tools);
+  if(i===CL.errIdx){const stamp=document.createElement('span');stamp.className='cl-stamp';stamp.textContent=CL.errStamp||'ERROR HERE';stamp.title='Open this block';
+    stamp.addEventListener('click',e=>{e.stopPropagation();b.collapsed=false;clRenderStack();});hd.insertBefore(stamp,tools);}
   hd.addEventListener('click',e=>{if(e.target===hd||e.target===grip)clSetActive(i);});
   const body=document.createElement('div');body.className='cl-blk-body';
-  const gut=document.createElement('div');gut.className='cl-gutter';
+  const ed=document.createElement('div');ed.className='cl-ed';
+  const pre=document.createElement('pre');pre.className='cl-hl';pre.setAttribute('aria-hidden','true');
   const ta=document.createElement('textarea');ta.className='cl-ta';ta.id='cl-ta-'+i;ta.spellcheck=false;ta.placeholder='\u2026';ta.value=b.code;ta.wrap='off';ta.setAttribute('autocapitalize','off');ta.setAttribute('autocorrect','off');
-  const paintGut=()=>{const n=ta.value.split('\n').length;if(gut.children.length!==n){let h='';for(let k=1;k<=n;k++)h+='<div>'+k+'</div>';gut.innerHTML=h;}};
-  ta.addEventListener('input',()=>{b.code=ta.value;paintGut();clGrow(ta);});
+  const paintHl=()=>{pre.innerHTML=clHl(ta.value)+'\n';};
+  ta.addEventListener('scroll',()=>{pre.scrollTop=ta.scrollTop;pre.scrollLeft=ta.scrollLeft;});
+  ta.addEventListener('input',()=>{b.code=ta.value;paintHl();clGrow(ta);
+    if(b.auto){const lbl=clLabelFor(ta.value,b.name);if(lbl!==b.name){b.name=lbl;name.value=lbl;clRenderPalHead();}}
+    if(CL.errIdx===i){CL.errIdx=-1;CL.errStamp='';card.classList.remove('cl-err');const s=hd.querySelector('.cl-stamp');if(s)s.remove();}
+    clSync();});
   ta.addEventListener('focus',()=>clSetActive(i));
   ta.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();clInsertAt(ta,'    ');}if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();clRun();}});
-  body.append(gut,ta);card.append(hd,body);
+  ed.append(pre,ta);body.appendChild(ed);card.append(hd,body);
   card.addEventListener('dragstart',e=>{if(e.target!==card)return;_clDrag=i;card.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
   card.addEventListener('dragover',e=>e.preventDefault());
-  card.addEventListener('drop',e=>{e.preventDefault();if(_clDrag==null||_clDrag===i)return;const mv=CL.blocks.splice(_clDrag,1)[0];CL.blocks.splice(i,0,mv);CL.active=i;_clDrag=null;clRenderStack();clRenderPalHead();});
+  card.addEventListener('drop',e=>{e.preventDefault();if(_clDrag==null||_clDrag===i)return;const mv=CL.blocks.splice(_clDrag,1)[0];CL.blocks.splice(i,0,mv);CL.active=i;_clDrag=null;clRenderStack();clRenderPalHead();clSync();});
   card.addEventListener('dragend',()=>{card.classList.remove('dragging');_clDrag=null;});
-  paintGut();requestAnimationFrame(()=>clGrow(ta));
+  paintHl();requestAnimationFrame(()=>clGrow(ta));
   return card;}
 function clIbtn(txt,title,fn){const b=document.createElement('button');b.className='cl-ibtn';b.title=title;b.textContent=txt;b.addEventListener('click',e=>{e.stopPropagation();fn();});return b;}
 function clGrow(el){el.style.height='auto';el.style.height=Math.max(46,el.scrollHeight)+'px';}
@@ -113,7 +132,16 @@ function clSetActive(i){if(CL.active===i)return;const st=clEl('cl-stack');if(!st
   CL.active=i;
   if(i>=0){const card=st.querySelector('.cl-blk[data-i="'+i+'"]');if(card){card.classList.add('active');const b=card.querySelector('.cl-ins');if(b)b.style.display='';}}
   clRenderPalHead();}
-function clAddBlk(){CL.blocks.push({name:'block '+(CL.blocks.length+1),code:'',collapsed:false,auto:true});CL.active=CL.blocks.length-1;clRenderStack();clRenderPalHead();clEl('cl-ta-'+CL.active)?.focus();}
+function clAddBlk(){const nb={name:'block '+(CL.blocks.length+1),code:'',collapsed:false,auto:true};
+  let mi=-1;CL.blocks.forEach((b,i)=>{if(b.name.trim().toLowerCase()==='main')mi=i;});
+  if(mi<0){CL.blocks.push(nb);CL.active=CL.blocks.length-1;}else{CL.blocks.splice(mi,0,nb);CL.active=mi;}
+  clRenderStack();clRenderPalHead();clSync();clEl('cl-ta-'+CL.active)?.focus();}
+
+function clToggleFull(){const pg=clEl('main').querySelector('.pg');if(!pg)return;CL.full=!CL.full;
+  pg.classList.toggle('cl-fullscreen',CL.full);document.body.style.overflow=CL.full?'hidden':'';
+  const b=clEl('cl-fs');if(b)b.textContent=CL.full?'\u2715 Exit':'\u2922 Fullscreen';
+  if(CL.full)pg.scrollTop=0;}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&CL.full&&S.view==='compose')clToggleFull();});
 
 // ─── Palette (own container; header text updates separately) ───
 function clRenderPal(){const el=clEl('cl-pal');if(!el)return;const rows=CL_KEYS[CL.lang]||CL_KEYS.python;el.innerHTML='';
@@ -129,10 +157,35 @@ function clRenderPal(){const el=clEl('cl-pal');if(!el)return;const rows=CL_KEYS[
   el.appendChild(pal);clRenderPalHead();}
 function clRenderPalHead(){const t=clEl('cl-pal-t');if(!t)return;
   t.innerHTML=CL.keysOpen?'Key palette \u2192 <em>'+esc(CL.active>=0&&CL.blocks[CL.active]?CL.blocks[CL.active].name:'\u2014')+'</em>':'Key palette';}
-function clKey(k){let i=CL.active;if(i<0){i=CL.blocks.length-1;clSetActive(i);}const t=clEl('cl-ta-'+i);if(!t)return;
-  clInsertAt(t,/[\w)]$/.test(k)&&!/\($/.test(k)?k+' ':k);t.focus();}
-function clInsertAt(t,txt){const s=t.selectionStart,e=t.selectionEnd;t.value=t.value.slice(0,s)+txt+t.value.slice(e);t.selectionStart=t.selectionEnd=s+txt.length;t.dispatchEvent(new Event('input',{bubbles:true}));}
-function clAssemble(){const isMain=b=>b.name.trim().toLowerCase()==='main';return CL.blocks.filter(b=>!isMain(b)).concat(CL.blocks.filter(isMain)).map(b=>b.code).filter(c=>c.trim()).join('\n\n');}
+function clKey(k){let i=CL.active;if(i<0){i=CL.blocks.length-1;clSetActive(i);}const t=clEl('cl-ta-'+i);if(!t)return;clInsertAt(t,k);}
+function clInsertAt(t,raw){if(!t)return;let token=raw,back=0;
+  if(token==='" "'||token==='"  "'){token='""';back=1;}else if(token==='[]'||token==='{}'){back=1;}
+  const s=t.selectionStart,e=t.selectionEnd,v=t.value,before=v.slice(0,s);
+  const needSpace=before.length&&!/\s$/.test(before)&&!/[(.\[]$/.test(before)&&!/^[\s)\]:,]/.test(token);
+  const ins=(needSpace?' ':'')+token;
+  t.value=before+ins+v.slice(e);
+  t.dispatchEvent(new Event('input',{bubbles:true}));
+  t.focus();const p=s+ins.length-back;t.setSelectionRange(p,p);}
+function clLabelFor(code,fallback){const ln=(code||'').split('\n').filter(l=>l.trim())[0]||'';
+  let m=/^\s*def\s+([A-Za-z_]\w*)/.exec(ln);if(m)return 'def '+m[1];
+  m=/^\s*class\s+([A-Za-z_]\w*)/.exec(ln);if(m)return 'class '+m[1];
+  if(/^\s*(import|from)\s/.test(ln))return 'imports';
+  return fallback;}
+function clHl(code){const kw=/\b(False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b/g;
+  const bi=/\b(print|input|len|range|int|str|float|list|dict|set|tuple|bool|abs|sum|min|max|enumerate|zip|map|filter|sorted|open|type|isinstance|round|join|split|upper|lower|get|items|keys|values|append)\b/g;
+  const num=/\b(\d+\.?\d*)\b/g;
+  const paint=t=>esc(t).replace(kw,'<span class="t-kw">$1</span>').replace(bi,'<span class="t-bi">$1</span>').replace(num,'<span class="t-num">$1</span>');
+  return String(code==null?'':code).split('\n').map(line=>{const re=/("""[\s\S]*?"""|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|#.*$)/g;let html='',idx=0,m;
+    while((m=re.exec(line))!==null){html+=paint(line.slice(idx,m.index));const tok=m[0];
+      html+=tok.charAt(0)==='#'?'<span class="t-com">'+esc(tok)+'</span>':'<span class="t-str">'+esc(tok)+'</span>';idx=m.index+tok.length;}
+    return html+paint(line.slice(idx));}).join('\n');}
+const clKeyStore=()=>'cs_cb_'+CL.pid;
+function clSync(){try{localStorage.setItem(clKeyStore(),JSON.stringify(CL.blocks.map(b=>({n:b.name,c:b.code,col:b.collapsed,auto:b.auto}))));}catch(e){}}
+function clAssembleFull(){const segs=[],lines=[];let n=1;
+  CL.blocks.forEach((b,i)=>{const code=(b.code||'').replace(/\s+$/,'');if(!code.trim())return;
+    const cnt=code.split('\n').length;segs.push({i,n:b.name,code,start:n,end:n+cnt-1});lines.push(code);n+=cnt;});
+  return{segs,text:lines.join('\n'),total:n-1};}
+function clAssemble(){return clAssembleFull().text;}
 
 // ─── Pyodide runner ───
 let _clPy=null,_clPyLoading=null;
@@ -142,22 +195,48 @@ async function clPyReady(){if(_clPy)return _clPy;if(_clPyLoading)return _clPyLoa
 async function clRunPy(src){const py=await clPyReady();py.runPython('import sys,io\n_b=io.StringIO()\nsys.stdout=_b\nsys.stderr=_b');let err=null;
   try{await py.runPythonAsync(src);}catch(e){err=String(e.message||e).trim().split('\n').slice(-4).join('\n');}
   const out=py.runPython('import sys\n_v=sys.stdout.getvalue()\nsys.stdout=sys.__stdout__\nsys.stderr=sys.__stderr__\n_v');return{out:String(out||''),err};}
-async function clRun(){const btn=clEl('cl-run');if(!btn||btn.disabled)return;const p=clProb();const src=clAssemble();
+async function clRun(){const btn=clEl('cl-run');if(!btn||btn.disabled)return;const p=clProb();CL.asm=clAssembleFull();const src=CL.asm.text;
   if(!src.trim()){exToast('\u26a0 Nothing to run \u2014 add some code first');return;}
   btn.disabled=true;btn.innerHTML='<span class="spin" style="width:12px;height:12px;border-width:2px;margin:0"></span> '+(_clPy?'Running\u2026':'Booting Python\u2026');
   let r;try{r=await clRunPy(src);}catch(e){r={out:'',err:'Could not start Python: '+e};}
   btn.disabled=false;btn.innerHTML='\u25b6 Run again';
   const ok=!r.err&&clNorm(r.out)===clNorm(p.expected);CL.ran={ok,out:r.out,err:r.err,src};
+  CL.ran.hint=r.err?clGuilty(r.err):(CL.errIdx=-1,CL.errStamp='',CL.errLine=-1,null);
+  CL.blocks.forEach((b,i)=>{b.collapsed=(i!==CL.errIdx&&CL.blocks.length>1&&!!r.err);});
+  CL.active=-1;clRenderStack();clRenderPalHead();
   if(ok){if(!CL.solved[p.id]){CL.solved[p.id]=true;xpAward(CL_XP,p.title);try{dailyBump('drills_done',1);}catch(e){}
       sbPost('code_sensei_attempts',{exercise_id:p.id,attempt_number:CL.attempts.length+1,result:'pass',code:src,notes:'compose lab'}).catch(()=>{});
       sbPatch('code_sensei_exercises',p.id,{status:'done'}).catch(()=>{});clRenderTop();}}
   else CL.attempts.unshift({n:CL.attempts.length+1,src,out:r.out,err:r.err,expected:p.expected,open:CL.attempts.length===0,saved:false,mark:null});
   clRenderOut();clRenderAttempts();}
+function clGuilty(text){CL.errLine=-1;CL.errIdx=-1;CL.errStamp='';const asm=CL.asm;
+  const all=String(text).match(/line (\d+)/g);if(all&&all.length)CL.errLine=parseInt(all[all.length-1].slice(5),10);
+  if(CL.errLine>0&&asm)for(const s of asm.segs){if(CL.errLine>=s.start&&CL.errLine<=s.end){CL.errIdx=s.i;break;}}
+  const nm=/NameError: name '([A-Za-z_]\w*)' is not defined/.exec(String(text));
+  if(nm&&asm&&CL.errIdx>=0){const name=nm[1];let guilty=null,defSeg=null;
+    asm.segs.forEach(s=>{if(s.i===CL.errIdx)guilty=s;});
+    asm.segs.forEach(s=>{if(guilty&&s.start>guilty.end&&new RegExp('(^|\\n)\\s*(def\\s+'+name+'\\b|'+name+'\\s*=)').test(s.code))defSeg=s;});
+    if(defSeg){CL.errStamp='RAN TOO EARLY';return{name,defSeg,guilty};}}
+  if(CL.errIdx>=0)CL.errStamp='ERROR HERE';
+  return null;}
 
 // ─── Output (own container) ───
-function clRenderOut(){const el=clEl('cl-out');if(!el)return;if(!CL.ran){el.innerHTML='';return;}const r=CL.ran;
-  el.innerHTML='<div class="cl-out"><div class="cl-out-hd">Output<span class="cl-pill '+(r.ok?'ok':'no')+'">'+(r.ok?'\u2713 MATCHES EXPECTED':'\u2717 DOES NOT MATCH')+'</span></div>'+
-  (r.err?'<pre class="err">'+esc(r.err)+'</pre>':'<pre>'+(esc(r.out)||'<span style="color:var(--td)">(no output)</span>')+'</pre>')+'</div>'+(r.ok?clSolvedHtml():'');}
+function clRenderOut(){const el=clEl('cl-out');if(!el)return;if(!CL.ran){el.innerHTML='';return;}const r=CL.ran;const asm=CL.asm;const isErr=!!r.err;
+  let h='';
+  if(asm&&asm.segs.length){h+='<div class="cl-asm'+(el.offsetWidth>=640?' two':'')+'"><div class="cl-asm-hd"><span>ASSEMBLED PROGRAM</span><span>'+asm.total+' LINE'+(asm.total===1?'':'S')+'</span></div>';
+    asm.segs.forEach(s=>{const guilty=isErr&&s.i===CL.errIdx;
+      h+='<div class="cl-seg'+(guilty?' guilty':'')+'"><span class="cl-seg-tag">'+esc(s.n).toUpperCase()+(guilty&&CL.errStamp==='RAN TOO EARLY'?' \u2014 TOO SOON':'')+'</span><pre>';
+      s.code.split('\n').forEach((line,li)=>{const n=s.start+li,bad=guilty&&n===CL.errLine;
+        h+='<span class="'+(bad?'cl-ln-err':'cl-ln')+'">'+(bad?n+' \u25b8':n)+'</span>'+clHl(line)+'\n';});
+      h+='</pre></div>';});
+    h+='</div>';}
+  h+='<div class="cl-so"><div class="cl-so-hd"><span>STDOUT</span><span class="cl-exit '+(isErr?'no':'ok')+'">EXIT '+(isErr?'1':'0')+'</span></div>'+
+    '<pre'+(isErr?' class="tb"':'')+'>'+(esc(isErr?r.err:r.out)||'<span style="color:var(--td)">(no output)</span>')+'</pre>';
+  if(r.hint){const g=r.hint.guilty;h+='<div class="cl-so-hint">line '+CL.errLine+' ran before <b>'+esc(r.hint.defSeg.n)+'</b> existed \u2014 drag <b>'+esc(g?g.n:'it')+'</b> below it \u2193</div>';}
+  h+='</div>';
+  h+='<div class="cl-out"><div class="cl-out-hd">Against expected<span class="cl-pill '+(r.ok?'ok':'no')+'">'+(r.ok?'\u2713 MATCHES EXPECTED':'\u2717 DOES NOT MATCH')+'</span></div>'+
+    (r.ok?'':clDiffHtml(r.out,clProb().expected,null))+'</div>';
+  el.innerHTML=h+(r.ok?clSolvedHtml():'');}
 function clSolvedHtml(){const mine=clMine();const i=mine.findIndex(x=>x.id===CL.pid);const nxt=mine[i+1];
   return '<div class="cl-solved">\u2713 Solved \u2014 output matches exactly.<button onclick="clReveal()">Compare with reference</button>'+(nxt?'<button onclick="clLoad('+nxt.id+')">Next \u2192</button>':'')+'</div>'+
   '<div style="margin-top:12px">'+mascotBubble('<em>'+['\u201cClean. Now make it shorter.\u201d','\u201cIt runs. Do you know <b>why</b> it runs?\u201d','\u201cOne more belt-stitch earned.\u201d'][CL.pid%3]+'</em>',40,'proud')+'</div>';}
