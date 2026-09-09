@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>CodeSensei</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="theme-color" content="#f7f1e3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sensei">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,6 +24,41 @@
 /* ─── Phase 12a.3: Dojo Paper theme (values from tokens/colors.css) ─── */
 :root[data-theme="dojo"]{--bg:#f7f1e3;--s:#ede4cd;--c:#fdf8ec;--ch:#f1e8d4;--bd:rgba(60,45,25,.13);--a:#b8412e;--as:rgba(184,65,46,.10);--tx:#2a221a;--td:#a89678;--tm:#8a7d68;--g:#5b8a3a;--r:#96261a;--p:#7a5cf0;--b:#3776ab;--code-bg:#fffbef;--code-bg-2:#fffbef;--code-ink:#3a2e22;--code-bd:rgba(60,45,25,.13);--panel-2:#ede4cd;--bd-hover:rgba(60,45,25,.26);--hairline-2:rgba(60,45,25,.05);--hairline-3:rgba(60,45,25,.09);--dot:rgba(60,45,25,.13);--scroll-thumb:rgba(60,45,25,.32);--cta-shadow-a:#7a2418;--cta-shadow-p:#4a3070;--cta-shadow-b:#2f5d7c;--logo-from:#b8412e;--logo-to:#8a3722;color-scheme:light}
 :root[data-theme="dojo"] .tree-panel{background:#fdf8ec}
+
+/* ─── Phase 12c: tree tone harmony — node palette + panel chrome as variables ───
+   Dark/default values below are byte-identical to the pre-12c literals. */
+:root{
+--tp-bg:#fff;--tc-bar:rgba(255,255,255,.95);--tc-bd:#e5e7eb;--tc-bd-2:#d1d5db;--tc-ink:#1a1e2a;--tc-dim:#6b7280;--tc-dim-2:#9ca3af;
+--tc-btn:#fff;--tc-btn-h:#f3f4f6;--tc-link:#7c8594;--tc-coll-f:#f0f2f5;--tc-coll-s:#c0c8d4;
+--tc-flow:#10b981;--tc-flow-bg:#f0fdf4;--tc-flow-bd:#bbf7d0;--tc-glow:rgba(16,185,129,.6);--tc-glow-2:rgba(16,185,129,.3);--tc-glow-p:rgba(99,102,241,.6);
+--tc-tip-bg:#1e293b;--tc-tip-bd:#334155;--tc-tip-ink:#e2e8f0;--tc-tip-t:#6ee7b7;--tc-tip-d:#94a3b8;
+--tc-xi:#8b5cf6;--tc-xc:#f87171;--tc-xn:#10b981;
+--td-l-f:#fef2f2;--td-l-s:#dc2626;--td-l-i:#991b1b;--td-l-lb:#ef4444;
+--td-r-f:#eff6ff;--td-r-s:#2563eb;--td-r-i:#1e3a8a;--td-r-lb:#3b82f6;
+--td-c-f:#fef3c7;--td-c-s:#d97706;--td-c-i:#92400e;--tc-hd:#f8f9fc;--tc-cta:#6366f1;
+--tn-project-f:#dbeafe;--tn-project-s:#3b82f6;--tn-file-f:#fef9c3;--tn-file-s:#ca8a04;
+--tn-module-f:#dbeafe;--tn-module-s:#3b82f6;--tn-class-f:#d1fae5;--tn-class-s:#059669;
+--tn-function-f:#fce7f3;--tn-function-s:#db2777;--tn-variable-f:#ede9fe;--tn-variable-s:#7c3aed;
+--tn-loop-f:#e2e8f0;--tn-loop-s:#475569;--tn-import-f:#e0f2fe;--tn-import-s:#0284c7;
+--tn-conditional-f:#ffedd5;--tn-conditional-s:#ea580c;--tn-statement-f:#fef9c3;--tn-statement-s:#a16207;
+--tn-section-f:#e0e7ff;--tn-section-s:#4f46e5;--tn-command-f:#fce7f3;--tn-command-s:#be185d;
+}
+:root[data-theme="dojo"]{
+--tp-bg:#fdf8ec;--tc-bar:rgba(253,248,236,.95);--tc-bd:rgba(60,45,25,.13);--tc-bd-2:rgba(60,45,25,.26);--tc-ink:#2a221a;--tc-dim:#8a7d68;--tc-dim-2:#a89678;
+--tc-btn:#fdf8ec;--tc-btn-h:#f1e8d4;--tc-link:#a89678;--tc-coll-f:#f1e8d4;--tc-coll-s:rgba(60,45,25,.26);
+--tc-flow:#5b8a3a;--tc-flow-bg:rgba(91,138,58,.10);--tc-flow-bd:rgba(91,138,58,.35);--tc-glow:rgba(91,138,58,.55);--tc-glow-2:rgba(91,138,58,.28);--tc-glow-p:rgba(122,92,240,.5);
+--tc-tip-bg:#2a221a;--tc-tip-bd:#3a2e22;--tc-tip-ink:#f7f1e3;--tc-tip-t:#a8d08a;--tc-tip-d:#a89678;
+--tc-xi:#7a5cf0;--tc-xc:#b8412e;--tc-xn:#5b8a3a;
+--td-l-f:#f6ddd3;--td-l-s:#96261a;--td-l-i:#7a1c12;--td-l-lb:#b8412e;
+--td-r-f:#e4ecd5;--td-r-s:#4a7230;--td-r-i:#33501f;--td-r-lb:#5b8a3a;
+--td-c-f:#f7e2c8;--td-c-s:#9a4f1e;--td-c-i:#7a3e17;--tc-hd:#f1e8d4;--tc-cta:#7a5cf0;
+--tn-project-f:#f3e3c4;--tn-project-s:#8a6a2f;--tn-file-f:#f7ecd0;--tn-file-s:#a8802e;
+--tn-module-f:#f0e0c8;--tn-module-s:#7a5e1a;--tn-class-f:#e4ecd5;--tn-class-s:#5b8a3a;
+--tn-function-f:#f6ddd3;--tn-function-s:#b8412e;--tn-variable-f:#ece3d3;--tn-variable-s:#6b5945;
+--tn-loop-f:#e6ded0;--tn-loop-s:#8a7d68;--tn-import-f:#efe4cf;--tn-import-s:#9a4f1e;
+--tn-conditional-f:#f7e2c8;--tn-conditional-s:#9a4f1e;--tn-statement-f:#f1ead9;--tn-statement-s:#a89678;
+--tn-section-f:#eae2ce;--tn-section-s:#7a5e1a;--tn-command-f:#f4d8cc;--tn-command-s:#96261a;
+}
 
 /* ─── Dojo Paper tokens (Phase 1) — defined for downstream phases, no consumers yet ─── */
 :root{
@@ -216,52 +258,52 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .tree-samples{display:flex;gap:5px;padding:7px 10px;border-top:1px solid var(--bd);flex-wrap:wrap}
 .tree-sample-btn{padding:3px 8px;background:var(--c);color:var(--td);border:1px solid var(--bd);border-radius:4px;font-family:var(--dojo-font-mono);font-size:10px;cursor:pointer}
 .tree-sample-btn:hover{color:var(--tx);border-color:var(--tm)}
-.tree-panel{flex:1;position:relative;overflow:hidden;background:#fff}
+.tree-panel{flex:1;position:relative;overflow:hidden;background:var(--tp-bg)}
 .tree-panel svg{width:100%;height:100%}
 .tree-node{cursor:pointer}.tree-node:hover .tshape{filter:brightness(.93) saturate(1.2)}
-.tlabel{font-family:var(--dojo-font-mono);fill:#1a1e2a;pointer-events:none;dominant-baseline:middle;text-anchor:middle;font-weight:600}
-.tbadge{font-family:var(--dojo-font-mono);font-size:8px;fill:#6b7280;pointer-events:none;text-anchor:middle}
-.tdetail{font-family:var(--dojo-font-mono);font-size:8.5px;fill:#6b7280;pointer-events:none;text-anchor:middle}
-.tlink{fill:none;stroke:#7c8594;stroke-width:1.8}
-.tcoll circle{fill:#f0f2f5;stroke:#c0c8d4;stroke-width:1.5}
-.tcoll text{font-family:var(--dojo-font-mono);font-size:10px;fill:#6b7280;text-anchor:middle;dominant-baseline:middle;font-weight:600}
-.tcount{font-family:var(--dojo-font-mono);font-size:8px;fill:#9ca3af;pointer-events:none;text-anchor:start}
+.tlabel{font-family:var(--dojo-font-mono);fill:var(--tc-ink);pointer-events:none;dominant-baseline:middle;text-anchor:middle;font-weight:600}
+.tbadge{font-family:var(--dojo-font-mono);font-size:8px;fill:var(--tc-dim);pointer-events:none;text-anchor:middle}
+.tdetail{font-family:var(--dojo-font-mono);font-size:8.5px;fill:var(--tc-dim);pointer-events:none;text-anchor:middle}
+.tlink{fill:none;stroke:var(--tc-link);stroke-width:1.8}
+.tcoll circle{fill:var(--tc-coll-f);stroke:var(--tc-coll-s);stroke-width:1.5}
+.tcoll text{font-family:var(--dojo-font-mono);font-size:10px;fill:var(--tc-dim);text-anchor:middle;dominant-baseline:middle;font-weight:600}
+.tcount{font-family:var(--dojo-font-mono);font-size:8px;fill:var(--tc-dim-2);pointer-events:none;text-anchor:start}
 .tree-node.dimmed{opacity:.12;transition:opacity .3s}
 .tree-node.visited{opacity:1;transition:opacity .3s}
 .tree-node.ancestor{opacity:.45;transition:opacity .3s}
 .tree-node.active-step{opacity:1;transition:opacity .3s}
-.tree-node.active-step .tshape{filter:drop-shadow(0 0 8px rgba(16,185,129,.6)) drop-shadow(0 0 16px rgba(16,185,129,.3))}
+.tree-node.active-step .tshape{filter:drop-shadow(0 0 8px var(--tc-glow)) drop-shadow(0 0 16px var(--tc-glow-2))}
 .tree-node.parallel-step{opacity:1;transition:opacity .3s}
-.tree-node.parallel-step .tshape{filter:drop-shadow(0 0 8px rgba(99,102,241,.6))}
+.tree-node.parallel-step .tshape{filter:drop-shadow(0 0 8px var(--tc-glow-p))}
 .tlink.dimmed{opacity:.08}
-.tree-flow-bar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;background:rgba(255,255,255,.95);border-bottom:1px solid #e5e7eb;backdrop-filter:blur(8px);z-index:10;flex-wrap:wrap}
-.tree-flow-btn{width:32px;height:32px;border-radius:7px;border:1px solid #d1d5db;background:#fff;color:#1a1e2a;font-size:14px;cursor:pointer;display:grid;place-items:center}
-.tree-flow-btn:hover{background:#f3f4f6}.tree-flow-btn.playing{background:#10b981;color:#fff;border-color:#10b981}
+.tree-flow-bar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;background:var(--tc-bar);border-bottom:1px solid var(--tc-bd);backdrop-filter:blur(8px);z-index:10;flex-wrap:wrap}
+.tree-flow-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--tc-bd-2);background:var(--tc-btn);color:var(--tc-ink);font-size:14px;cursor:pointer;display:grid;place-items:center}
+.tree-flow-btn:hover{background:var(--tc-btn-h)}.tree-flow-btn.playing{background:var(--tc-flow);color:var(--tp-bg);border-color:var(--tc-flow)}
 .tree-flow-btn:disabled{opacity:.3;cursor:default}
-.tree-step-info{font-family:var(--dojo-font-mono);font-size:11px;color:#6b7280}
-.tree-step-info .snum{color:#10b981;font-weight:700;font-size:13px}
-.tree-step-name{font-family:var(--dojo-font-mono);font-size:10px;color:#1a1e2a;background:#f0fdf4;border:1px solid #bbf7d0;padding:3px 9px;border-radius:5px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tree-speed{display:flex;align-items:center;gap:4px;font-size:10px;color:#9ca3af;font-family:var(--dojo-font-mono)}
-.tree-speed input{width:50px;accent-color:#10b981}
-.tree-info{position:absolute;bottom:12px;left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:rgba(255,255,255,.92);border:1px solid #e5e7eb;border-radius:8px;font-size:10px;color:#6b7280;font-family:var(--dojo-font-mono)}
+.tree-step-info{font-family:var(--dojo-font-mono);font-size:11px;color:var(--tc-dim)}
+.tree-step-info .snum{color:var(--tc-flow);font-weight:700;font-size:13px}
+.tree-step-name{font-family:var(--dojo-font-mono);font-size:10px;color:var(--tc-ink);background:var(--tc-flow-bg);border:1px solid var(--tc-flow-bd);padding:3px 9px;border-radius:5px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree-speed{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--tc-dim-2);font-family:var(--dojo-font-mono)}
+.tree-speed input{width:50px;accent-color:var(--tc-flow)}
+.tree-info{position:absolute;bottom:12px;left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:var(--tc-bar);border:1px solid var(--tc-bd);border-radius:8px;font-size:10px;color:var(--tc-dim);font-family:var(--dojo-font-mono)}
 .tree-info .tstats{display:flex;gap:10px}
 .tree-info .tval{color:var(--a);font-weight:600}
-.tree-zbtn{width:24px;height:24px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:5px;color:#6b7280;font-size:12px;cursor:pointer;display:grid;place-items:center}
-.tree-zbtn:hover{background:#e5e7eb;color:#1a1e2a}
+.tree-zbtn{width:24px;height:24px;background:var(--tc-btn-h);border:1px solid var(--tc-bd-2);border-radius:5px;color:var(--tc-dim);font-size:12px;cursor:pointer;display:grid;place-items:center}
+.tree-zbtn:hover{background:var(--tc-bd);color:var(--tc-ink)}
 .tree-mode-toggle{display:flex;gap:0;border:1px solid var(--bd);border-radius:6px;overflow:hidden;margin:0 6px}
 .tree-mode-btn{padding:4px 10px;font-family:var(--dojo-font-mono);font-size:10px;border:none;background:transparent;color:var(--td);cursor:pointer}
 .tree-mode-btn.on{background:var(--a);color:var(--bg)}
-.tree-mode-btn.flow-on{background:#10b981;color:#fff}
-.tree-ttip{position:fixed;padding:8px 12px;background:#1e293b;border:1px solid #334155;border-radius:8px;font-family:var(--dojo-font-mono);font-size:11px;color:#e2e8f0;pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;max-width:260px;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.3)}
-.tree-ttip.visible{opacity:1}.tree-ttip .ttt{color:#6ee7b7;font-weight:600}.tree-ttip .ttd{color:#94a3b8;margin-top:2px}
+.tree-mode-btn.flow-on{background:var(--tc-flow);color:var(--tp-bg)}
+.tree-ttip{position:fixed;padding:8px 12px;background:var(--tc-tip-bg);border:1px solid var(--tc-tip-bd);border-radius:8px;font-family:var(--dojo-font-mono);font-size:11px;color:var(--tc-tip-ink);pointer-events:none;opacity:0;transition:opacity .15s;z-index:100;max-width:260px;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.tree-ttip.visible{opacity:1}.tree-ttip .ttt{color:var(--tc-tip-t);font-weight:600}.tree-ttip .ttd{color:var(--tc-tip-d);margin-top:2px}
 /* Cross-reference flow arrows */
 .xref-arrow{fill:none;stroke-width:2;stroke-dasharray:6,4;pointer-events:none;opacity:.7}
-.xref-import{stroke:#8b5cf6}
-.xref-call{stroke:#f87171}
-.xref-instantiate{stroke:#10b981}
+.xref-import{stroke:var(--tc-xi)}
+.xref-call{stroke:var(--tc-xc)}
+.xref-instantiate{stroke:var(--tc-xn)}
 .xref-label{font-family:var(--dojo-font-mono);font-size:8px;pointer-events:none;dominant-baseline:middle}
-.xref-label-import{fill:#8b5cf6}.xref-label-call{fill:#f87171}.xref-label-inst{fill:#10b981}
-.xref-legend{position:absolute;top:10px;left:12px;background:rgba(255,255,255,.92);border:1px solid #e5e7eb;border-radius:8px;padding:6px 10px;font-family:var(--dojo-font-mono);font-size:9px;color:#6b7280;display:flex;gap:10px;z-index:5}
+.xref-label-import{fill:var(--tc-xi)}.xref-label-call{fill:var(--tc-xc)}.xref-label-inst{fill:var(--tc-xn)}
+.xref-legend{position:absolute;top:10px;left:12px;background:var(--tc-bar);border:1px solid var(--tc-bd);border-radius:8px;padding:6px 10px;font-family:var(--dojo-font-mono);font-size:9px;color:var(--tc-dim);display:flex;gap:10px;z-index:5}
 .xref-legend-item{display:flex;align-items:center;gap:4px}
 .xref-legend-line{width:18px;height:0;border-top:2px dashed;display:inline-block}
 .xref-toggle{padding:4px 10px;font-family:var(--dojo-font-mono);font-size:10px;border:1px solid var(--bd);border-radius:4px;background:transparent;color:var(--td);cursor:pointer}
@@ -277,25 +319,25 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .tsp-saving{padding:4px 10px;font-size:10px;color:var(--g);text-align:center}
 /* Compare mode */
 .tcmp-wrap{display:flex;flex:1;height:100%}
-.tcmp-side{flex:1;position:relative;overflow:hidden;background:#fff;display:flex;flex-direction:column}
-.tcmp-side+.tcmp-side{border-left:2px solid #e5e7eb}
-.tcmp-header{padding:6px 12px;background:#f8f9fc;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.tcmp-header select{padding:4px 8px;border:1px solid #d1d5db;border-radius:5px;font-family:var(--dojo-font-mono);font-size:11px;background:#fff;color:#1a1e2a;flex:1}
-.tcmp-header .tcmp-label{font-family:var(--dojo-font-mono);font-size:10px;font-weight:700;color:#6b7280;white-space:nowrap}
+.tcmp-side{flex:1;position:relative;overflow:hidden;background:var(--tp-bg);display:flex;flex-direction:column}
+.tcmp-side+.tcmp-side{border-left:2px solid var(--tc-bd)}
+.tcmp-header{padding:6px 12px;background:var(--tc-hd);border-bottom:1px solid var(--tc-bd);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tcmp-header select{padding:4px 8px;border:1px solid var(--tc-bd-2);border-radius:5px;font-family:var(--dojo-font-mono);font-size:11px;background:var(--tc-btn);color:var(--tc-ink);flex:1}
+.tcmp-header .tcmp-label{font-family:var(--dojo-font-mono);font-size:10px;font-weight:700;color:var(--tc-dim);white-space:nowrap}
 .tcmp-svg{flex:1;width:100%;height:100%}
-.tcmp-bar{position:absolute;top:0;left:0;right:0;padding:8px 12px;background:rgba(255,255,255,.95);border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;gap:12px;z-index:5}
-.tcmp-btn{padding:5px 14px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--dojo-font-mono)}
+.tcmp-bar{position:absolute;top:0;left:0;right:0;padding:8px 12px;background:var(--tc-bar);border-bottom:1px solid var(--tc-bd);display:flex;align-items:center;justify-content:center;gap:12px;z-index:5}
+.tcmp-btn{padding:5px 14px;background:var(--tc-cta);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--dojo-font-mono)}
 .tcmp-btn:hover{filter:brightness(1.1)}
-.tcmp-legend{display:flex;gap:10px;font-family:var(--dojo-font-mono);font-size:9px;color:#6b7280}
+.tcmp-legend{display:flex;gap:10px;font-family:var(--dojo-font-mono);font-size:9px;color:var(--tc-dim)}
 .tcmp-legend-dot{width:12px;height:12px;border-radius:3px;border:2px solid;display:inline-block;vertical-align:middle;margin-right:3px}
 /* Diff highlight on nodes */
 .tree-node.diff-same .tshape{stroke-width:2}
-.tree-node.diff-left .tshape{fill:#fef2f2!important;stroke:#dc2626!important;stroke-width:3.5}
-.tree-node.diff-left .tlabel{fill:#991b1b!important}
-.tree-node.diff-right .tshape{fill:#eff6ff!important;stroke:#2563eb!important;stroke-width:3.5}
-.tree-node.diff-right .tlabel{fill:#1e3a8a!important}
-.tree-node.diff-changed .tshape{fill:#fef3c7!important;stroke:#d97706!important;stroke-width:3.5;stroke-dasharray:6,3}
-.tree-node.diff-changed .tlabel{fill:#92400e!important}
+.tree-node.diff-left .tshape{fill:var(--td-l-f)!important;stroke:var(--td-l-s)!important;stroke-width:3.5}
+.tree-node.diff-left .tlabel{fill:var(--td-l-i)!important}
+.tree-node.diff-right .tshape{fill:var(--td-r-f)!important;stroke:var(--td-r-s)!important;stroke-width:3.5}
+.tree-node.diff-right .tlabel{fill:var(--td-r-i)!important}
+.tree-node.diff-changed .tshape{fill:var(--td-c-f)!important;stroke:var(--td-c-s)!important;stroke-width:3.5;stroke-dasharray:6,3}
+.tree-node.diff-changed .tlabel{fill:var(--td-c-i)!important}
 @media(max-width:700px){
   .tree-wrap{flex-direction:column}
   .tree-code-panel{width:100%;height:38dvh;min-height:150px;border-right:none;border-bottom:1px solid var(--bd)}
@@ -524,7 +566,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 <div class="ham" onclick="toggleMobileNav()">☰</div>
 <div class="overlay" id="overlay" onclick="toggleMobileNav()"></div>
 <div class="sb" id="sidebar">
-  <div class="sb-hd"><div class="sb-logo">&lt;/&gt;</div><span style="font-size:14px;font-weight:700">CodeSensei</span></div>
+  <div class="sb-hd"><img class="sb-logo" src="icons/icon.svg" alt="" style="background:none;width:30px;height:30px"><span style="font-size:14px;font-weight:700">CodeSensei</span></div>
   <div class="sb-nav">
     <div class="nv on" id="nav-dash" onclick="goDash()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">◈</span>Dashboard</div>
     <div class="nv" id="nav-bat" onclick="goModules('bat')"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">☰</span>Batch</div>
@@ -533,6 +575,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
     <div class="nv" id="nav-web" onclick="goWebApps()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">🌐</span>Web Apps</div>
     <div class="nv" id="nav-aiml" onclick="goAIML()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">🤖</span>AI / ML</div>
     <div class="nv" id="nav-ex" onclick="goExercises()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">✎</span>Exercises</div>
+    <div class="nv" id="nav-compose" onclick="goCompose()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">⌨</span>Compose</div>
     <div class="nv" id="nav-dojo" onclick="goDojo()"><span style="font-size:15px;width:18px;text-align:center;font-family:var(--dojo-font-mono)">⚔</span>Dojo</div>
   </div>
   <div class="sb-ft" style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><button id="theme-btn" onclick="toggleTheme()" style="background:var(--c);border:1px solid var(--bd);color:var(--tm);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit">◑ Dark</button><span>Learning from your own code</span></div>
@@ -667,7 +710,7 @@ async function getUserId(){if(_uid!==undefined)return _uid;const u=await sbq('co
 
 function md(t){if(!t)return'';return t.split(/(```[^`]*```)/gs).map(b=>{if(b.startsWith('```')){const c=b.replace(/```\w*\n?/g,'').replace(/```$/,'');return'<pre class="md-code">'+esc(c)+'</pre>';}return b.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map(p=>{if(p.startsWith('**')&&p.endsWith('**'))return'<span class="md-b">'+esc(p.slice(2,-2))+'</span>';if(p.startsWith('`')&&p.endsWith('`'))return'<code class="md-ic">'+esc(p.slice(1,-1))+'</code>';return esc(p).replace(/\n/g,'<br>');}).join('');}).join('');}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-const MTAB_MAP={'nav-dash':'home','nav-bat':'learn','nav-sql':'learn','nav-py':'learn','nav-web':'learn','nav-aiml':'learn','nav-ex':'learn','nav-dojo':'drill'};
+const MTAB_MAP={'nav-dash':'home','nav-bat':'learn','nav-sql':'learn','nav-py':'learn','nav-web':'learn','nav-aiml':'learn','nav-ex':'learn','nav-compose':'learn','nav-dojo':'drill'};
 function setNav(id,mtab){document.querySelectorAll('.nv').forEach(n=>n.classList.remove('on'));document.getElementById(id)?.classList.add('on');setMTab(mtab||MTAB_MAP[id]||'home');closeMobileNav();}
 function setMTab(t){document.querySelectorAll('.mtab-b').forEach(n=>n.classList.remove('on'));document.getElementById('mtab-'+t)?.classList.add('on');}
 function toggleMobileNav(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
@@ -1149,6 +1192,7 @@ function drillPick(oi){if(S.drill.picked!==null)return;S.drill.picked=oi;
   const w=S.drill.queue[S.drill.i];const ok=drillOptions(w)[oi]===w.correct_answer;
   ok?S.drill.right++:S.drill.wrong++;
   drillGrade(w,ok);dailyBump('drills_done',1);drillRender();}
+function drillTypeFix(){if(S.drill.picked!==null)return;const w=S.drill.queue[S.drill.i];const v=document.getElementById('drill-fix')?.value||'';const ok=typeNorm(v)===typeNorm(w.correct_answer);S.drill.picked=ok;ok?S.drill.right++:S.drill.wrong++;drillGrade(w,ok);dailyBump('drills_done',1);drillRender();}
 function drillGrade(w,ok){
   const patch=ok
     ?(()=>{const n=srsNext(w.drill_count||0);return n.mastered?{drill_count:(w.drill_count||0)+1,mastered:true}:{drill_count:(w.drill_count||0)+1,mastered:false,due_at:srsPlusDays(n.days)};})()
@@ -1168,11 +1212,27 @@ function drillRender(){
       '<button class="ex-btn-s" onclick="goDash()">Dashboard</button></div></div></div></div>';
     return;
   }
-  const w=d.queue[d.i];const opts=drillOptions(w);const picked=d.picked;
+  const w=d.queue[d.i];const picked=d.picked;const lg=dojoLang(w.topic_id);
+  if(w.challenge_type==='type_the_fix'){
+    main.innerHTML='<div class="pg"><div class="drill-wrap">'+
+      '<div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1.5px;margin-bottom:4px">RE-MATCH \u00b7 '+(d.i+1)+' OF '+d.queue.length+' \u00b7 TYPE THE FIX</div>'+
+      '<h1 style="margin-bottom:14px">Beat your old mistake</h1>'+
+      '<div class="drill-bar"><div class="drill-bar-fill" style="width:'+Math.round(d.i/d.queue.length*100)+'%"></div></div>'+
+      '<div class="qc"><div class="ql" style="color:var(--a)">'+esc(lg.l)+' \u00b7 COMPOSE \u00b7 MISSED \u00d7'+(w.miss_count||1)+'</div>'+
+      '<div class="qt" style="white-space:pre-wrap">'+qtext(w.question)+'</div>'+
+      (w.code_snippet?'<pre class="qcd">'+esc(w.code_snippet)+'</pre>':'')+
+      (picked===null?'<div class="tap-fill"><div class="tap-tray-label" style="margin-top:10px">TYPE THE CORRECT OUTPUT LINE</div><input id="drill-fix" class="type-in" spellcheck="false" autocomplete="off" onkeydown="if(event.key===\'Enter\')drillTypeFix()" /><button class="ex-btn-p btn-cta" style="margin-top:10px" onclick="drillTypeFix()">Check</button></div>'
+        :'<div style="margin-top:14px">'+(picked===true
+          ?'<div style="font-size:13px;color:var(--g);font-weight:600">\u2713 Beaten \u2014 '+(w.mastered?'mastered, retired from the bank':'next re-match '+srsDueLabel(w))+'</div>'
+          :'<div style="font-size:13px;color:var(--r);font-weight:600">Not yet \u2014 back tomorrow.</div><div style="font-size:12px;color:var(--tm);margin-top:6px">Correct: <span style="font-family:var(--dojo-font-mono,monospace);color:var(--g)">'+esc(w.correct_answer)+'</span></div>')+
+          '<button class="ex-btn-p btn-cta" style="margin-top:14px" onclick="drillNext()">'+(d.i>=d.queue.length-1?'Finish':'Next')+'</button></div>')+
+      '</div></div></div>';
+    document.getElementById('drill-fix')?.focus();return;
+  }
+  const opts=drillOptions(w);
   const rows=opts.map((o,oi)=>{let c='qo';
     if(picked!==null){if(o===w.correct_answer)c+=' ok';else if(oi===picked)c+=' no';}
     return '<div class="'+c+'"'+(picked===null?' onclick="drillPick('+oi+')"':'')+'>'+esc(o)+'</div>';}).join('');
-  const lg=dojoLang(w.topic_id);
   main.innerHTML='<div class="pg"><div class="drill-wrap">'+
     '<div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1.5px;margin-bottom:4px">RE-MATCH \u00b7 '+(d.i+1)+' OF '+d.queue.length+'</div>'+
     '<h1 style="margin-bottom:14px">Beat your old mistake</h1>'+
@@ -1751,6 +1811,7 @@ function goPython(){
     +'<h2 style="color:var(--b)">🐍 Python</h2>'
     +'<p class="sub">100 Days of Code · Structure Tree Visualizer</p>'
     +'<div style="font-size:11px;color:var(--g);font-weight:700;letter-spacing:1px;margin-bottom:10px">TOOLS</div>'
+    +'<div class="cd" onclick="goCompose(\'python\')" style="margin-bottom:10px;border-color:color-mix(in srgb,var(--g) 12%,transparent)"><div style="display:flex;align-items:center;gap:14px"><div style="width:44px;height:44px;border-radius:10px;background:color-mix(in srgb,var(--g) 10%,transparent);display:flex;align-items:center;justify-content:center;font-size:20px">⌨</div><div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Compose Lab</div><div style="font-size:12px;color:var(--td)">Build it in blocks · Key palette · Runs for real (Pyodide)</div></div><span style="color:var(--g);font-size:16px">→</span></div></div>'
     +'<div class="cd" onclick="goTree()" style="margin-bottom:20px;border-color:color-mix(in srgb,var(--g) 12%,transparent)"><div style="display:flex;align-items:center;gap:14px"><div style="width:44px;height:44px;border-radius:10px;background:color-mix(in srgb,var(--g) 10%,transparent);display:flex;align-items:center;justify-content:center;font-size:20px">🌳</div><div style="flex:1"><div style="font-size:15px;font-weight:600;margin-bottom:2px">Structure Tree Visualizer</div><div style="font-size:12px;color:var(--td)">Paste code → D3.js tree · Logic flow stepper · Compare mode</div></div><span style="color:var(--g);font-size:16px">→</span></div></div>'
     +'<div style="font-size:11px;color:var(--a);font-weight:700;letter-spacing:1px;margin-bottom:10px">100 DAYS OF PYTHON</div>'
     +'<p style="font-size:12.5px;color:var(--td);margin-bottom:14px">App Brewery bootcamp — tap a day to see lecture resources</p>'
@@ -1870,20 +1931,34 @@ function tCountDesc(n){let c=0;if(n.children)for(const ch of n.children){c++;c+=
 
 // Shape config
 const TS={
-  project:    {color:'#dbeafe',stroke:'#3b82f6',w:180,h:44,r:8},
-  file:       {color:'#fef9c3',stroke:'#ca8a04',w:180,h:38,r:4},
-  module:     {color:'#dbeafe',stroke:'#3b82f6',w:140,h:40,r:20},
-  class:      {color:'#d1fae5',stroke:'#059669',w:150,h:42,r:21},
-  function:   {color:'#fce7f3',stroke:'#db2777',w:140,h:38,r:0},
-  variable:   {color:'#ede9fe',stroke:'#7c3aed',w:140,h:32,r:4},
-  loop:       {color:'#e2e8f0',stroke:'#475569',w:150,h:56,r:0},
-  import:     {color:'#e0f2fe',stroke:'#0284c7',w:110,h:30,r:15},
-  conditional:{color:'#ffedd5',stroke:'#ea580c',w:130,h:40,r:0},
-  statement:  {color:'#fef9c3',stroke:'#a16207',w:140,h:28,r:3},
-  section:    {color:'#e0e7ff',stroke:'#4f46e5',w:150,h:36,r:6},
-  command:    {color:'#fce7f3',stroke:'#be185d',w:140,h:32,r:4}
+  project:    {w:180,h:44,r:8},
+  file:       {w:180,h:38,r:4},
+  module:     {w:140,h:40,r:20},
+  class:      {w:150,h:42,r:21},
+  function:   {w:140,h:38,r:0},
+  variable:   {w:140,h:32,r:4},
+  loop:       {w:150,h:56,r:0},
+  import:     {w:110,h:30,r:15},
+  conditional:{w:130,h:40,r:0},
+  statement:  {w:140,h:28,r:3},
+  section:    {w:150,h:36,r:6},
+  command:    {w:140,h:32,r:4}
 };
-function tDrawShape(g,type,w,h){const c=TS[type]||TS.variable;
+// Phase 12c: node fills/strokes come from CSS vars so the palette follows the theme.
+// d3 needs concrete colors, so resolve once per theme and cache.
+let _tPalKey=null;
+function tPal(){
+  const key=document.documentElement.getAttribute('data-theme')||'dark';
+  if(_tPalKey===key)return;
+  const cs=getComputedStyle(document.documentElement);
+  for(const t in TS){
+    TS[t].color=cs.getPropertyValue('--tn-'+t+'-f').trim()||'#eee';
+    TS[t].stroke=cs.getPropertyValue('--tn-'+t+'-s').trim()||'#888';
+  }
+  TS._xref={import:cs.getPropertyValue('--tc-xi').trim()||'#8b5cf6',call:cs.getPropertyValue('--tc-xc').trim()||'#f87171',instantiate:cs.getPropertyValue('--tc-xn').trim()||'#10b981',link:cs.getPropertyValue('--tc-link').trim()||'#7c8594'};
+  _tPalKey=key;
+}
+function tDrawShape(g,type,w,h){tPal();const c=TS[type]||TS.variable;
 if(type==='class'){
   // True ellipse
   g.append('ellipse').attr('class','tshape').attr('cx',0).attr('cy',0).attr('rx',w/2).attr('ry',h/2).attr('fill',c.color).attr('stroke',c.stroke).attr('stroke-width',2.5);
@@ -1925,7 +2000,7 @@ let maxY=y+cfg.h/2;for(const p of pos){maxY=Math.max(maxY,p.y+(TS[p.node.type]||
 function tDraw(allPos,allLks){const panel=document.getElementById('tpanel');if(!panel)return;const svg=d3.select('#tsvg');svg.selectAll('*').remove();
 document.getElementById('tinfo').style.display='flex';
 const w=panel.clientWidth,h=panel.clientHeight-50;
-const defs=svg.append('defs');defs.append('marker').attr('id','tarrow').attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#7c8594');
+const defs=svg.append('defs');tPal();defs.append('marker').attr('id','tarrow').attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill',TS._xref.link);
 tSvgG=svg.append('g');tZoom=d3.zoom().scaleExtent([.05,3]).on('zoom',e=>tSvgG.attr('transform',e.transform));svg.call(tZoom);
 tNodePosMap={};tAllNodeMap={};for(const p of allPos){tNodePosMap[p.node._id]={x:p.x,y:p.y};tAllNodeMap[p.node._id]=p.node;}
 tSvgG.selectAll('.tlink').data(allLks).enter().append('path').attr('class','tlink').attr('marker-end','url(#tarrow)').attr('d',d=>{const sc=TS[d.src.type]||TS.variable,tc=TS[d.tgt.type]||TS.variable;const sx=d.src.x,sy=d.src.y+sc.h/2,tx=d.tgt.x,ty=d.tgt.y-tc.h/2;if(sx===tx)return`M${sx},${sy} L${tx},${ty}`;const my=sy+(ty-sy)*.5;return`M${sx},${sy} L${sx},${my} L${tx},${my} L${tx},${ty}`;});
@@ -1948,7 +2023,7 @@ if(tXrefOn&&tXrefLinks.length>0&&!tFlowMode){
   const xrefG=tSvgG.append('g').attr('class','xref-layer');
   // Add arrow markers for each type
   const svg=d3.select('#tsvg');const defs=svg.select('defs');
-  ['import','call','instantiate'].forEach(t=>{const clr=t==='import'?'#8b5cf6':t==='call'?'#f87171':'#10b981';defs.append('marker').attr('id','xarr-'+t).attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill',clr);});
+  ['import','call','instantiate'].forEach(t=>{tPal();const clr=TS._xref[t];defs.append('marker').attr('id','xarr-'+t).attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill',clr);});
   tXrefLinks.forEach(lk=>{
     const from=tNodePosMap[lk.from];const to=tNodePosMap[lk.to];
     if(!from||!to)return;
@@ -2134,24 +2209,24 @@ function tRenderCompare(){
     <div class="tcmp-wrap">
       <div class="tcmp-side" id="tcmpL">
         <div class="tcmp-header">
-          <span class="tcmp-label" style="color:#ef4444">LEFT:</span>
+          <span class="tcmp-label" style="color:var(--td-l-lb)">LEFT:</span>
           <select id="tcmpSelL" onchange="tCmpLeftIdx=+this.value;tRunCompare()">${tFiles.map((f,i)=>`<option value="${i}"${i===tCmpLeftIdx?' selected':''}>${f.name}</option>`).join('')}</select>
         </div>
         <svg class="tcmp-svg" id="tcmpSvgL"></svg>
       </div>
       <div class="tcmp-side" id="tcmpR">
         <div class="tcmp-header">
-          <span class="tcmp-label" style="color:#3b82f6">RIGHT:</span>
+          <span class="tcmp-label" style="color:var(--td-r-lb)">RIGHT:</span>
           <select id="tcmpSelR" onchange="tCmpRightIdx=+this.value;tRunCompare()">${tFiles.map((f,i)=>`<option value="${i}"${i===tCmpRightIdx?' selected':''}>${f.name}</option>`).join('')}</select>
         </div>
         <svg class="tcmp-svg" id="tcmpSvgR"></svg>
       </div>
     </div>
-    <div class="tcmp-legend" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.95);border:1px solid #e5e7eb;border-radius:8px;padding:8px 16px;z-index:5">
-      <span><span class="tcmp-legend-dot" style="border-color:#dc2626;background:#fef2f2"></span>Only in left</span>
-      <span><span class="tcmp-legend-dot" style="border-color:#2563eb;background:#eff6ff"></span>Only in right</span>
-      <span><span class="tcmp-legend-dot" style="border-color:#d97706;background:#fef3c7;border-style:dashed"></span>Changed</span>
-      <span><span class="tcmp-legend-dot" style="border-color:#d1d5db;background:#fff"></span>Same</span>
+    <div class="tcmp-legend" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:var(--tc-bar);border:1px solid var(--tc-bd);border-radius:8px;padding:8px 16px;z-index:5">
+      <span><span class="tcmp-legend-dot" style="border-color:var(--td-l-s);background:var(--td-l-f)"></span>Only in left</span>
+      <span><span class="tcmp-legend-dot" style="border-color:var(--td-r-s);background:var(--td-r-f)"></span>Only in right</span>
+      <span><span class="tcmp-legend-dot" style="border-color:var(--td-c-s);background:var(--td-c-f);border-style:dashed"></span>Changed</span>
+      <span><span class="tcmp-legend-dot" style="border-color:var(--tc-bd-2);background:var(--tc-btn)"></span>Same</span>
     </div>`;
   const tinfoEl=document.getElementById('tinfo');if(tinfoEl)tinfoEl.style.display='none';
   tRunCompare();
@@ -2229,7 +2304,7 @@ function tDrawCompareTree(svgId,parsedTree,fileName,diffMap,side){
   const sub=tLayoutSub(fileNode,0,PY);
 
   const defs=svg.append('defs');
-  defs.append('marker').attr('id','carr-'+side).attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill','#7c8594');
+  tPal();defs.append('marker').attr('id','carr-'+side).attr('viewBox','0 -4 8 8').attr('refX',7).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto').append('path').attr('d','M0,-3L7,0L0,3Z').attr('fill',TS._xref.link);
 
   const g=svg.append('g');
   const zoom=d3.zoom().scaleExtent([.05,3]).on('zoom',e=>g.attr('transform',e.transform));
@@ -3282,6 +3357,7 @@ function toggleTheme(){
   if(S.view==='tree')tReRender();
   else if(S.view==='dash')goDash();
   else if(S.view==='dojo')dojoRender();
+  else if(S.view==='compose')clRender();
   else if(S.view==='mhome')goMHome();
   else if(S.view==='mprofile')goMProfile();
 }
@@ -3289,6 +3365,9 @@ let _theme='dark';try{_theme=localStorage.getItem('cs_theme')||'dark';}catch(e){
 applyTheme(_theme);
 playerLoad();dailyLoad();
 if(matchMedia('(max-width:700px)').matches)goMHome();else goDash();
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
+<link rel="stylesheet" href="css/compose.css">
+<script src="js/compose.js"></script>
 </body>
 </html>
