@@ -482,6 +482,7 @@ h1{font-size:24px;font-weight:700;margin-bottom:3px}h2{font-size:20px;font-weigh
 .dojo-src{font-size:9.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:999px;flex-shrink:0;white-space:nowrap}
 .dojo-src-quiz{background:color-mix(in srgb,var(--a) 10%,transparent);color:var(--a);border:1px solid color-mix(in srgb,var(--a) 25%,transparent)}
 .dojo-src-log{background:color-mix(in srgb,var(--b) 8%,transparent);color:var(--b);border:1px solid color-mix(in srgb,var(--b) 22%,transparent)}
+.dojo-src-compose{background:color-mix(in srgb,var(--g) 10%,transparent);color:var(--g);border:1px solid color-mix(in srgb,var(--g) 25%,transparent)}
 .dojo-detail{margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);cursor:auto}
 .dojo-empty{text-align:center;padding:56px 20px;color:var(--td)}
 /* ─── Phase 10: SRS banner + drill ─── */
@@ -1300,7 +1301,8 @@ function dojoCardHtml(it){
     '<div class="dojo-tile" style="background:'+lg.c+'">'+esc(lg.l)+'</div>'+
     '<div style="flex:1;min-width:0"><div class="dojo-card-title">'+esc(it.title||'Untitled')+'</div><div class="dojo-card-meta">'+meta+'</div></div>'+
     (it.kind==='quiz'?'<span class="srs-due'+(it.w.mastered?' srs-mastered':'')+'">'+srsDueLabel(it.w)+'</span>':'')+
-    '<span class="dojo-src '+(it.kind==='quiz'?'dojo-src-quiz':'dojo-src-log')+'">'+(it.kind==='quiz'?'quiz miss':'logged')+'</span>'+
+    (()=>{const comp=(it.kind==='quiz'&&it.w.source==='compose')||(it.kind==='log'&&it.m.category==='compose');
+      return '<span class="dojo-src '+(comp?'dojo-src-compose':it.kind==='quiz'?'dojo-src-quiz':'dojo-src-log')+'">'+(comp?(it.kind==='quiz'?'\u2328 re-match':'\u2328 compose'):it.kind==='quiz'?'quiz miss':'logged')+'</span>';})()+
     '</div>'+detail+'</div>';
 }
 function dojoRender(){

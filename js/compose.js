@@ -273,7 +273,7 @@ async function clConfirmSave(){const a=CL.pending,p=clProb();const btn=clEl('cl-
   const q='Fix the line that produced the wrong output in \u201c'+p.title+'\u201d.\n\n'+p.statement+'\n\nYour output line '+(a.mark+1)+' was:\n'+mine+'\n\nWhat should that line of output have been?';
   const [w,m]=await Promise.all([
     sbPost('code_sensei_wrong_answers',{user_id:uid==null?null:String(uid),challenge_id:'compose:'+p.id+':'+a.n+':'+Date.now(),topic_id:'python',module_number:null,question:q,code_snippet:a.src,correct_answer:exp,your_answer:mine,options:null,source:'compose',challenge_type:'type_the_fix',miss_count:1,drill_count:0,mastered:false,last_missed_at:now,due_at:srsPlusDays(1)}),
-    sbPost('code_sensei_mistakes',{user_id:uid,topic_id:'python',module_number:null,title:'Compose: '+p.title,description:a.err?a.err.split('\n').pop():'Output mismatch on line '+(a.mark+1),code_snippet:a.src,correct_form:exp,tags:['compose',p.group]})]);
+    sbPost('code_sensei_mistakes',{exercise_id:p.id,attempt_id:null,language:'python',category:'compose',title:'Compose: '+p.title,description:a.err?a.err.split('\n').pop():'Output mismatch on line '+(a.mark+1),code_snippet:a.src,correct_form:exp})]);
   a.saved=true;CL.pending=null;S.dojoLoaded=false;clRenderOvl();clRenderAttempts();
   exToast(w&&m?'\u2694 Saved \u2014 re-match queued in the Dojo':'\u26a0 Partly saved \u2014 check console');}
 function clRevealHtml(){const p=clProb();return '<div class="cl-ovl" onclick="if(event.target===this)clCloseSheet()"><div class="cl-sheet"><div class="cl-sheet-hd"><h3>Reference \u00b7 '+esc(p.title)+'</h3><button class="cl-ibtn" onclick="clCloseSheet()">\u00d7</button></div><div class="cl-sheet-bd">'+
