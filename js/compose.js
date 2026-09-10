@@ -1,10 +1,11 @@
 // ═══════════════════════════════════════
-// PHASE 13 — COMPOSE LAB  (13.1: scoped rendering — focus never rebuilds the DOM)
+// PHASE 13 — COMPOSE LAB  (13.1 scoped rendering · 13.4 collapsible question · 16 mobile: palette sheet, fullscreen default, picker, offline cache + write queue)
 // Loaded by index_patched.html; relies on sbq/sbPost/sbPatch/xpAward/exToast/mascotBubble/mascotSvg/srsPlusDays/getUserId/esc/setNav/S/dailyBump.
 // Render scopes: clRender() = whole page (problem load / theme) · clRenderTop() = header+strip+problem card
 // · clRenderStack() = block cards · clSetActive() = class toggles only · clRenderPal/Out/Attempts/Sensei/Ovl = own container.
 // ═══════════════════════════════════════
-const CL={list:null,pid:null,lang:'python',group:'All',blocks:[],active:-1,attempts:[],ran:null,keysOpen:true,chat:[],live:false,pending:null,reveal:false,solved:{},hintIdx:0,asm:null,errLine:-1,errIdx:-1,errStamp:'',full:false};
+const CL={list:null,pid:null,lang:'python',group:'All',blocks:[],active:-1,attempts:[],ran:null,keysOpen:true,chat:[],live:false,pending:null,reveal:false,solved:{},hintIdx:0,qOpen:true,asm:null,errLine:-1,errIdx:-1,errStamp:'',full:false,picker:false,offline:false};
+const clMobile=()=>matchMedia('(max-width:700px)').matches;
 const CL_KEYS={python:[['def','for','while','if','elif','else:','in','range(','return','import','not','and','or','True'],['print(','input(','len(','int(','str(','sum(','sorted(','enumerate(','open(','.get(','.split(','.upper('],[':','[]','{}','" "','()','+=','==','!=','%','self']]};
 const CL_XP=20;
 const clJ=v=>{if(typeof v==='string'){try{return JSON.parse(v);}catch(e){return null;}}return v;};
@@ -18,9 +19,13 @@ async function goCompose(lang){
   S.view='compose';setNav('nav-compose');if(lang)CL.lang=lang;
   clEl('main').innerHTML='<div class="pg"><div class="ld"><div class="spin"></div>Opening Compose Lab\u2026</div></div>';
   if(!CL.list){
-    const [rows,atts]=await Promise.all([
+    let rows=null,atts=[];const cached=clCacheLoad();
+    if(navigator.onLine){const r=await Promise.all([
       sbq('code_sensei_exercises','select=*&category=eq.compose&order=sort_order.asc,id.asc'),
-      sbq('code_sensei_attempts','select=exercise_id,result&result=eq.pass')]);
+      sbq('code_sensei_attempts','select=exercise_id,result&result=eq.pass')]);rows=r[0];atts=r[1];}
+    if(Array.isArray(rows)&&rows.length){CL.offline=false;clCacheSave(rows,atts);}
+    else if(cached){rows=cached.rows;atts=cached.atts;CL.offline=true;}
+    else rows=[];
     CL.list=(Array.isArray(rows)?rows:[]).map(r=>({id:r.id,title:r.title,statement:r.problem_statement||'',group:r.concept||'General',lang:r.language||'python',expected:r.expected_output||'',blocks:clJ(r.blocks)||[{name:'main',code:''}],solution:clJ(r.solution)||[],hints:clJ(r.hints)||['Break the problem into the smallest step you can name.'],status:r.status}));
     (Array.isArray(atts)?atts:[]).forEach(a=>{CL.solved[a.exercise_id]=true;});
     CL.list.forEach(p=>{if(p.status==='done')CL.solved[p.id]=true;});
@@ -29,8 +34,23 @@ async function goCompose(lang){
   if(!mine.length){clEl('main').innerHTML='<div class="pg"><button class="back" onclick="goDash()">\u2190 Dashboard</button><h2>\u2328 Compose Lab</h2><p class="sub">No compose problems for '+esc(CL.lang)+' yet.</p><div class="cd" style="margin-top:14px"><div style="font-size:13px;color:var(--tm)">Run <code style="font-family:var(--dojo-font-mono)">migrations/008_compose_lab.sql</code> to seed the Python set.</div></div></div>';return;}
   if(!CL.pid||!mine.find(p=>p.id===CL.pid))clLoad(mine.find(p=>!CL.solved[p.id])?.id||mine[0].id,true);
   clRender();
+  if(clMobile()&&!CL.full)clToggleFull(true);
+  clFlushQueue();
   clPyReady().catch(()=>{});
 }
+// ─── 16: offline cache of the problem set + queued writes ───
+function clCacheLoad(){try{return JSON.parse(localStorage.getItem('cs_cl_cache')||'null');}catch(e){return null;}}
+function clCacheSave(rows,atts){try{localStorage.setItem('cs_cl_cache',JSON.stringify({rows,atts:Array.isArray(atts)?atts:[],at:Date.now()}));}catch(e){}}
+function clQGet(){try{return JSON.parse(localStorage.getItem('cs_cl_queue')||'[]');}catch(e){return[];}}
+function clQSet(q){try{localStorage.setItem('cs_cl_queue',JSON.stringify(q));}catch(e){}}
+function clQueue(op){const q=clQGet();q.push(op);clQSet(q);return Promise.resolve(null);}
+function clPost(table,data){if(!navigator.onLine)return clQueue({t:'post',table,data});return sbPost(table,data).then(r=>{if(r==null)clQueue({t:'post',table,data});return r;});}
+function clPatch(table,id,data){if(!navigator.onLine)return clQueue({t:'patch',table,id,data});return sbPatch(table,id,data);}
+let _clFlushing=false;
+async function clFlushQueue(){if(_clFlushing||!navigator.onLine)return;const q=clQGet();if(!q.length)return;_clFlushing=true;const left=[];let n=0;
+  for(const op of q){try{if(op.t==='post'){const r=await sbPost(op.table,op.data);if(r==null)left.push(op);else n++;}else{await sbPatch(op.table,op.id,op.data);n++;}}catch(e){left.push(op);}}
+  clQSet(left);_clFlushing=false;if(n)exToast('\u2601 Synced '+n+' offline save'+(n===1?'':'s'));if(left.length===0&&S.view==='compose'){S.dojoLoaded=false;}}
+window.addEventListener('online',()=>{clFlushQueue();if(S.view==='compose'&&CL.offline){CL.list=null;goCompose();}});
 function clLoad(id,silent){const p=CL.list.find(x=>x.id===id);if(!p)return;CL.pid=id;
   let saved=null;try{saved=JSON.parse(localStorage.getItem('cs_cb_'+id)||'null');}catch(e){saved=null;}
   const starter=p.blocks.some(b=>(b.code||'').trim());
@@ -47,29 +67,34 @@ function clReset(){try{localStorage.removeItem('cs_cb_'+CL.pid);}catch(e){}const
 
 // ─── Scope 0: whole page shell (only on load / theme) ───
 function clRender(){const m=clEl('main');if(!m||S.view!=='compose')return;
-  m.innerHTML='<div class="pg"><div id="cl-top"></div>'+
+  m.innerHTML='<div class="pg"><div class="cl-scrim" id="cl-scrim" onclick="clToggleQ()"></div><button class="cl-pull" id="cl-pull" onclick="clToggleQ()"><span class="id" id="cl-pull-id"></span><span class="t" id="cl-pull-t"></span><span class="cl-qchev">\u25be</span></button><div class="cl-drawer" id="cl-drawer"></div><div id="cl-top"></div>'+
   '<div class="cl-composer"><div class="cl-composer-hd"><span>Compose \u00b7 '+esc(CL.lang)+'</span><span id="cl-count"></span></div><div id="cl-stack"></div>'+
   '<button class="cl-addblk" id="cl-add">+ Add block</button><div id="cl-pal"></div></div>'+
-  '<div class="cl-actions"><button class="cl-run" id="cl-run">\u25b6 Assemble &amp; run</button><button class="cl-gbtn" id="cl-fs">\u2922 Fullscreen</button><button class="cl-gbtn" id="cl-reveal">Reveal solution</button><button class="cl-gbtn" id="cl-resetbtn">Reset</button></div>'+
-  '<div id="cl-out"></div><div id="cl-attempts"></div><div id="cl-sensei"></div><div id="cl-ovl"></div></div>';
+  '<div class="cl-actions"><button class="cl-run" id="cl-run">\u25b6 Assemble &amp; run</button><button class="cl-gbtn" id="cl-fs">\u2922 Fullscreen</button><button class="cl-gbtn cl-pickbtn" onclick="clPicker()">\u2630 Problems</button><button class="cl-gbtn" id="cl-reveal">Reveal solution</button><button class="cl-gbtn" id="cl-resetbtn">Reset</button></div>'+
+  '<div id="cl-out"></div><div id="cl-attempts"></div><div id="cl-sensei"></div><div id="cl-ovl"></div><div id="cl-spacer"></div></div>';
   clEl('cl-add').addEventListener('click',clAddBlk);
   clEl('cl-run').addEventListener('click',clRun);
   clEl('cl-reveal').addEventListener('click',clReveal);
   clEl('cl-resetbtn').addEventListener('click',clReset);
   clEl('cl-fs').addEventListener('click',clToggleFull);
-  clRenderTop();clRenderStack();clRenderPal();clRenderOut();clRenderAttempts();clRenderSensei();clRenderOvl();}
+  clRenderTop();clRenderStack();clRenderPal();clRenderOut();clRenderAttempts();clRenderSensei();clRenderOvl();clApplyFull();}
 
 // ─── Scope 1: header · chips · strip · problem card ───
 function clRenderTop(){const el=clEl('cl-top');if(!el)return;const p=clProb();const mine=clMine();const solvedN=mine.filter(x=>CL.solved[x.id]).length;
-  el.innerHTML='<button class="back" onclick="goDash()">\u2190 Dashboard</button>'+
-  '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="color:var(--g);margin:0">\u2328 Compose Lab</h2><span style="flex:1"></span><span class="cl-mini">'+solvedN+' / '+mine.length+' solved</span></div>'+
+  const pid=clEl('cl-pull-id'),pt=clEl('cl-pull-t');if(pid)pid.textContent='#'+p.id;if(pt)pt.textContent=p.title;
+  const dr=clEl('cl-drawer');if(dr)dr.innerHTML='<div class="cl-din"><div class="cl-exhead"><span class="cl-exid">#'+p.id+'</span><h3>'+esc(p.title)+'</h3><span class="grp">'+esc(p.group)+'</span></div><div class="cl-stmt">'+esc(p.statement)+'</div><div class="cl-expect"><span class="k">Expected</span><pre>'+esc(p.expected)+'</pre></div></div>'+
+    '<div class="cl-dft"><button class="cl-dbtn x" onclick="clToggleFull(false)" title="Exit fullscreen">\u2715</button><button class="cl-dbtn" onclick="clPicker()">\u2630 Problems</button><span class="cnt">'+solvedN+' / '+mine.length+' solved</span><button class="cl-dbtn" onclick="clToggleQ()">Close \u25b4</button></div>';
+  el.innerHTML=(clMobile()?'<button class="back" onclick="goMLearn()">\u2190 Learn</button>':'<button class="back" onclick="goDash()">\u2190 Dashboard</button>')+
+  '<div class="cl-hdrow" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="color:var(--g);margin:0">\u2328 Compose Lab</h2><span style="flex:1"></span>'+(CL.offline?'<span class="cl-mini cl-off" title="No network \u2014 showing the cached problem set; saves queue until you\u2019re back online">\u2601 offline \u00b7 cached</span>':'')+'<span class="cl-mini">'+solvedN+' / '+mine.length+' solved</span></div>'+
   '<p class="sub">Build it in blocks \u00b7 Key palette \u00b7 Runs for real in your browser</p>'+
   '<div class="cl-progress"><i style="width:'+Math.round(solvedN/mine.length*100)+'%"></i></div>'+
   '<div class="cl-groupbar">'+clGroupBar(mine)+'</div>'+
   '<div class="cl-striprow"><span class="lbl">Problems</span><div class="cl-strip">'+clStrip(mine)+'</div></div>'+
-  '<div class="cl-exhead"><span class="cl-exid">#'+p.id+'</span><h3>'+esc(p.title)+'</h3><span class="grp">'+esc(p.group)+'</span></div>'+
-  '<div class="cl-stmt">'+esc(p.statement)+'</div>'+
-  clExpectHtml(p);}
+  '<div class="cl-q'+(CL.qOpen?' open':'')+'" id="cl-q"><div class="cl-exhead" onclick="clToggleQ()"><span class="cl-exid">#'+p.id+'</span><h3>'+esc(p.title)+'</h3><span class="grp">'+esc(p.group)+'</span><span class="cl-qchev">\u25be</span></div>'+
+  '<div class="cl-qbody"><div class="cl-stmt">'+esc(p.statement)+'</div>'+clExpectHtml(p)+'</div>'+
+  '<div class="cl-qpeek" onclick="clToggleQ()"><span class="k">Problem</span><code>'+esc(p.statement.split('\n').filter(l=>l.trim())[0]||'')+'</code><span class="cl-qmore">Read \u25be</span></div></div>';}
+function clToggleQ(){CL.qOpen=!CL.qOpen;clApplyQ();}
+function clApplyQ(){['cl-q','cl-drawer','cl-pull','cl-scrim'].forEach(id=>{const n=clEl(id);if(n)n.classList.toggle('open',CL.qOpen);});}
 function clExpectHtml(p){const given=p.statement.includes(p.expected);
   if(given&&!CL.showExp)return '<button class="cl-expbtn" onclick="CL.showExp=true;clRenderTop()">Show expected \u2304</button>';
   return '<div class="cl-expect"><span class="k">Expected</span><pre>'+esc(p.expected)+'</pre>'+(given?'<button class="cl-exphide" onclick="CL.showExp=false;clRenderTop()">\u2303</button>':'')+'</div>';}
@@ -84,6 +109,7 @@ function clGroup(g){CL.group=g;clRenderTop();}
 // ─── Scope 2: block stack (createElement + listeners; rebuilt only on structural change) ───
 function clRenderStack(){const st=clEl('cl-stack');if(!st)return;st.innerHTML='';
   CL.blocks.forEach((b,i)=>st.appendChild(clCard(b,i)));
+  if(!st._clBw){st._clBw=true;st.addEventListener('focusout',clBlurWatch);}
   const c=clEl('cl-count');if(c)c.textContent=CL.blocks.length+' block'+(CL.blocks.length===1?'':'s');}
 function clCard(b,i){
   const card=document.createElement('div');card.className='cl-blk'+(i===CL.active?' active':'')+(b.collapsed?' collapsed':'');card.dataset.i=i;card.draggable=true;
@@ -131,30 +157,60 @@ function clSetActive(i){if(CL.active===i)return;const st=clEl('cl-stack');if(!st
   const prev=st.querySelector('.cl-blk.active');if(prev){prev.classList.remove('active');const b=prev.querySelector('.cl-ins');if(b)b.style.display='none';}
   CL.active=i;
   if(i>=0){const card=st.querySelector('.cl-blk[data-i="'+i+'"]');if(card){card.classList.add('active');const b=card.querySelector('.cl-ins');if(b)b.style.display='';}}
-  clRenderPalHead();}
+  clRenderPalHead();
+  if(clMobile()){clSheet(i>=0);if(i>=0&&CL.full&&CL.qOpen){CL.qOpen=false;clApplyQ();}if(i>=0)setTimeout(()=>clEnsureVisible(clEl('cl-ta-'+i)),260);}}
+// ─── 16: palette as a bottom sheet on phones (pinned above the keyboard via visualViewport) ───
+function clSheet(show){const p=document.querySelector('.cl-palette.sheet');if(!p)return;p.classList.toggle('show',show);clSheetPos();
+  const sp=clEl('cl-spacer');if(sp)sp.style.height=show?(p.offsetHeight+12)+'px':'0';}
+function clSheetPos(){const p=document.querySelector('.cl-palette.sheet');if(!p)return;const vv=window.visualViewport;
+  p.style.bottom=(vv?Math.max(0,window.innerHeight-vv.height-vv.offsetTop):0)+'px';}
+function clEnsureVisible(ta){if(!ta)return;const p=document.querySelector('.cl-palette.sheet.show');const vv=window.visualViewport;
+  const limit=(vv?vv.offsetTop+vv.height:window.innerHeight)-(p?p.offsetHeight:0)-12;const r=ta.getBoundingClientRect();const bottom=Math.min(r.bottom,r.top+140);
+  if(bottom<=limit&&r.top>=0)return;const d=bottom>limit?bottom-limit:r.top-8;
+  const pg=CL.full?clEl('main')?.querySelector('.pg'):null;if(pg)pg.scrollTop+=d;else window.scrollBy(0,d);}
+function clBlurWatch(){if(!clMobile())return;setTimeout(()=>{const a=document.activeElement;if(!(a&&(a.classList.contains('cl-ta')||a.classList.contains('cl-blk-name'))))clSetActive(-1);},150);}
+if(window.visualViewport){visualViewport.addEventListener('resize',clSheetPos);visualViewport.addEventListener('scroll',clSheetPos);}
+// re-render the breakpoint-dependent pieces (back button, palette-as-sheet) when the window crosses 700px
+let _clWasMob=clMobile();
+matchMedia('(max-width:700px)').addEventListener('change',()=>{const m=clMobile();if(m===_clWasMob||S.view!=='compose'||!clEl('cl-pal'))return;_clWasMob=m;clRenderTop();clRenderPal();});
+function clSheetDone(){const a=document.activeElement;if(a&&a.blur)a.blur();clSetActive(-1);}
 function clAddBlk(){const nb={name:'block '+(CL.blocks.length+1),code:'',collapsed:false,auto:true};
   let mi=-1;CL.blocks.forEach((b,i)=>{if(b.name.trim().toLowerCase()==='main')mi=i;});
   if(mi<0){CL.blocks.push(nb);CL.active=CL.blocks.length-1;}else{CL.blocks.splice(mi,0,nb);CL.active=mi;}
   clRenderStack();clRenderPalHead();clSync();clEl('cl-ta-'+CL.active)?.focus();}
 
-function clToggleFull(){const pg=clEl('main').querySelector('.pg');if(!pg)return;CL.full=!CL.full;
+function clToggleFull(force){CL.full=typeof force==='boolean'?force:!CL.full;
+  CL.qOpen=!CL.full||clMobile();  // desktop fullscreen collapses the question; phones keep it open until you start typing
+  clApplyFull();if(CL.full){const pg=clEl('main')?.querySelector('.pg');if(pg)pg.scrollTop=0;}}
+function clApplyFull(){const pg=clEl('main')?.querySelector('.pg');if(!pg||S.view!=='compose')return;
   pg.classList.toggle('cl-fullscreen',CL.full);document.body.style.overflow=CL.full?'hidden':'';
-  const b=clEl('cl-fs');if(b)b.textContent=CL.full?'\u2715 Exit':'\u2922 Fullscreen';
-  if(CL.full)pg.scrollTop=0;}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&CL.full&&S.view==='compose')clToggleFull();});
+  const b=clEl('cl-fs');if(b)b.textContent=CL.full?'\u2715 Exit':'\u2922 Fullscreen';clApplyQ();
+  const wantSheet=clMobile()&&CL.full,hasSheet=!!document.querySelector('.cl-palette.sheet');if(wantSheet!==hasSheet)clRenderPal();else clSheetPos();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&CL.full&&S.view==='compose')clToggleFull(false);});
+// leaving Compose via any nav must drop fullscreen + body scroll lock
+(function(){const o=window.setNav;if(typeof o!=='function')return;window.setNav=function(id){if(id!=='nav-compose'&&CL.full){CL.full=false;document.body.style.overflow='';}return o.apply(this,arguments);};})();
+// ─── 16: problem picker (fullscreen / phone — the strip is hidden there) ───
+function clPicker(){CL.picker=true;clRenderOvl();}
+function clPick(id){CL.picker=false;clLoad(id);}
+function clPickerHtml(){const mine=clMine();const groups=[];mine.forEach(p=>{if(!groups.includes(p.group))groups.push(p.group);});
+  return '<div class="cl-ovl" onclick="if(event.target===this)clCloseSheet()"><div class="cl-sheet"><div class="cl-sheet-hd"><h3>Problems \u00b7 '+mine.filter(p=>CL.solved[p.id]).length+' / '+mine.length+' solved</h3><button class="cl-ibtn" onclick="clCloseSheet()">\u00d7</button></div><div class="cl-sheet-bd">'+
+  groups.map(g=>'<div class="cl-pk-g">'+esc(g)+'</div>'+mine.filter(p=>p.group===g).map(p=>'<button class="cl-pk'+(p.id===CL.pid?' on':'')+'" onclick="clPick('+p.id+')"><span class="id">#'+p.id+'</span><span class="t">'+esc(p.title)+'</span>'+(CL.solved[p.id]?'<span class="ck">\u2713</span>':'')+'</button>').join('')).join('')+
+  '</div></div></div>';}
 
 // ─── Palette (own container; header text updates separately) ───
-function clRenderPal(){const el=clEl('cl-pal');if(!el)return;const rows=CL_KEYS[CL.lang]||CL_KEYS.python;el.innerHTML='';
-  const pal=document.createElement('div');pal.className='cl-palette';
+function clRenderPal(){const el=clEl('cl-pal');if(!el)return;const rows=CL_KEYS[CL.lang]||CL_KEYS.python;el.innerHTML='';const mob=clMobile()&&CL.full;  // phone + fullscreen → bottom sheet, rises with the keyboard when a block has focus
+  const pal=document.createElement('div');pal.className='cl-palette'+(mob?' sheet':'')+(mob&&CL.active>=0?' show':'');
   const hd=document.createElement('div');hd.className='cl-pal-hd';
   const t=document.createElement('span');t.className='t';t.id='cl-pal-t';
-  const tog=document.createElement('button');tog.textContent=CL.keysOpen?'Hide keys \u2303':'Show keys \u2304';tog.addEventListener('click',()=>{CL.keysOpen=!CL.keysOpen;clRenderPal();});
-  hd.append(t,tog);pal.appendChild(hd);
+  const tog=document.createElement('button');tog.textContent=CL.keysOpen?'Hide keys \u2303':'Show keys \u2304';tog.addEventListener('pointerdown',e=>e.preventDefault());tog.addEventListener('click',()=>{CL.keysOpen=!CL.keysOpen;clRenderPal();clSheet(CL.active>=0);});
+  hd.append(t,tog);
+  if(mob){const done=document.createElement('button');done.textContent='Done';done.className='done';done.addEventListener('click',clSheetDone);hd.appendChild(done);}
+  pal.appendChild(hd);
   if(CL.keysOpen){const wrap=document.createElement('div');wrap.className='cl-pal-rows';
     rows.forEach(r=>{const row=document.createElement('div');row.className='cl-pal-row';
       r.forEach(k=>{const kb=document.createElement('button');kb.className='cl-key';kb.textContent=k;kb.addEventListener('pointerdown',e=>e.preventDefault());kb.addEventListener('click',()=>clKey(k));row.appendChild(kb);});
       wrap.appendChild(row);});pal.appendChild(wrap);}
-  el.appendChild(pal);clRenderPalHead();}
+  el.appendChild(pal);clRenderPalHead();if(mob){clSheetPos();requestAnimationFrame(()=>{const sp=clEl('cl-spacer');if(sp)sp.style.height=CL.active>=0?(pal.offsetHeight+12)+'px':'0';});}else{const sp=clEl('cl-spacer');if(sp)sp.style.height='0';}}
 function clRenderPalHead(){const t=clEl('cl-pal-t');if(!t)return;
   t.innerHTML=CL.keysOpen?'Key palette \u2192 <em>'+esc(CL.active>=0&&CL.blocks[CL.active]?CL.blocks[CL.active].name:'\u2014')+'</em>':'Key palette';}
 function clKey(k){let i=CL.active;if(i<0){i=CL.blocks.length-1;clSetActive(i);}const t=clEl('cl-ta-'+i);if(!t)return;clInsertAt(t,k);}
@@ -205,8 +261,9 @@ async function clRun(){const btn=clEl('cl-run');if(!btn||btn.disabled)return;con
   CL.blocks.forEach((b,i)=>{b.collapsed=(i!==CL.errIdx&&CL.blocks.length>1&&!!r.err);});
   CL.active=-1;clRenderStack();clRenderPalHead();
   if(ok){if(!CL.solved[p.id]){CL.solved[p.id]=true;xpAward(CL_XP,p.title);try{dailyBump('drills_done',1);}catch(e){}
-      sbPost('code_sensei_attempts',{exercise_id:p.id,attempt_number:CL.attempts.length+1,result:'pass',code:src,notes:'compose lab'}).catch(()=>{});
-      sbPatch('code_sensei_exercises',p.id,{status:'done'}).catch(()=>{});clRenderTop();}}
+      clPost('code_sensei_attempts',{exercise_id:p.id,attempt_number:CL.attempts.length+1,result:'pass',code:src,notes:'compose lab'}).catch(()=>{});
+      clPatch('code_sensei_exercises',p.id,{status:'done'}).catch(()=>{});
+      try{const c=clCacheLoad();if(c){c.atts=(c.atts||[]).concat([{exercise_id:p.id,result:'pass'}]);clCacheSave(c.rows,c.atts);}}catch(e){}clRenderTop();}}
   else CL.attempts.unshift({n:CL.attempts.length+1,src,out:r.out,err:r.err,expected:p.expected,open:CL.attempts.length===0,saved:false,mark:null});
   clRenderOut();clRenderAttempts();}
 function clGuilty(text){CL.errLine=-1;CL.errIdx=-1;CL.errStamp='';const asm=CL.asm;
@@ -259,8 +316,8 @@ function clMark(i,l){CL.attempts[i].mark=CL.attempts[i].mark===l?null:l;clRender
 function clSaveAtt(i){const a=CL.attempts[i];if(a.mark==null){exToast('\u26a0 Mark the wrong line first');a.open=true;clRenderAttempts();return;}CL.pending=a;clRenderOvl();}
 
 // ─── Overlays: save sheet · reveal (own container) ───
-function clRenderOvl(){const el=clEl('cl-ovl');if(!el)return;el.innerHTML=CL.pending?clSaveSheetHtml():CL.reveal?clRevealHtml():'';}
-function clCloseSheet(){CL.pending=null;CL.reveal=false;clRenderOvl();}
+function clRenderOvl(){const el=clEl('cl-ovl');if(!el)return;el.innerHTML=CL.pending?clSaveSheetHtml():CL.reveal?clRevealHtml():CL.picker?clPickerHtml():'';}
+function clCloseSheet(){CL.pending=null;CL.reveal=false;CL.picker=false;clRenderOvl();}
 function clReveal(){CL.reveal=true;clRenderOvl();}
 function clSaveSheetHtml(){const a=CL.pending,p=clProb();const mine=clNorm(a.out).split('\n')[a.mark]||'(no line)';const exp=clNorm(a.expected).split('\n')[a.mark]||'(nothing)';
   return '<div class="cl-ovl" onclick="if(event.target===this)clCloseSheet()"><div class="cl-sheet"><div class="cl-sheet-hd"><h3>\u2694 Send to the Dojo</h3><button class="cl-ibtn" onclick="clCloseSheet()">\u00d7</button></div><div class="cl-sheet-bd">'+
@@ -271,11 +328,12 @@ function clSaveSheetHtml(){const a=CL.pending,p=clProb();const mine=clNorm(a.out
 async function clConfirmSave(){const a=CL.pending,p=clProb();const btn=clEl('cl-save-btn');if(btn){btn.disabled=true;btn.textContent='Saving\u2026';}
   const mine=clNorm(a.out).split('\n')[a.mark]||'';const exp=clNorm(a.expected).split('\n')[a.mark]||'';const uid=await getUserId();const now=new Date().toISOString();
   const q='Fix the line that produced the wrong output in \u201c'+p.title+'\u201d.\n\n'+p.statement+'\n\nYour output line '+(a.mark+1)+' was:\n'+mine+'\n\nWhat should that line of output have been?';
+  const off=!navigator.onLine;
   const [w,m]=await Promise.all([
-    sbPost('code_sensei_wrong_answers',{user_id:uid==null?null:String(uid),challenge_id:'compose:'+p.id+':'+a.n+':'+Date.now(),topic_id:'python',module_number:null,question:q,code_snippet:a.src,correct_answer:exp,your_answer:mine,options:null,source:'compose',challenge_type:'type_the_fix',miss_count:1,drill_count:0,mastered:false,last_missed_at:now,due_at:srsPlusDays(1)}),
-    sbPost('code_sensei_mistakes',{exercise_id:p.id,attempt_id:null,language:'python',category:'compose',title:'Compose: '+p.title,description:a.err?a.err.split('\n').pop():'Output mismatch on line '+(a.mark+1),code_snippet:a.src,correct_form:exp})]);
+    clPost('code_sensei_wrong_answers',{user_id:uid==null?null:String(uid),challenge_id:'compose:'+p.id+':'+a.n+':'+Date.now(),topic_id:'python',module_number:null,question:q,code_snippet:a.src,correct_answer:exp,your_answer:mine,options:null,source:'compose',challenge_type:'type_the_fix',miss_count:1,drill_count:0,mastered:false,last_missed_at:now,due_at:srsPlusDays(1)}),
+    clPost('code_sensei_mistakes',{exercise_id:p.id,attempt_id:null,language:'python',category:'compose',title:'Compose: '+p.title,description:a.err?a.err.split('\n').pop():'Output mismatch on line '+(a.mark+1),code_snippet:a.src,correct_form:exp})]);
   a.saved=true;CL.pending=null;S.dojoLoaded=false;clRenderOvl();clRenderAttempts();
-  exToast(w&&m?'\u2694 Saved \u2014 re-match queued in the Dojo':'\u26a0 Partly saved \u2014 check console');}
+  exToast(off?'\u2601 Saved offline \u2014 syncs to the Dojo when you\u2019re back online':w&&m?'\u2694 Saved \u2014 re-match queued in the Dojo':'\u26a0 Saved locally \u2014 will retry when online');}
 function clRevealHtml(){const p=clProb();return '<div class="cl-ovl" onclick="if(event.target===this)clCloseSheet()"><div class="cl-sheet"><div class="cl-sheet-hd"><h3>Reference \u00b7 '+esc(p.title)+'</h3><button class="cl-ibtn" onclick="clCloseSheet()">\u00d7</button></div><div class="cl-sheet-bd">'+
   (CL.ran&&CL.ran.ok?'<div class="cl-sol"><div class="n">yours</div><pre>'+esc(CL.ran.src)+'</pre></div>':'')+
   p.solution.map(b=>'<div class="cl-sol"><div class="n">'+esc(b.name)+'</div><pre>'+esc(b.code)+'</pre></div>').join('')+
