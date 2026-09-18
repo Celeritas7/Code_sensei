@@ -36,12 +36,13 @@
 --td-l-f:#fef2f2;--td-l-s:#dc2626;--td-l-i:#991b1b;--td-l-lb:#ef4444;
 --td-r-f:#eff6ff;--td-r-s:#2563eb;--td-r-i:#1e3a8a;--td-r-lb:#3b82f6;
 --td-c-f:#fef3c7;--td-c-s:#d97706;--td-c-i:#92400e;--tc-hd:#f8f9fc;--tc-cta:#6366f1;
---tn-project-f:#dbeafe;--tn-project-s:#3b82f6;--tn-file-f:#fef9c3;--tn-file-s:#ca8a04;
+/* 12c: project deepened off module-blue; statement off file-gold; command off function-pink; section pushed off module-blue */
+--tn-project-f:#bfdbfe;--tn-project-s:#1d4ed8;--tn-file-f:#fef9c3;--tn-file-s:#ca8a04;
 --tn-module-f:#dbeafe;--tn-module-s:#3b82f6;--tn-class-f:#d1fae5;--tn-class-s:#059669;
 --tn-function-f:#fce7f3;--tn-function-s:#db2777;--tn-variable-f:#ede9fe;--tn-variable-s:#7c3aed;
 --tn-loop-f:#e2e8f0;--tn-loop-s:#475569;--tn-import-f:#e0f2fe;--tn-import-s:#0284c7;
---tn-conditional-f:#ffedd5;--tn-conditional-s:#ea580c;--tn-statement-f:#fef9c3;--tn-statement-s:#a16207;
---tn-section-f:#e0e7ff;--tn-section-s:#4f46e5;--tn-command-f:#fce7f3;--tn-command-s:#be185d;
+--tn-conditional-f:#ffedd5;--tn-conditional-s:#ea580c;--tn-statement-f:#f5f5f4;--tn-statement-s:#78716c;
+--tn-section-f:#e4e2fd;--tn-section-s:#4338ca;--tn-command-f:#ccfbf1;--tn-command-s:#0f766e;
 }
 :root[data-theme="dojo"]{
 --tp-bg:#fdf8ec;--tc-bar:rgba(253,248,236,.95);--tc-bd:rgba(60,45,25,.13);--tc-bd-2:rgba(60,45,25,.26);--tc-ink:#2a221a;--tc-dim:#8a7d68;--tc-dim-2:#a89678;
@@ -52,12 +53,15 @@
 --td-l-f:#f6ddd3;--td-l-s:#96261a;--td-l-i:#7a1c12;--td-l-lb:#b8412e;
 --td-r-f:#e4ecd5;--td-r-s:#4a7230;--td-r-i:#33501f;--td-r-lb:#5b8a3a;
 --td-c-f:#f7e2c8;--td-c-s:#9a4f1e;--td-c-i:#7a3e17;--tc-hd:#f1e8d4;--tc-cta:#7a5cf0;
---tn-project-f:#f3e3c4;--tn-project-s:#8a6a2f;--tn-file-f:#f7ecd0;--tn-file-s:#a8802e;
+/* 12c: paper palette separates by INK depth — project/module/file are three golds by depth;
+   statement is the lightest grey, variable a warmer tan, section ink-violet (was module's exact gold),
+   conditional rust (was import's exact stroke), command deeper than function. */
+--tn-project-f:#eedfbb;--tn-project-s:#6b4f18;--tn-file-f:#f7ecd0;--tn-file-s:#a8802e;
 --tn-module-f:#f0e0c8;--tn-module-s:#7a5e1a;--tn-class-f:#e4ecd5;--tn-class-s:#5b8a3a;
---tn-function-f:#f6ddd3;--tn-function-s:#b8412e;--tn-variable-f:#ece3d3;--tn-variable-s:#6b5945;
+--tn-function-f:#f6ddd3;--tn-function-s:#b8412e;--tn-variable-f:#e9ddc6;--tn-variable-s:#6b5945;
 --tn-loop-f:#e6ded0;--tn-loop-s:#8a7d68;--tn-import-f:#efe4cf;--tn-import-s:#9a4f1e;
---tn-conditional-f:#f7e2c8;--tn-conditional-s:#9a4f1e;--tn-statement-f:#f1ead9;--tn-statement-s:#a89678;
---tn-section-f:#eae2ce;--tn-section-s:#7a5e1a;--tn-command-f:#f4d8cc;--tn-command-s:#96261a;
+--tn-conditional-f:#f7e2c8;--tn-conditional-s:#7a2e10;--tn-statement-f:#f6f3ea;--tn-statement-s:#b3a794;
+--tn-section-f:#e6e3ef;--tn-section-s:#55507e;--tn-command-f:#f0cfc2;--tn-command-s:#7a1d14;
 }
 
 /* ─── Dojo Paper tokens (Phase 1) — defined for downstream phases, no consumers yet ─── */
@@ -594,7 +598,9 @@ const SB='https://wylxvmkcrexwfpjpbhyy.supabase.co/rest/v1';
 const SB_FN='https://wylxvmkcrexwfpjpbhyy.supabase.co/functions/v1';
 const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bHh2bWtjcmV4d2ZwanBiaHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2MzkxMDYsImV4cCI6MjA4NDIxNTEwNn0.6Bxo42hx4jwlJGWnfjiTpiDUsYfc1QLTN3YtrU1efak';
 const HDR={'apikey':K,'Authorization':'Bearer '+K,'Content-Type':'application/json','Prefer':'return=representation'};
-const CS_SECRET='CHANGE_ME_SHARED_SECRET'; // must match claude-proxy's CS_SHARED_SECRET
+// Must match the claude-proxy edge function's CS_SHARED_SECRET env var.
+// Per-device override without editing this file: localStorage.setItem('cs_secret','…')
+const CS_SECRET=(function(){try{return localStorage.getItem('cs_secret')||'cs_7b41e9d2a6f04c58b3ea1d7c92f6085a';}catch(e){return 'cs_7b41e9d2a6f04c58b3ea1d7c92f6085a';}})();
 const GH_API='https://api.github.com/repos/celeritas7/Ghost_tracker_simple';
 
 // ─── Phase 6: single-pair manual-explanation handoff template ───
@@ -912,7 +918,6 @@ function goModules(topic){
   const tp=TOPICS[S.topic];
   document.getElementById('main').innerHTML=`<div class="pg"><button class="back" onclick="goDash()">← Dashboard</button>
     <h2 style="color:${tp.color}">${tp.title}</h2><p class="sub">${tp.mods.length} modules</p>
-    ${matchMedia('(max-width:700px)').matches?'<div class="cd" onclick="goCompose(\'python\')" style="margin-bottom:14px;display:flex;align-items:center;gap:12px;cursor:pointer;border-color:color-mix(in srgb,var(--g) 25%,transparent)"><div style="width:40px;height:40px;border-radius:10px;background:color-mix(in srgb,var(--g) 10%,transparent);color:var(--g);display:flex;align-items:center;justify-content:center;font-size:18px;font-family:var(--dojo-font-mono)">\u2328</div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">Compose Lab</div><div style="font-size:12px;color:var(--td)">Python \u00b7 build it in blocks \u00b7 runs on your phone</div></div><span style="color:var(--g);font-size:16px">\u2192</span></div>':''}
     ${tp.mods.map(mod=>`<div class="mod" ${mod.ready?`onclick="openMod(${mod.n})"`:''}style="${mod.ready?'':'opacity:.4;cursor:default'}">
       <div class="mod-n" style="background:${tp.color}18;color:${tp.color}">${mod.n}</div>
       <div style="flex:1"><div style="font-size:14px;font-weight:600;margin-bottom:2px">Module ${mod.n}: ${mod.t}</div><div style="font-size:12px;color:var(--td)">${mod.s}</div><div style="font-size:10.5px;color:var(--td);margin-top:3px">${mod.f}</div></div>
@@ -2839,7 +2844,7 @@ function exRenderListPage(){
     }
   }
 
-  return '<div class="ex-hd-row"><div class="ex-hd-row-text"><h1>Exercises</h1><div class="sub">Track problems, attempts, and what you learned.</div></div><button class="ex-btn-p btn-cta" onclick="exOpenNewExercise()">+ New exercise</button></div>'+listBody;
+  return '<div class="ex-hd-row"><div class="ex-hd-row-text"><h1>Exercises</h1><div class="sub">Track problems, attempts, and what you learned.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="ex-btn-s" onclick="goComposeNew()" title="Write a block-based problem that runs in the browser">\u2328 New compose problem</button><button class="ex-btn-p btn-cta" onclick="exOpenNewExercise()">+ New exercise</button></div></div>'+listBody;
 }
 
 function exRenderDetail(){

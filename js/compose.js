@@ -4,7 +4,7 @@
 // Render scopes: clRender() = whole page (problem load / theme) · clRenderTop() = header+strip+problem card
 // · clRenderStack() = block cards · clSetActive() = class toggles only · clRenderPal/Out/Attempts/Sensei/Ovl = own container.
 // ═══════════════════════════════════════
-const CL={list:null,pid:null,lang:'python',group:'All',blocks:[],active:-1,attempts:[],ran:null,keysOpen:true,chat:[],live:false,pending:null,reveal:false,solved:{},hintIdx:0,qOpen:true,asm:null,errLine:-1,errIdx:-1,errStamp:'',full:false,picker:false,offline:false};
+const CL={list:null,pid:null,lang:'python',group:'All',blocks:[],active:-1,attempts:[],ran:null,keysOpen:true,chat:[],live:false,pending:null,reveal:false,solved:{},hintIdx:0,qOpen:true,asm:null,errLine:-1,errIdx:-1,errStamp:'',full:false,picker:false,offline:false,au:null};
 const clMobile=()=>matchMedia('(max-width:700px)').matches;
 const CL_KEYS={python:[['def','for','while','if','elif','else:','in','range(','return','import','not','and','or','True'],['print(','input(','len(','int(','str(','sum(','sorted(','enumerate(','open(','.get(','.split(','.upper('],[':','[]','{}','" "','()','+=','==','!=','%','self']]};
 const CL_XP=20;
@@ -26,12 +26,12 @@ async function goCompose(lang){
     if(Array.isArray(rows)&&rows.length){CL.offline=false;clCacheSave(rows,atts);}
     else if(cached){rows=cached.rows;atts=cached.atts;CL.offline=true;}
     else rows=[];
-    CL.list=(Array.isArray(rows)?rows:[]).map(r=>({id:r.id,title:r.title,statement:r.problem_statement||'',group:r.concept||'General',lang:r.language||'python',expected:r.expected_output||'',blocks:clJ(r.blocks)||[{name:'main',code:''}],solution:clJ(r.solution)||[],hints:clJ(r.hints)||['Break the problem into the smallest step you can name.'],status:r.status}));
+    CL.list=(Array.isArray(rows)?rows:[]).map(r=>({id:r.id,title:r.title,statement:r.problem_statement||'',group:r.concept||'General',lang:r.language||'python',expected:r.expected_output||'',blocks:clJ(r.blocks)||[{name:'main',code:''}],solution:clJ(r.solution)||[],hints:clJ(r.hints)||['Break the problem into the smallest step you can name.'],status:r.status,sort_order:r.sort_order}));
     (Array.isArray(atts)?atts:[]).forEach(a=>{CL.solved[a.exercise_id]=true;});
     CL.list.forEach(p=>{if(p.status==='done')CL.solved[p.id]=true;});
   }
   const mine=clMine();
-  if(!mine.length){clEl('main').innerHTML='<div class="pg"><button class="back" onclick="goDash()">\u2190 Dashboard</button><h2>\u2328 Compose Lab</h2><p class="sub">No compose problems for '+esc(CL.lang)+' yet.</p><div class="cd" style="margin-top:14px"><div style="font-size:13px;color:var(--tm)">Run <code style="font-family:var(--dojo-font-mono)">migrations/008_compose_lab.sql</code> to seed the Python set.</div></div></div>';return;}
+  if(!mine.length){clEl('main').innerHTML='<div class="pg"><button class="back" onclick="goDash()">\u2190 Dashboard</button><h2>\u2328 Compose Lab</h2><p class="sub">No compose problems for '+esc(CL.lang)+' yet.</p><div class="cd" style="margin-top:14px"><div style="font-size:13px;color:var(--tm)">Run <code style="font-family:var(--dojo-font-mono)">migrations/008_compose_lab.sql</code> to seed the Python set.</div></div><div class="cl-actions" style="margin-top:14px"><button class="cl-run" onclick="clAuthor(null)">\u270e Write the first problem</button></div><div id="cl-ovl"></div></div>';return;}
   if(!CL.pid||!mine.find(p=>p.id===CL.pid))clLoad(mine.find(p=>!CL.solved[p.id])?.id||mine[0].id,true);
   clRender();
   if(clMobile()&&!CL.full)clToggleFull(true);
@@ -83,14 +83,14 @@ function clRender(){const m=clEl('main');if(!m||S.view!=='compose')return;
 function clRenderTop(){const el=clEl('cl-top');if(!el)return;const p=clProb();const mine=clMine();const solvedN=mine.filter(x=>CL.solved[x.id]).length;
   const pid=clEl('cl-pull-id'),pt=clEl('cl-pull-t');if(pid)pid.textContent='#'+p.id;if(pt)pt.textContent=p.title;
   const dr=clEl('cl-drawer');if(dr)dr.innerHTML='<div class="cl-din"><div class="cl-exhead"><span class="cl-exid">#'+p.id+'</span><h3>'+esc(p.title)+'</h3><span class="grp">'+esc(p.group)+'</span></div><div class="cl-stmt">'+esc(p.statement)+'</div><div class="cl-expect"><span class="k">Expected</span><pre>'+esc(p.expected)+'</pre></div></div>'+
-    '<div class="cl-dft"><button class="cl-dbtn x" onclick="clToggleFull(false)" title="Exit fullscreen">\u2715</button><button class="cl-dbtn" onclick="clPicker()">\u2630 Problems</button><span class="cnt">'+solvedN+' / '+mine.length+' solved</span><button class="cl-dbtn" onclick="clToggleQ()">Close \u25b4</button></div>';
+    '<div class="cl-dft"><button class="cl-dbtn x" onclick="clToggleFull(false)" title="Exit fullscreen">\u2715</button><button class="cl-dbtn" onclick="clPicker()">\u2630 Problems</button><button class="cl-dbtn" onclick="clAuthor(CL.pid)" title="Edit this problem">\u270e Edit</button><span class="cnt">'+solvedN+' / '+mine.length+' solved</span><button class="cl-dbtn" onclick="clToggleQ()">Close \u25b4</button></div>';
   el.innerHTML=(clMobile()?'<button class="back" onclick="goMLearn()">\u2190 Learn</button>':'<button class="back" onclick="goDash()">\u2190 Dashboard</button>')+
-  '<div class="cl-hdrow" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="color:var(--g);margin:0">\u2328 Compose Lab</h2><span style="flex:1"></span>'+(CL.offline?'<span class="cl-mini cl-off" title="No network \u2014 showing the cached problem set; saves queue until you\u2019re back online">\u2601 offline \u00b7 cached</span>':'')+'<span class="cl-mini">'+solvedN+' / '+mine.length+' solved</span></div>'+
+  '<div class="cl-hdrow" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="color:var(--g);margin:0">\u2328 Compose Lab</h2><span style="flex:1"></span>'+(CL.offline?'<span class="cl-mini cl-off" title="No network \u2014 showing the cached problem set; saves queue until you\u2019re back online">\u2601 offline \u00b7 cached</span>':'')+'<span class="cl-mini">'+solvedN+' / '+mine.length+' solved</span><button class="cl-mini cl-newp" onclick="clAuthor(null)" title="Write a new compose problem">+ New problem</button></div>'+
   '<p class="sub">Build it in blocks \u00b7 Key palette \u00b7 Runs for real in your browser</p>'+
   '<div class="cl-progress"><i style="width:'+Math.round(solvedN/mine.length*100)+'%"></i></div>'+
   '<div class="cl-groupbar">'+clGroupBar(mine)+'</div>'+
   '<div class="cl-striprow"><span class="lbl">Problems</span><div class="cl-strip">'+clStrip(mine)+'</div></div>'+
-  '<div class="cl-q'+(CL.qOpen?' open':'')+'" id="cl-q"><div class="cl-exhead" onclick="clToggleQ()"><span class="cl-exid">#'+p.id+'</span><h3>'+esc(p.title)+'</h3><span class="grp">'+esc(p.group)+'</span><span class="cl-qchev">\u25be</span></div>'+
+  '<div class="cl-q'+(CL.qOpen?' open':'')+'" id="cl-q"><div class="cl-exhead" onclick="clToggleQ()"><span class="cl-exid">#'+p.id+'</span><h3>'+esc(p.title)+'</h3><span class="grp">'+esc(p.group)+'</span><button class="cl-ibtn cl-edit" title="Edit this problem" onclick="event.stopPropagation();clAuthor('+p.id+')">\u270e</button><span class="cl-qchev">\u25be</span></div>'+
   '<div class="cl-qbody"><div class="cl-stmt">'+esc(p.statement)+'</div>'+clExpectHtml(p)+'</div>'+
   '<div class="cl-qpeek" onclick="clToggleQ()"><span class="k">Problem</span><code>'+esc(p.statement.split('\n').filter(l=>l.trim())[0]||'')+'</code><span class="cl-qmore">Read \u25be</span></div></div>';}
 function clToggleQ(){CL.qOpen=!CL.qOpen;clApplyQ();}
@@ -103,7 +103,13 @@ function clGroupBar(mine){const groups=[];mine.forEach(p=>{if(!groups.includes(p
   groups.forEach(g=>{const all=mine.filter(p=>p.group===g),done=all.filter(p=>CL.solved[p.id]).length;
     h+='<button class="cl-gchip'+(CL.group===g?' on':'')+'" onclick="clGroup('+JSON.stringify(g).replace(/"/g,'&quot;')+')">'+esc(g)+'<span class="n">'+done+'/'+all.length+'</span></button>';});return h;}
 function clStrip(mine){return mine.filter(p=>CL.group==='All'||CL.group===p.group)
-  .map(p=>'<button class="cl-pchip'+(p.id===CL.pid?' on':'')+(CL.solved[p.id]?' solved':'')+'" title="#'+p.id+' \u00b7 '+esc(p.group)+'" onclick="clLoad('+p.id+')">'+esc(p.title)+'</button>').join('');}
+  .map(p=>'<button class="cl-pchip'+(p.id===CL.pid?' on':'')+(CL.solved[p.id]?' solved':'')+'" data-pid="'+p.id+'" title="#'+p.id+' \u00b7 '+esc(p.group)+' \u2014 long-press or right-click to edit" oncontextmenu="event.preventDefault();clAuthor('+p.id+')" onclick="clChip('+p.id+')">'+esc(p.title)+'</button>').join('');}
+// long-press a strip chip (phones) / right-click (desktop) -> edit that problem
+let _clLp=null,_clLpFired=false;
+function clChip(id){if(_clLpFired)return;clLoad(id);}
+document.addEventListener('touchstart',e=>{const c=e.target.closest&&e.target.closest('.cl-pchip[data-pid]');if(!c)return;
+  _clLp=setTimeout(()=>{_clLp=null;_clLpFired=true;setTimeout(()=>{_clLpFired=false;},800);clAuthor(parseInt(c.dataset.pid,10));},550);},{passive:true});
+['touchend','touchmove','touchcancel'].forEach(t=>document.addEventListener(t,()=>{if(_clLp){clearTimeout(_clLp);_clLp=null;}},{passive:true}));
 function clGroup(g){CL.group=g;clRenderTop();}
 
 // ─── Scope 2: block stack (createElement + listeners; rebuilt only on structural change) ───
@@ -186,7 +192,7 @@ function clApplyFull(){const pg=clEl('main')?.querySelector('.pg');if(!pg||S.vie
   pg.classList.toggle('cl-fullscreen',CL.full);document.body.style.overflow=CL.full?'hidden':'';
   const b=clEl('cl-fs');if(b)b.textContent=CL.full?'\u2715 Exit':'\u2922 Fullscreen';clApplyQ();
   const wantSheet=clMobile()&&CL.full,hasSheet=!!document.querySelector('.cl-palette.sheet');if(wantSheet!==hasSheet)clRenderPal();else clSheetPos();}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&CL.full&&S.view==='compose')clToggleFull(false);});
+document.addEventListener('keydown',e=>{if(e.key!=='Escape'||S.view!=='compose')return;if(CL.au){clAuClose();return;}if(CL.full)clToggleFull(false);});
 // leaving Compose via any nav must drop fullscreen + body scroll lock
 (function(){const o=window.setNav;if(typeof o!=='function')return;window.setNav=function(id){if(id!=='nav-compose'&&CL.full){CL.full=false;document.body.style.overflow='';}return o.apply(this,arguments);};})();
 // ─── 16: problem picker (fullscreen / phone — the strip is hidden there) ───
@@ -316,7 +322,7 @@ function clMark(i,l){CL.attempts[i].mark=CL.attempts[i].mark===l?null:l;clRender
 function clSaveAtt(i){const a=CL.attempts[i];if(a.mark==null){exToast('\u26a0 Mark the wrong line first');a.open=true;clRenderAttempts();return;}CL.pending=a;clRenderOvl();}
 
 // ─── Overlays: save sheet · reveal (own container) ───
-function clRenderOvl(){const el=clEl('cl-ovl');if(!el)return;el.innerHTML=CL.pending?clSaveSheetHtml():CL.reveal?clRevealHtml():CL.picker?clPickerHtml():'';}
+function clRenderOvl(){const el=clEl('cl-ovl');if(!el)return;el.innerHTML=CL.au?clAuHtml():CL.pending?clSaveSheetHtml():CL.reveal?clRevealHtml():CL.picker?clPickerHtml():'';if(CL.au)clAuMount();}
 function clCloseSheet(){CL.pending=null;CL.reveal=false;CL.picker=false;clRenderOvl();}
 function clReveal(){CL.reveal=true;clRenderOvl();}
 function clSaveSheetHtml(){const a=CL.pending,p=clProb();const mine=clNorm(a.out).split('\n')[a.mark]||'(no line)';const exp=clNorm(a.expected).split('\n')[a.mark]||'(nothing)';
@@ -352,3 +358,144 @@ async function clAsk(q){q=String(q||'').trim();if(!q)return;const p=clProb();CL.
       const d=await r.json();reply=d.text||d.content?.[0]?.text||d.reply||JSON.stringify(d).slice(0,200);}catch(e){reply='Claude is unreachable right now. Canned nudge: '+p.hints[0];}}
   else reply=p.hints[Math.min(CL.hintIdx++,p.hints.length-1)];
   CL.chat.pop();CL.chat.push({r:'s',t:esc(reply).replace(/`([^`]+)`/g,'<code>$1</code>')});clRenderSensei();}
+
+// ═══════════════════════════════════════
+// PHASE 15 — COMPOSE PROBLEM AUTHORING
+// Write / edit / delete compose problems in the app instead of hand-writing SQL inserts.
+// Entry points: "+ New problem" in the Compose header · ✎ on the problem card and the fullscreen
+// drawer · long-press (phone) or right-click (desktop) a strip chip · "⌨ New compose problem" on
+// the Exercises page. Reuses clHl / clGrow / clInsertAt / clRunPy — the reference solution is run
+// once in Pyodide and its stdout becomes expected_output.
+// ═══════════════════════════════════════
+const CL_AU_PH=['A variable is a labelled box — put the value in it first.','Splitting a sentence gives you a list of words.','print(s.split()[-1].upper())'];
+function clAuBlank(){return{id:null,title:'',group:'',statement:'',expected:'',hints:['','',''],blocks:[{name:'main',code:''}],solution:[{name:'main',code:''}],ran:null,err:''};}
+function clAuthor(id){
+  if(!clEl('cl-ovl')){exToast('⚠ Open the Compose Lab first');return;}
+  const a=clAuBlank();
+  if(id!=null){const p=(CL.list||[]).find(x=>x.id===id);
+    if(p){a.id=p.id;a.title=p.title||'';a.group=p.group==='General'?'':(p.group||'');a.statement=p.statement||'';a.expected=p.expected||'';
+      a.hints=[0,1,2].map(i=>(p.hints||[])[i]||'');
+      a.blocks=(p.blocks&&p.blocks.length?p.blocks:[{name:'main',code:''}]).map(b=>({name:b.name||'main',code:b.code||''}));
+      a.solution=(p.solution&&p.solution.length?p.solution:a.blocks).map(b=>({name:b.name||'main',code:b.code||''}));}}
+  CL.au=a;CL.pending=null;CL.reveal=false;CL.picker=false;clRenderOvl();
+  setTimeout(()=>{const t=clEl('au-title');if(t&&!a.id)t.focus();},60);}
+function clAuClose(){CL.au=null;clRenderOvl();}
+async function goComposeNew(){await goCompose(CL.lang);clAuthor(null);}
+
+function clAuHtml(){const a=CL.au;const groups=[];(CL.list||[]).forEach(p=>{if(p.lang===CL.lang&&p.group&&p.group!=='General'&&!groups.includes(p.group))groups.push(p.group);});
+  return '<div class="cl-ovl" onclick="if(event.target===this)clAuClose()"><div class="cl-sheet au">'+
+  '<div class="cl-sheet-hd"><h3>'+(a.id?'Edit problem · #'+a.id:'New compose problem')+'</h3>'+
+    (a.id?'<button class="cl-gbtn danger" onclick="clAuDelete()">Delete</button>':'')+
+    '<button class="cl-ibtn" onclick="clAuClose()" title="Close">×</button></div>'+
+  '<div class="cl-sheet-bd">'+
+  (a.err?'<div class="cl-au-err">'+esc(a.err)+'</div>':'')+
+  '<div class="cl-au-row">'+
+    '<label class="cl-au-f"><span>Title</span><input id="au-title" value="'+esc(a.title)+'" placeholder="Sum the evens"></label>'+
+    '<label class="cl-au-f"><span>Concept</span><input id="au-group" list="au-groups" value="'+esc(a.group)+'" placeholder="Lists &amp; loops"><datalist id="au-groups">'+groups.map(g=>'<option value="'+esc(g)+'"></option>').join('')+'</datalist></label>'+
+  '</div>'+
+  '<label class="cl-au-f"><span>Problem statement</span><textarea id="au-stmt" rows="4" placeholder="Print the sum of every even number in nums.&#10;&#10;nums = [3, 8, 1, 12, 7, 6]">'+esc(a.statement)+'</textarea></label>'+
+  '<div class="cl-au-sec"><span>Starter blocks</span><em>what the student opens with — usually empty, or the given data</em><button class="cl-au-add" onclick="clAuAdd(\'blocks\')">+ block</button></div><div id="cl-au-blocks"></div>'+
+  '<div class="cl-au-sec"><span>Reference solution</span><em>runs once — its stdout becomes the expected output, and Reveal shows these blocks</em><button class="cl-au-add" onclick="clAuAdd(\'solution\')">+ block</button></div><div id="cl-au-sol"></div>'+
+  '<div class="cl-au-runrow"><button class="cl-run" id="au-run" onclick="clAuRun()">▶ Run solution → fill expected</button>'+(a.ran&&a.ran.ok?'<span class="cl-pill ok">✓ CAPTURED</span>':'')+'</div>'+
+  (a.ran?'<div class="cl-so"><div class="cl-so-hd"><span>'+(a.ran.err?'TRACEBACK':'STDOUT')+'</span><span class="cl-exit '+(a.ran.err?'no':'ok')+'">EXIT '+(a.ran.err?'1':'0')+'</span></div><pre'+(a.ran.err?' class="tb"':'')+'>'+(esc(a.ran.err||a.ran.out)||'<span style="color:var(--td)">(no output)</span>')+'</pre></div>':'')+
+  '<label class="cl-au-f"><span>Expected output</span><textarea id="au-exp" class="mono" rows="3" spellcheck="false" placeholder="Run the solution above, or type the exact stdout by hand">'+esc(a.expected)+'</textarea></label>'+
+  '<div class="cl-au-sec"><span>Hints</span><em>three staged nudges — vague first, concrete last</em></div>'+
+  a.hints.map((h,i)=>'<label class="cl-au-f"><span>Hint '+(i+1)+'</span><input id="au-h'+i+'" value="'+esc(h)+'" placeholder="'+esc(CL_AU_PH[i])+'"></label>').join('')+
+  '<div class="cl-actions"><button class="cl-run" id="au-save" onclick="clAuSave()">'+(a.id?'Save changes':'Create problem')+'</button><button class="cl-gbtn" onclick="clAuClose()">Cancel</button></div>'+
+  '</div></div></div>';}
+
+function clAuHarvest(){const a=CL.au;if(!a)return;const g=id=>{const n=clEl(id);return n?n.value:undefined;};
+  const t=g('au-title');if(t!==undefined)a.title=t;
+  const gr=g('au-group');if(gr!==undefined)a.group=gr;
+  const s=g('au-stmt');if(s!==undefined)a.statement=s;
+  const e=g('au-exp');if(e!==undefined)a.expected=e;
+  [0,1,2].forEach(i=>{const h=g('au-h'+i);if(h!==undefined)a.hints[i]=h;});}
+function clAuMount(){const a=CL.au;if(!a)return;
+  [['blocks','cl-au-blocks'],['solution','cl-au-sol']].forEach(([which,hid])=>{const host=clEl(hid);if(!host)return;host.innerHTML='';
+    a[which].forEach((b,i)=>host.appendChild(clAuCard(which,b,i)));});}
+function clAuCard(which,b,i){
+  const card=document.createElement('div');card.className='cl-blk';
+  const hd=document.createElement('div');hd.className='cl-blk-hd';
+  const name=document.createElement('input');name.className='cl-blk-name';name.value=b.name;name.spellcheck=false;
+  name.addEventListener('input',()=>{b.name=name.value;});
+  const tools=document.createElement('span');tools.className='cl-blk-tools';
+  const del=clIbtn('×','Remove block',()=>{if(CL.au[which].length<2)return;clAuHarvest();CL.au[which].splice(i,1);clAuMount();});del.classList.add('x');
+  tools.appendChild(del);hd.append(name,tools);
+  const body=document.createElement('div');body.className='cl-blk-body';
+  const ed=document.createElement('div');ed.className='cl-ed';
+  const pre=document.createElement('pre');pre.className='cl-hl';pre.setAttribute('aria-hidden','true');
+  const ta=document.createElement('textarea');ta.className='cl-ta';ta.spellcheck=false;ta.wrap='off';ta.value=b.code;
+  ta.setAttribute('autocapitalize','off');ta.setAttribute('autocorrect','off');
+  ta.placeholder=which==='blocks'?'(empty — the student starts from scratch)':'total = 0\nfor n in nums:\n    ...';
+  const paint=()=>{pre.innerHTML=clHl(ta.value)+'\n';};
+  ta.addEventListener('scroll',()=>{pre.scrollTop=ta.scrollTop;pre.scrollLeft=ta.scrollLeft;});
+  ta.addEventListener('input',()=>{b.code=ta.value;paint();clGrow(ta);});
+  ta.addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();clInsertAt(ta,'    ');}});
+  ed.append(pre,ta);body.appendChild(ed);card.append(hd,body);
+  paint();requestAnimationFrame(()=>clGrow(ta));return card;}
+function clAuAdd(which){clAuHarvest();CL.au[which].push({name:'block '+(CL.au[which].length+1),code:''});clAuMount();}
+
+function clAuSolSrc(){return CL.au.solution.map(b=>(b.code||'').replace(/\s+$/,'')).filter(c=>c.trim()).join('\n');}
+async function clAuRun(){const a=CL.au;if(!a)return;clAuHarvest();const src=clAuSolSrc();
+  if(!src.trim()){a.err='Write the reference solution first — that is what produces the expected output.';clRenderOvl();return;}
+  const btn=clEl('au-run');if(btn){btn.disabled=true;btn.innerHTML='<span class="spin" style="width:12px;height:12px;border-width:2px;margin:0"></span> '+(_clPy?'Running…':'Booting Python…');}
+  let r;try{r=await clRunPy(src);}catch(e){r={out:'',err:'Could not start Python: '+e};}
+  a.ran={ok:!r.err,out:r.out,err:r.err};
+  a.err=r.err?'The reference solution raised an error — fix it and run again.':'';
+  if(!r.err)a.expected=clNorm(r.out);
+  clRenderOvl();}
+
+async function clAuReq(method,path,body){try{
+  const r=await fetch(SB+'/code_sensei_exercises'+path,{method,headers:HDR,body:body?JSON.stringify(body):undefined});
+  const txt=await r.text();let d=null;try{d=txt?JSON.parse(txt):null;}catch(e){}
+  if(!r.ok){console.error('clAuReq',method,r.status,txt);return{ok:false,msg:(d&&(d.message||d.details||d.hint))||('HTTP '+r.status)};}
+  return{ok:true,row:Array.isArray(d)?d[0]:d};}catch(e){return{ok:false,msg:String(e.message||e)};}}
+function clAuRow(a,raw){return{id:raw&&raw.id!=null?raw.id:a.id,title:a.title,statement:a.statement,group:a.group||'General',lang:CL.lang,
+  expected:a.expected,blocks:a.blocks,solution:a.solution,hints:a.hints,status:(raw&&raw.status)||'todo',sort_order:raw?raw.sort_order:undefined};}
+function clCacheUpsert(raw){const c=clCacheLoad();if(!c||!raw)return;const rows=c.rows||[];const i=rows.findIndex(r=>r.id===raw.id);
+  if(i>=0)rows[i]=raw;else rows.push(raw);clCacheSave(rows,c.atts);}
+function clCacheDrop(id){const c=clCacheLoad();if(!c)return;clCacheSave((c.rows||[]).filter(r=>r.id!==id),c.atts);}
+
+async function clAuSave(){const a=CL.au;if(!a)return;clAuHarvest();
+  a.title=(a.title||'').trim();a.group=(a.group||'').trim();a.statement=(a.statement||'').trim();
+  const fail=m=>{a.err=m;clRenderOvl();};
+  if(!a.title)return fail('A title is required — it labels the chip in the problem strip.');
+  if(!a.solution.some(b=>(b.code||'').trim()))return fail('The reference solution cannot be empty — both the expected output and the Reveal panel come from it.');
+  if(!String(a.expected).trim())return fail('No expected output yet — run the solution, or type the exact stdout by hand.');
+  if(!navigator.onLine)return fail('Authoring needs a connection — problems are written straight to the database.');
+  const btn=clEl('au-save');if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  const clean=arr=>arr.map(b=>({name:(b.name||'main').trim()||'main',code:(b.code||'').replace(/\s+$/,'')}));
+  a.blocks=clean(a.blocks);a.solution=clean(a.solution).filter(b=>b.code.trim());
+  const hints=a.hints.map(h=>(h||'').trim()).filter(Boolean);
+  a.hints=hints.length?hints:['Break the problem into the smallest step you can name.'];
+  a.expected=clNorm(a.expected);
+  const payload={title:a.title,problem_statement:a.statement||null,concept:a.group||'General',
+    expected_output:a.expected,blocks:a.blocks,solution:a.solution,hints:a.hints};
+  let res;
+  if(a.id){res=await clAuReq('PATCH','?id=eq.'+a.id,payload);}
+  else{const uid=await getUserId();
+    const orders=(CL.list||[]).filter(p=>p.lang===CL.lang).map(p=>p.sort_order||0).filter(n=>n>0);
+    res=await clAuReq('POST','',Object.assign({user_id:uid,category:'compose',language:CL.lang,status:'todo',
+      sort_order:(orders.length?Math.max.apply(null,orders):(CL.list||[]).length)+1},payload));}
+  if(!res.ok){if(btn){btn.disabled=false;btn.textContent=a.id?'Save changes':'Create problem';}
+    return fail('Save failed: '+res.msg);}
+  const raw=res.row;const row=clAuRow(a,raw);const edit=!!a.id;
+  if(row.sort_order==null)delete row.sort_order;  // never clobber a known order with undefined
+  if(raw)clCacheUpsert(raw);
+  const i=(CL.list||[]).findIndex(p=>p.id===row.id);
+  if(i>=0)CL.list[i]=Object.assign({},CL.list[i],row);else CL.list.push(row);
+  CL.au=null;
+  if(!edit||CL.pid===row.id){try{localStorage.removeItem('cs_cb_'+row.id);}catch(e){}clLoad(row.id,true);}
+  clRender();exToast(edit?'✓ Problem updated':'✓ Problem created — it is in the strip');}
+
+async function clAuDelete(){const a=CL.au;if(!a||!a.id)return;
+  if(!confirm('Delete “'+a.title+'”?\n\nThe problem goes away; anything already saved to the Dojo from it stays.'))return;
+  const res=await clAuReq('DELETE','?id=eq.'+a.id);
+  if(!res.ok)return (function(){a.err='Delete failed: '+res.msg+(/foreign key|violates/i.test(res.msg)?' — logged attempts still reference it.':'');clRenderOvl();})();
+  const id=a.id;CL.au=null;clCacheDrop(id);
+  CL.list=(CL.list||[]).filter(p=>p.id!==id);delete CL.solved[id];
+  try{localStorage.removeItem('cs_cb_'+id);}catch(e){}
+  const mine=clMine();
+  if(!mine.length){CL.pid=null;CL.list=null;exToast('🗑 Deleted — no problems left');return goCompose();}
+  if(CL.pid===id)clLoad(mine[0].id,true);
+  clRender();exToast('🗑 Problem deleted');}
