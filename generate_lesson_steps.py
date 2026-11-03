@@ -13,7 +13,7 @@ Setup (PowerShell):
 import csv, json, os, sys, requests
 
 SB = "https://wylxvmkcrexwfpjpbhyy.supabase.co/rest/v1"
-KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5bHh2bWtjcmV4d2ZwanBiaHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2MzkxMDYsImV4cCI6MjA4NDIxNTEwNn0.6Bxo42hx4jwlJGWnfjiTpiDUsYfc1QLTN3YtrU1efak"  # same anon key as index.html (const K='eyJ...')
+KEY = "sb_publishable_e3pDOuxIdstaC7s0a680kQ_R10TrAyv"  # same publishable key as index.html (const K='sb_publishable_...')
 HDR = {"apikey": KEY, "Authorization": f"Bearer {KEY}"}
 MODEL = "claude-sonnet-4-5"
 
