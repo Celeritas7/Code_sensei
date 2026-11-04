@@ -354,8 +354,8 @@ function clRenderSensei(){const el=clEl('cl-sensei');if(!el)return;
   '<div class="cl-chat-in"><input id="cl-chat-in" placeholder="Ask the sensei\u2026" onkeydown="if(event.key===\'Enter\')clAsk(this.value)" /><button onclick="clAsk(document.getElementById(\'cl-chat-in\').value)">Ask</button></div></div>';
   const c=clEl('cl-chat');if(c)c.scrollTop=c.scrollHeight;}
 async function clAsk(q){q=String(q||'').trim();if(!q)return;const p=clProb();CL.chat.push({r:'u',t:esc(q)});CL.chat.push({r:'s',t:'<span style="color:var(--td)">thinking\u2026</span>'});clRenderSensei();let reply;
-  if(CL.live){try{const r=await fetch(SB_FN+'/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json','x-cs-secret':CS_SECRET},body:JSON.stringify({system:'You are Sensei, a terse Python coding coach. Give ONE short nudge (max 2 sentences). Never give the full solution. Use `backticks` for code tokens.',messages:[{role:'user',content:'Problem: '+p.title+' \u2014 '+p.statement+'\nExpected stdout: '+p.expected+'\nStudent code:\n'+clAssemble()+'\n\nQuestion: '+q}]})});
-      const d=await r.json();reply=d.text||d.content?.[0]?.text||d.reply||JSON.stringify(d).slice(0,200);}catch(e){reply='Claude is unreachable right now. Canned nudge: '+p.hints[0];}}
+  if(CL.live){try{reply=await senseiCall({max_tokens:300,system:'You are Sensei, a terse Python coding coach. Give ONE short nudge (max 2 sentences). Never give the full solution. Use `backticks` for code tokens.',messages:[{role:'user',content:'Problem: '+p.title+' \u2014 '+p.statement+'\nExpected stdout: '+p.expected+'\nStudent code:\n'+clAssemble()+'\n\nQuestion: '+q}]});}
+      catch(e){reply='Claude could not answer — '+e.message+'. Switch to Canned for a hint.';}}
   else reply=p.hints[Math.min(CL.hintIdx++,p.hints.length-1)];
   CL.chat.pop();CL.chat.push({r:'s',t:esc(reply).replace(/`([^`]+)`/g,'<code>$1</code>')});clRenderSensei();}
 
