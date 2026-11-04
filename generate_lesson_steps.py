@@ -8,6 +8,7 @@ Setup (PowerShell):
     $env:ANTHROPIC_API_KEY="sk-ant-..."
     python generate_lesson_steps.py sql        # one topic
     python generate_lesson_steps.py            # sql + bat
+    python generate_lesson_steps.py bat:1      # one module (to test before a full run)
 (no pip installs beyond requests — the anthropic SDK is NOT used)
 """
 import csv, json, os, sys, requests
@@ -15,7 +16,10 @@ import csv, json, os, sys, requests
 SB = "https://wylxvmkcrexwfpjpbhyy.supabase.co/rest/v1"
 KEY = "sb_publishable_e3pDOuxIdstaC7s0a680kQ_R10TrAyv"  # same publishable key as index.html (const K='sb_publishable_...')
 HDR = {"apikey": KEY, "Authorization": f"Bearer {KEY}"}
-MODEL = "claude-sonnet-4-5"
+MODEL = "claude-sonnet-5-5"
+# Thinking is on by default (effort "high") and counts toward max_tokens, so leave room.
+# Don't send thinking/temperature/top_p/top_k: Sonnet 5.5 rejects the non-default values.
+MAX_TOKENS = 16000
 
 def ask_claude(prompt):
     r = requests.post("https://api.anthropic.com/v1/messages",
@@ -23,13 +27,23 @@ def ask_claude(prompt):
                  "anthropic-version": "2023-06-01",
                  "content-type": "application/json",
                  "accept-encoding": "identity"},
-        json={"model": MODEL, "max_tokens": 4000,
+        json={"model": MODEL, "max_tokens": MAX_TOKENS,
               "messages": [{"role": "user", "content": prompt}]},
-        timeout=180)
+        timeout=600)
     if not r.ok:
         print(f"  anthropic -> {r.status_code}: {r.text[:300]}")
         r.raise_for_status()
-    return r.json()["content"][0]["text"]
+    msg = r.json()
+    stop = msg.get("stop_reason")
+    if stop == "refusal":
+        raise RuntimeError(f"Claude refused: {msg.get('stop_details')}")
+    if stop == "max_tokens":
+        raise RuntimeError(f"reply cut off at max_tokens={MAX_TOKENS}")
+    # The reply can start with a thinking block, so take the text blocks by type.
+    text = "".join(b.get("text", "") for b in msg.get("content", []) if b.get("type") == "text")
+    if not text.strip():
+        raise RuntimeError(f"empty reply (stop_reason={stop})")
+    return text
 
 PROMPT = """You are preparing a lesson for a micro-step pager (one concept per screen).
 The lesson material below is real code from the student's course, line by line, each
@@ -54,8 +68,10 @@ def main():
         sys.exit('Set the key first:  $env:ANTHROPIC_API_KEY="sk-ant-..."')
     topics = sys.argv[1:] or ["sql", "bat"]
     rows = []
-    for topic in topics:
-        lessons = fetch("code_sensei_lessons", f"select=*&topic_id=eq.{topic}&order=module_number")
+    for arg in topics:
+        topic, _, only = arg.partition(":")
+        mfilter = f"&module_number=eq.{only}" if only else ""
+        lessons = fetch("code_sensei_lessons", f"select=*&topic_id=eq.{topic}{mfilter}&order=module_number")
         for les in lessons:
             mnum = les["module_number"]
             title = les.get("module_title") or f"Module {mnum}"
