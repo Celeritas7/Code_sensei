@@ -19,6 +19,7 @@ the builder refuses drift until its transformations have been reviewed again.
 
 The review candidates live in
 [Commonplace](https://github.com/Celeritas7/Commonplace/tree/main/platform/operations/general-apps).
+The companion change is [Commonplace PR #106](https://github.com/Celeritas7/Commonplace/pull/106).
 01 creates protected identity mappings; 02 establishes legacy guards; 05 covers
 the full Code_sensei graph. This client needs all three before activation, including
 `code_sensei_current_user_id`, `code_sensei_apply_offline` and `code_sensei_save_project`.
