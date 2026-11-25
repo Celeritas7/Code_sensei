@@ -67,5 +67,9 @@ await writeFile(resolve(out,'index.html'),html);await writeFile(resolve(out,'js/
 await writeFile(resolve(out,'js/access-config.js'),'window.CS_STAGE_CONFIG = '+JSON.stringify(config).replaceAll('<','\\u003c')+';\n');
 for(const [from,to] of [['core.js','js/access-core.js'],['boot.js','js/access-boot.js'],['sw.js','sw.js']])await copyFile(resolve(root,'access',from),resolve(out,to));
 await copyFile(resolve(root,'node_modules/@supabase/supabase-js/dist/umd/supabase.js'),resolve(out,'vendor/supabase.js'));
+const worker=await readFile(resolve(root,'access/sw.js'),'utf8');
+const workerInputs=await Promise.all(['js/access-core.js','js/access-boot.js','js/access-config.js','vendor/supabase.js'].map(path=>readFile(resolve(out,path),'utf8')));
+const buildId=hash([html,compose,worker,...workerInputs].join('\n')).slice(0,16);
+await writeFile(resolve(out,'sw.js'),worker.replaceAll('__CS_BUILD__',buildId));
 await writeFile(resolve(out,'PREPARATION.txt'),'Staging only. Requires reviewed General_apps candidates 01, 02, 05 and verified owner mappings. No automatic enrollment or live deployment.\n');
 console.log('Prepared .staging; original app and offline worker unchanged.');

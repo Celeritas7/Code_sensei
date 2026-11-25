@@ -15,4 +15,6 @@ test('staging build preserves original entry points and removes anonymous privat
  new vm.Script(compose);
  const sw=await readFile(new URL('.staging/sw.js',root),'utf8');
  assert.doesNotMatch(sw,/caches.delete|caches.match\(/);
+ assert.match(sw,/-shell-[a-f0-9]{16}/);
+ assert.doesNotMatch(sw,/__CS_BUILD__/);
 });

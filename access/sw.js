@@ -1,11 +1,11 @@
 /* Staging worker: shell/runtime only. Personal API caches belong to the verified
  * account boundary, never to an origin-wide fetch fallback. Old packs retained. */
-const VERSION = 'cs-access-v1', SHELL = VERSION + '-shell';
+const VERSION = 'cs-access-v1', SHELL = VERSION + '-shell-__CS_BUILD__';
 const FILES = ['./', './index.html', './js/compose.js', './css/compose.css', './manifest.json',
   './js/access-core.js', './js/access-boot.js', './js/access-config.js', './vendor/supabase.js',
   './icons/icon.svg', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png'];
 const paths = new Set(FILES.map(path => new URL(path, self.registration.scope).pathname));
-self.addEventListener('install', event => event.waitUntil(caches.open(SHELL).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting())));
+self.addEventListener('install', event => event.waitUntil(caches.open(SHELL).then(cache => cache.addAll(FILES.map(path => new Request(path, { cache: 'reload' })))).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 self.addEventListener('message', event => {
   if (event.data === 'CS_ACCESS_VERSION') event.ports[0]?.postMessage(VERSION);

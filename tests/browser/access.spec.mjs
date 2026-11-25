@@ -32,7 +32,7 @@ test('verified boot, owner-scoped drafts and explicit Google action',async({page
  await page.goto('/');await expect(page.locator('html')).toHaveClass(/cs-access-open/);
  await page.evaluate(()=>goCompose());await expect(page.locator('#main')).toContainText('A practice');
  await page.evaluate(()=>{CL.blocks=[{name:'main',code:'saved draft',collapsed:false,auto:false}];clSync();});
- expect(await page.evaluate(({A,legacyA})=>localStorage.getItem('cs_account_v1:'+A+':'+legacyA+':cs_cb_1'),{A,legacyA})).toContain('saved draft');
+ expect(await page.evaluate(()=>CS.local.getItem('cs_cb_1'))).toContain('saved draft');
  await page.getByRole('button',{name:'Sign out',exact:true}).click();
  await expect(page.locator('#cs-access-gate')).toBeVisible();
  await page.getByRole('button',{name:'Continue with Google'}).click();

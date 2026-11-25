@@ -11,7 +11,7 @@ function csLock(message) {
 }
 async function csWorker() {
   if (!('serviceWorker' in navigator)) throw new Error('This browser needs service-worker support for this staging build.');
-  await navigator.serviceWorker.register('./sw.js');
+  await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
   await navigator.serviceWorker.ready;
   // A previous worker cached anonymous REST responses. Never start the client
   // until the new worker confirms it does not serve that mixed cache.
@@ -50,8 +50,9 @@ async function csEnter(offline) {
 if (!csConfig?.projectUrl || !csConfig?.publishableKey) {
   csLock('This is a preparation build. Configure the reviewed staging project before signing in.');
 } else {
+  const authStorageKey = 'cs_verified_auth_v1:' + new URL(csConfig.projectUrl).host;
   const client = window.supabase.createClient(csConfig.projectUrl, csConfig.publishableKey, {
-    auth: { storageKey: 'cs_verified_auth_v1', flowType: 'pkce', persistSession: true,
+    auth: { storageKey: authStorageKey, flowType: 'pkce', persistSession: true,
       autoRefreshToken: true, detectSessionInUrl: true }
   });
   CS = createCSAccess({ auth: client.auth, base: csConfig.projectUrl,
@@ -59,7 +60,7 @@ if (!csConfig?.projectUrl || !csConfig?.publishableKey) {
   // Synchronous callback: no Auth requests or awaits inside the SDK lock.
   client.auth.onAuthStateChange((event, session) => CS.authChanged(event, session));
   window.addEventListener('storage', event => {
-    if (event.key !== 'cs_verified_auth_v1') return;
+    if (event.key !== authStorageKey) return;
     let session; try { session = JSON.parse(event.newValue); } catch { /* removal */ }
     CS.authChanged(session?.user ? 'SIGNED_IN' : 'SIGNED_OUT', session);
   });

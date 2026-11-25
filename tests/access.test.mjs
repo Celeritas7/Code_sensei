@@ -56,7 +56,7 @@ test('offline reload preserves own notes and drafts but account B has neither',a
  const b=setup(storage);b.state.actor=B;await b.api.open();
  assert.equal(b.api.local.getItem('cs_cb_1'),null);b.state.online=false;
  await assert.rejects(()=>b.api.request(url),/not saved/);
- assert.equal(storage['cs_account_v1:'+A+':'+legacyA+':cs_cb_1'],'retained draft');
+ assert.equal(storage['cs_account_v1:'+encodeURIComponent(base)+':'+A+':'+legacyA+':cs_cb_1'],'retained draft');
 });
 test('switch during a request discards its response and blocks subsequent operations',async()=>{
  const {api,state}=setup();await api.open();let finish;
@@ -88,7 +88,7 @@ test('offline queue remains under its original account during switching',async()
 test('expired lease and signout deny offline reopen without deleting saved work',async()=>{
  const {api,state,storage}=setup();await api.open();api.local.setItem('cs_cb_1','saved');state.time+=8*86400000;state.online=false;
  assert.throws(()=>api.offline(),/verify/);await api.signOut();assert.equal(api.hasOffline(),false);
- assert.equal(storage['cs_account_v1:'+A+':'+legacyA+':cs_cb_1'],'saved');
+ assert.equal(storage['cs_account_v1:'+encodeURIComponent(base)+':'+A+':'+legacyA+':cs_cb_1'],'saved');
 });
 test('legacy drafts are retained, never adopted by the first login; owner recovery keeps conflicts',async()=>{
  const storage=memory();storage.setItem('cs_cb_1','legacy');storage.setItem('cs_cl_queue','legacy queue');
@@ -97,4 +97,11 @@ test('legacy drafts are retained, never adopted by the first login; owner recove
  const owner=setup(storage,{legacyOwner:A});await owner.api.open();owner.api.local.setItem('cs_cb_1','new draft');
  assert.equal(owner.api.recoverLegacyDrafts(),1);assert.equal(owner.api.local.getItem('cs_cb_1'),'new draft');
  assert.equal(owner.api.local.getItem('legacy-copy:cs_cb_1'),'legacy');assert.equal(storage.getItem('cs_cl_queue'),'legacy queue');
+});
+test('a different project on the same origin cannot reuse saved identity or account data',async()=>{
+ const {api,storage}=setup();await api.open();api.local.setItem('cs_cb_1','original project draft');
+ const other=setup(storage,{base:'https://other-project.example.invalid'});other.state.online=false;
+ assert.equal(other.api.hasOffline(),false);assert.throws(()=>other.api.offline(),/verify/);
+ other.state.online=true;await other.api.open();assert.equal(other.api.local.getItem('cs_cb_1'),null);
+ assert.equal(api.local.getItem('cs_cb_1'),'original project draft');
 });

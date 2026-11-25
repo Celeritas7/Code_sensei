@@ -40,7 +40,7 @@ Personal exercise authoring remains owner scoped.
 
 ## Saved work and offline use
 
-The local scope includes both Auth and original app UUID. Personal responses,
+The local scope includes the project origin, Auth and original app UUID. Personal responses,
 Compose drafts and queued saves cannot fall back to another account's storage.
 A switch hides and disables the old page, rejects pending responses and requires
 a reload. Persistent operation IDs and transactional receipts make offline Compose
@@ -55,6 +55,8 @@ queuing here; resolve their errors online.
 
 Old shell/data caches, Pyodide packs and unscoped keys remain. The new worker never
 serves the old mixed REST cache and deletes no packs. Do not clear website data.
+Each generated shell has a content-derived cache version, so a later build does
+not keep serving an older access script. Pyodide keeps its existing cache.
 Before same-origin cutover, verify old tabs and the worker handshake on each device.
 
 Unscoped work is never assigned to the first login. An operator may set

@@ -4,7 +4,8 @@
   root.createCSAccess = function ({ auth, fetcher = fetch, storage = localStorage,
     online = () => navigator.onLine, now = Date.now, uuid = () => crypto.randomUUID(),
     base, key, onLock = () => {}, legacyOwner = null }) {
-    const markerKey = 'cs_access_last_verified_v1', maxAge = 7 * 86400000;
+    const namespace = encodeURIComponent(base);
+    const markerKey = 'cs_access_last_verified_v1:' + namespace, maxAge = 7 * 86400000;
     const validId = value => typeof value === 'string' && /^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(value);
     const parse = raw => { try { return JSON.parse(raw); } catch { return null; } };
     let active = null, epoch = 0, closed = false, flushing = null, openingSub = null, observedSubject = null;
@@ -20,7 +21,7 @@
     function assertCurrent(expected, generation) {
       if (generation !== epoch || closed || scope() !== expected) throw failure('Account changed; operation stopped.');
     }
-    const localKey = (name, expected = scope()) => 'cs_account_v1:' + expected + ':' + name;
+    const localKey = (name, expected = scope()) => 'cs_account_v1:' + namespace + ':' + expected + ':' + name;
     const local = {
       getItem: name => storage.getItem(localKey(name)),
       setItem: (name, value) => storage.setItem(localKey(name), value),
