@@ -1,3 +1,8 @@
 docs/
 supabase/.temp/
 Temp/
+node_modules/
+.staging/
+test-results/
+playwright-report/
+access/config.local.json
