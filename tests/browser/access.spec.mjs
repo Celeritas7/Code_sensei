@@ -67,3 +67,15 @@ test('old mixed API cache is preserved but never served by the new worker',async
  expect(await page.evaluate(async()=>await csRead('code_sensei_user_notes'))).toEqual([{id:'fixture-note',note_text:A+' private note'}]);
  expect(await page.evaluate(()=>caches.keys())).toContain('cs-data-v3');
 });
+test('navigation stays disabled until account data finishes loading',async({page})=>{
+ let release,started=false;
+ const wait=new Promise(resolve=>{release=resolve;});
+ await page.route('https://fixture.example.invalid/rest/v1/code_sensei_player*',async route=>{
+  started=true;await wait;await route.fulfill({json:[{id:1,user_id:legacyA,xp:20,active_days:[],hearts:5}]});
+ });
+ await page.goto('/');await expect.poll(()=>started).toBe(true);
+ await expect(page.locator('html')).not.toHaveClass(/cs-access-open/);
+ expect(await page.locator('#cs-app').evaluate(el=>el.inert)).toBe(true);
+ release();await expect(page.locator('html')).toHaveClass(/cs-access-open/);
+ await page.evaluate(()=>goCompose());await expect(page.locator('#main')).toContainText('A practice');
+});

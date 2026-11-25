@@ -31,9 +31,6 @@ async function csEnter(offline) {
   try {
     await csWorker();
     if (offline) CS.offline(); else await CS.open();
-    document.getElementById('cs-app').inert = false;
-    document.documentElement.classList.add('cs-access-open');
-    document.getElementById('cs-recover').hidden = !CS.canRecover;
     if (offline) {
       try { Object.assign(P, JSON.parse(CS.local.getItem('cs_player_state') || '{}')); } catch {}
       try { Object.assign(D, JSON.parse(CS.local.getItem('cs_daily_state') || '{}')); } catch {}
@@ -43,6 +40,10 @@ async function csEnter(offline) {
       CS.local.setItem('cs_daily_state', JSON.stringify(D));
     }
     if (matchMedia('(max-width:700px)').matches) goMHome(); else goDash();
+    if (!CS.ready) throw new Error('Account changed while loading. Reload to continue.');
+    document.getElementById('cs-recover').hidden = !CS.canRecover;
+    document.getElementById('cs-app').inert = false;
+    document.documentElement.classList.add('cs-access-open');
     if (!offline) clFlushQueue();
   } catch (error) { csLock(error.message || 'Unable to verify account access.'); }
 }

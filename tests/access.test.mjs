@@ -39,6 +39,14 @@ test('unmapped accounts fail closed without reading personal records',async()=>{
  const {api,state}=setup();state.allowed=false;await assert.rejects(()=>api.open(),/access/);
  assert.equal(api.ready,false);assert.equal(state.reads.length,1);
 });
+test('an account switch during initial verification cannot open the previous account',async()=>{
+ const {api,auth}=setup();let finish;
+ auth.getUser=()=>new Promise(resolve=>{finish=resolve;});
+ const pending=api.open();while(!finish)await new Promise(resolve=>setTimeout(resolve,0));
+ api.authChanged('SIGNED_IN',{user:{id:B}});
+ finish({data:{user:{id:A,is_anonymous:false,email_confirmed_at:'2026-11-26'}}});
+ await assert.rejects(()=>pending,/Account changed/);assert.equal(api.ready,false);assert.equal(api.hasOffline(),false);
+});
 test('offline reload preserves own notes and drafts but account B has neither',async()=>{
  const {api,state,storage}=setup();await api.open();api.local.setItem('cs_cb_1','retained draft');
  const url=base+'/rest/v1/code_sensei_user_notes';await api.request(url);

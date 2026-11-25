@@ -47,6 +47,7 @@ window.addEventListener('online',()=>{if(CS?.ready){clFlushQueue();if(S.view==='
 // Cached empty/deleted sets must not resurrect previous items after revocation.
 compose=compose.replace('if(Array.isArray(rows)&&rows.length)','if(Array.isArray(rows))');
 html=html.replace("Add a row to code_sensei_users with name=Aniket.","Ask the administrator to verify your account mapping.");
+html=html.replaceAll('Welcome back, Aniket','Welcome back').replaceAll('>Aniket</div>','>Learner</div>');
 html=html.replace(/    let projId;[\s\S]*?for\(const fd of fileData\)\{await sbPost\('code_sensei_py_files',fd\);\}/,
  `    const files=tFiles.filter(f=>f.code.trim()).map(f=>({filename:f.name||'untitled.py',code_content:f.code}));
     await CS.rpc('code_sensei_save_project',{project_id:existing[0]?.id||null,project_name:pn,view_mode:tMode,files});`);
