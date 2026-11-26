@@ -1,0 +1,20 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import vm from 'node:vm';
+test('staging build preserves original entry points and removes anonymous private calls',async()=>{
+ const root=new URL('../',import.meta.url),files=['index.html','js/compose.js','sw.js'];
+ const before=await Promise.all(files.map(f=>readFile(new URL(f,root),'utf8')));
+ execFileSync(process.execPath,['access/prepare.mjs','--fixture'],{cwd:root});
+ assert.deepEqual(await Promise.all(files.map(f=>readFile(new URL(f,root),'utf8'))),before);
+ const html=await readFile(new URL('.staging/index.html',root),'utf8'),compose=await readFile(new URL('.staging/js/compose.js',root),'utf8');
+ assert.doesNotMatch(html+compose,/headers:HDR|Bearer '\+K|CS_SECRET|name=eq.Aniket/);
+ assert.match(html,/code_sensei_save_project/);assert.match(compose,/CS.write\('post'/);
+ for(const match of html.matchAll(/<script>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
+ new vm.Script(compose);
+ const sw=await readFile(new URL('.staging/sw.js',root),'utf8');
+ assert.doesNotMatch(sw,/caches.delete|caches.match\(/);
+ assert.match(sw,/-shell-[a-f0-9]{16}/);
+ assert.doesNotMatch(sw,/__CS_BUILD__/);
+});
